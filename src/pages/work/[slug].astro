@@ -1,0 +1,95 @@
+---
+import Base from "../../layouts/Base.astro";
+import Footer from "../../components/Footer.astro";
+import Media from "../../components/Media.astro";
+import { getProjects, neighbours } from "../../lib/projects";
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  const n = projects.length;
+  return projects.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      index: i,
+      total: n,
+      ...neighbours(projects, i),
+    },
+  }));
+}
+
+const { entry, index, total, prev, next } = Astro.props;
+const p = entry;
+const coverLabel = p.gallery[0] ? `${p.name} — ${p.gallery[0].label.replace(/ — .*/, "")}` : p.name;
+const metaRows: [string, string][] = [
+  ["Client", p.client],
+  ["Year", p.yr],
+  ["Role", p.role],
+  ["Services", p.services.join(", ")],
+];
+---
+
+<Base title={`${p.name} — Juno Vestergaard`}>
+  <!-- HERO -->
+  <section class="pd-hero" data-screen-label="Project hero">
+    <div class="phero__index meta">
+      <span>( {p.cat} )</span><span class="rule"></span>
+      <span>{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
+    </div>
+    <h1 class="pd-title">
+      <span class="line"><span data-rise>{p.name}</span></span>
+    </h1>
+    <div class="pd-sub">
+      <p class="pd-lede" data-rise-soft>{p.intro}</p>
+      <span class="pd-tags meta" data-rise-soft>{p.cat}  —  {p.yr}</span>
+    </div>
+  </section>
+
+  <!-- COVER -->
+  <section class="pd-cover">
+    <div class="frame"><Media src={p.cover} label={coverLabel} /></div>
+  </section>
+
+  <!-- INFO -->
+  <section class="pd-info" data-screen-label="Project info">
+    <div class="pd-info__meta">
+      {metaRows.map(([k, v]) => (
+        <div class="pd-meta-row"><span class="k">{k}</span><span class="v">{v}</span></div>
+      ))}
+    </div>
+    <div class="pd-info__body">
+      {p.overview.map((t) => <p>{t}</p>)}
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="pd-gallery" data-screen-label="Project gallery">
+    {p.gallery.map((g, i) => (
+      <figure class={`pd-shot ${g.span}`} data-reveal>
+        <Media src={g.image} label={g.label} />
+        <figcaption class="meta">{String(i + 1).padStart(2, "0")} — {g.label}</figcaption>
+      </figure>
+    ))}
+  </section>
+
+  <!-- QUOTE (optional) -->
+  {p.quote && p.quote.length > 0 && (
+    <blockquote class="pd-quote reveal-lines">
+      {p.quote.map((line) => (
+        <span class="line"><span set:html={line}></span></span>
+      ))}
+    </blockquote>
+  )}
+
+  <!-- PREV / NEXT -->
+  <nav class="pd-next">
+    <a class="pd-nav-link prev" href={`/work/${prev.id}`} data-cursor="open">
+      <span class="meta">( Previous )</span><span class="t">{prev.name}</span>
+    </a>
+    <a class="pd-nav-link next" href={`/work/${next.id}`} data-cursor="open">
+      <span class="meta">( Next project )</span><span class="t">{next.name}</span>
+    </a>
+  </nav>
+
+  <Footer />
+</Base>

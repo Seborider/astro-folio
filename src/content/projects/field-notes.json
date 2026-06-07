@@ -1,0 +1,35 @@
+{
+  "order": 9,
+  "name": "Field Notes",
+  "cat": "Editorial",
+  "yr": "2025",
+  "role": "Design",
+  "client": "Field Notes Journal",
+  "services": [
+    "Editorial design",
+    "Typography"
+  ],
+  "intro": "A quarterly journal of fieldwork and design research.",
+  "overview": [
+    "Field Notes gathers essays from designers working outside the studio.",
+    "A utilitarian grid and a single accent keep the writing foremost."
+  ],
+  "gallery": [
+    {
+      "label": "Cover system",
+      "span": "full"
+    },
+    {
+      "label": "Essay spread",
+      "span": "half"
+    },
+    {
+      "label": "Grid",
+      "span": "half"
+    },
+    {
+      "label": "Index",
+      "span": "full"
+    }
+  ]
+}

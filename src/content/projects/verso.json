@@ -1,0 +1,36 @@
+{
+  "order": 4,
+  "name": "Verso",
+  "cat": "Identity",
+  "yr": "2024",
+  "role": "Design",
+  "client": "Verso (independent publisher)",
+  "services": [
+    "Identity",
+    "Cover system",
+    "Stationery"
+  ],
+  "intro": "Identity for an independent publisher of translated fiction.",
+  "overview": [
+    "Verso publishes fiction in translation. The mark plays on the recto/verso of a page — a flippable monogram that reads both ways.",
+    "A flexible spine system lets every title share a shelf while keeping its own voice."
+  ],
+  "gallery": [
+    {
+      "label": "Spine system",
+      "span": "full"
+    },
+    {
+      "label": "Monogram",
+      "span": "half"
+    },
+    {
+      "label": "Cover grid",
+      "span": "half"
+    },
+    {
+      "label": "Stationery",
+      "span": "full"
+    }
+  ]
+}

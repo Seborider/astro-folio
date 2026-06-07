@@ -1,0 +1,35 @@
+{
+  "order": 11,
+  "name": "Murmur",
+  "cat": "Motion",
+  "yr": "2023",
+  "role": "Animation",
+  "client": "Murmur (podcast network)",
+  "services": [
+    "Motion identity",
+    "Toolkit"
+  ],
+  "intro": "A motion identity for a conversation-led podcast network.",
+  "overview": [
+    "Murmur needed an identity you could hear. The mark animates to voice — a waveform that gathers and disperses.",
+    "A toolkit of loops lets each show brand itself within the system."
+  ],
+  "gallery": [
+    {
+      "label": "Identity loop",
+      "span": "full"
+    },
+    {
+      "label": "Show bumpers",
+      "span": "half"
+    },
+    {
+      "label": "Waveform",
+      "span": "half"
+    },
+    {
+      "label": "Social",
+      "span": "full"
+    }
+  ]
+}

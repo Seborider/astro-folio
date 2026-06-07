@@ -1,0 +1,36 @@
+{
+  "order": 13,
+  "name": "Quartz",
+  "cat": "Exhibition",
+  "yr": "2021",
+  "role": "Spatial",
+  "client": "Quartz (museum show)",
+  "services": [
+    "Spatial design",
+    "Wayfinding",
+    "Catalogue"
+  ],
+  "intro": "Spatial and graphic design for a mineralogy exhibition.",
+  "overview": [
+    "Quartz brought a museum's mineral collection into the light for the first time in decades.",
+    "Vitrine typography and a crystalline wayfinding system guided visitors through formation, structure and use."
+  ],
+  "gallery": [
+    {
+      "label": "Exhibition",
+      "span": "full"
+    },
+    {
+      "label": "Vitrine type",
+      "span": "half"
+    },
+    {
+      "label": "Wayfinding",
+      "span": "half"
+    },
+    {
+      "label": "Catalogue",
+      "span": "full"
+    }
+  ]
+}

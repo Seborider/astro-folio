@@ -1,0 +1,24 @@
+---
+/**
+ * Media.astro — renders a real image when a `src` is provided (e.g. from
+ * Sanity's image CDN), otherwise falls back to the labelled striped
+ * placeholder. Keeps the same `.placeholder` box so layout/animation are
+ * identical whether or not media exists yet.
+ *
+ * Props:
+ *   src?   — resolved image URL (or null/undefined for placeholder)
+ *   label  — caption shown in the placeholder + used as alt text
+ *   motion — add the ph-motion sweep (default true)
+ */
+interface Props { src?: string | null; label: string; motion?: boolean; }
+const { src, label, motion = true } = Astro.props;
+---
+{src ? (
+  <img class={`media-img${motion ? " ph-motion" : ""}`} src={src} alt={label} loading="lazy" />
+) : (
+  <div class={`placeholder${motion ? " ph-motion" : ""}`}><span>{label}</span></div>
+)}
+
+<style>
+  .media-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+</style>

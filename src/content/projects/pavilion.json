@@ -1,0 +1,36 @@
+{
+  "order": 1,
+  "name": "Pavilion",
+  "cat": "Art Direction",
+  "yr": "2025",
+  "role": "Art Direction",
+  "client": "Pavilion Architecture Biennale",
+  "services": [
+    "Art direction",
+    "Wayfinding",
+    "Photography"
+  ],
+  "intro": "Art direction for a temporary architecture biennale staged across a harbour.",
+  "overview": [
+    "Pavilion invited twelve studios to build temporary structures along Copenhagen's waterfront. Our role was the visual world that tied them together.",
+    "A wayfinding-led system used scale and shadow as the primary devices — photography shot at dawn to catch the long light the structures were designed for."
+  ],
+  "gallery": [
+    {
+      "label": "Campaign key visual",
+      "span": "full"
+    },
+    {
+      "label": "Wayfinding",
+      "span": "half"
+    },
+    {
+      "label": "Poster series",
+      "span": "half"
+    },
+    {
+      "label": "Catalogue spread",
+      "span": "full"
+    }
+  ]
+}

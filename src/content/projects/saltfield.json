@@ -1,0 +1,36 @@
+{
+  "order": 5,
+  "name": "Saltfield",
+  "cat": "Campaign · 3D",
+  "yr": "2023",
+  "role": "Direction",
+  "client": "Saltfield (outerwear)",
+  "services": [
+    "Campaign",
+    "CG environments",
+    "Lookbook"
+  ],
+  "intro": "A launch campaign for a coastal outerwear label, built in CG and grain.",
+  "overview": [
+    "Saltfield's first season needed weather. We built CG environments — fog, salt, low sun — and dropped the product into them.",
+    "The result sits between product film and landscape painting; stills were pulled directly from the render for print."
+  ],
+  "gallery": [
+    {
+      "label": "Campaign film",
+      "span": "full"
+    },
+    {
+      "label": "Environment study",
+      "span": "half"
+    },
+    {
+      "label": "Lookbook",
+      "span": "half"
+    },
+    {
+      "label": "Out-of-home",
+      "span": "full"
+    }
+  ]
+}

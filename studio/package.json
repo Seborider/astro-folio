@@ -1,0 +1,20 @@
+{
+  "name": "juno-folio-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev",
+    "start": "sanity start",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "import:seed": "sanity dataset import seed/projects.ndjson production --replace"
+  },
+  "dependencies": {
+    "sanity": "^3.57.0",
+    "@sanity/vision": "^3.57.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "styled-components": "^6.1.0"
+  }
+}

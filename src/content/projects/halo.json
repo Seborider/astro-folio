@@ -1,0 +1,35 @@
+{
+  "order": 12,
+  "name": "Halo",
+  "cat": "Identity",
+  "yr": "2022",
+  "role": "Design",
+  "client": "Halo (lighting studio)",
+  "services": [
+    "Identity",
+    "Website"
+  ],
+  "intro": "Identity for an architectural lighting studio.",
+  "overview": [
+    "Halo designs light for buildings. The mark is a soft ring that behaves like a fixture across surfaces.",
+    "Warm neutrals and generous space let the work glow."
+  ],
+  "gallery": [
+    {
+      "label": "Identity",
+      "span": "full"
+    },
+    {
+      "label": "Mark",
+      "span": "half"
+    },
+    {
+      "label": "Stationery",
+      "span": "half"
+    },
+    {
+      "label": "Site",
+      "span": "full"
+    }
+  ]
+}

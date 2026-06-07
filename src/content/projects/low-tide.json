@@ -1,0 +1,36 @@
+{
+  "order": 7,
+  "name": "Low Tide",
+  "cat": "Photography",
+  "yr": "2021",
+  "role": "Direction",
+  "client": "Self-initiated",
+  "services": [
+    "Photography",
+    "Book",
+    "Exhibition"
+  ],
+  "intro": "A self-initiated photographic study of the North Sea at its lowest tide.",
+  "overview": [
+    "Low Tide is a year of returning to the same stretch of coast at the lowest water of each month.",
+    "The edit became a small book and an exhibition — a study in how little needs to change for everything to."
+  ],
+  "gallery": [
+    {
+      "label": "Series overview",
+      "span": "full"
+    },
+    {
+      "label": "Plate 04",
+      "span": "half"
+    },
+    {
+      "label": "Plate 11",
+      "span": "half"
+    },
+    {
+      "label": "Exhibition",
+      "span": "full"
+    }
+  ]
+}

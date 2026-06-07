@@ -1,0 +1,40 @@
+{
+  "order": 6,
+  "name": "Atlas Index",
+  "cat": "Web · WebGL",
+  "yr": "2022",
+  "role": "Design + Build",
+  "client": "Atlas (research institute)",
+  "services": [
+    "Art direction",
+    "WebGL",
+    "Front-end"
+  ],
+  "intro": "A living index of a research institute's archive, rendered in WebGL.",
+  "overview": [
+    "Atlas needed its public archive to feel alive rather than filed. We built a navigable index where entries drift and cluster by relation.",
+    "A custom WebGL layer handles the field of entries at 60fps; everything degrades gracefully to a static index without JS."
+  ],
+  "gallery": [
+    {
+      "label": "Index — WebGL field",
+      "span": "full"
+    },
+    {
+      "label": "Entry view",
+      "span": "half"
+    },
+    {
+      "label": "Cluster logic",
+      "span": "half"
+    },
+    {
+      "label": "Mobile",
+      "span": "full"
+    }
+  ],
+  "quote": [
+    "An archive should feel",
+    "<em>alive</em>, not filed."
+  ]
+}

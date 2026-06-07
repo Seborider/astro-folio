@@ -1,0 +1,61 @@
+---
+/**
+ * Footer.astro — site footer.
+ * Pass `carousel` (a list of projects) to render the home page's
+ * Archive band with the draggable project carousel. Omit it for the
+ * lean footer used on inner pages.
+ */
+interface CarouselItem { id: string; name: string; yr: string; }
+interface Props { carousel?: CarouselItem[]; }
+const { carousel } = Astro.props;
+---
+<footer class="footer" id={carousel ? "archive" : undefined} data-screen-label="Footer">
+  {carousel && (
+    <>
+      <div class="footer__head">
+        <h2>Archive</h2>
+        <span class="meta" id="carCount">( 1 / {String(carousel.length).padStart(2, "0")} )</span>
+      </div>
+      <div class="carousel" id="carousel">
+        {carousel.map((p) => (
+          <a class="carousel__item" href={`/work/${p.id}`} data-cursor="open">
+            <div class="carousel__media"><div class="placeholder ph-motion"><span>{p.name}</span></div></div>
+            <div class="carousel__cap"><span>{p.name}</span><span>{p.yr}</span></div>
+          </a>
+        ))}
+      </div>
+    </>
+  )}
+
+  <div class="footer__grid">
+    <div class="footer__contact">
+      <div class="meta" style="margin-bottom:18px">( Reach out )</div>
+      <a class="big" id="emailBtn" href="#" data-cursor="copy">Say hello ↗</a>
+    </div>
+    <div class="footer__col">
+      <h4>Socials</h4>
+      <a href="#" data-cursor="view">Instagram ↗</a>
+      <a href="#" data-cursor="view">LinkedIn ↗</a>
+      <a href="#" data-cursor="view">Savee ↗</a>
+    </div>
+    <div class="footer__col">
+      <h4>Index</h4>
+      <a href="/" data-cursor="home">Home</a>
+      <a href="/work" data-cursor="view">Work</a>
+      <a href="/about" data-cursor="view">About</a>
+      <a href="/archive" data-cursor="view">Archive</a>
+    </div>
+    <div class="footer__col">
+      <h4>Based</h4>
+      <span>Copenhagen</span>
+      <span>UTC+1</span>
+      <span id="clock">—</span>
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <span>© 2026 — Neutral demo, all placeholders</span>
+    <span>Built with Astro · GSAP · Lenis · WebGL</span>
+    <span>Recreation study</span>
+  </div>
+</footer>

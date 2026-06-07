@@ -1,0 +1,40 @@
+{
+  "order": 2,
+  "name": "Nocturne",
+  "cat": "Film · Title Design",
+  "yr": "2025",
+  "role": "Title Design",
+  "client": "Nocturne (feature film)",
+  "services": [
+    "Title sequence",
+    "Logotype",
+    "Key art"
+  ],
+  "intro": "Main titles and identity for a nocturnal psychological thriller.",
+  "overview": [
+    "Nocturne needed a title sequence that felt like memory under pressure — legible, then not.",
+    "Type dissolves into grain and reforms; the mark is a single serif N that behaves like a light source moving behind fog."
+  ],
+  "gallery": [
+    {
+      "label": "Title sequence",
+      "span": "full"
+    },
+    {
+      "label": "Logotype",
+      "span": "half"
+    },
+    {
+      "label": "Frame study",
+      "span": "half"
+    },
+    {
+      "label": "Poster",
+      "span": "full"
+    }
+  ],
+  "quote": [
+    "Everything begins as an",
+    "<em>accident</em> of attention."
+  ]
+}

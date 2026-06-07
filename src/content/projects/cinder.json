@@ -1,0 +1,35 @@
+{
+  "order": 10,
+  "name": "Cinder",
+  "cat": "Packaging",
+  "yr": "2024",
+  "role": "Art Direction",
+  "client": "Cinder (coffee roaster)",
+  "services": [
+    "Packaging",
+    "Art direction"
+  ],
+  "intro": "Packaging for a small-batch coffee roaster.",
+  "overview": [
+    "Cinder roasts dark. The packaging leans into char — matte black with a single burned mark.",
+    "A tactile, unbleached stock carries the range across origins."
+  ],
+  "gallery": [
+    {
+      "label": "Range",
+      "span": "full"
+    },
+    {
+      "label": "Bag detail",
+      "span": "half"
+    },
+    {
+      "label": "Mark",
+      "span": "half"
+    },
+    {
+      "label": "Shelf",
+      "span": "full"
+    }
+  ]
+}

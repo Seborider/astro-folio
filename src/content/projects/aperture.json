@@ -1,0 +1,35 @@
+{
+  "order": 8,
+  "name": "Aperture",
+  "cat": "Identity",
+  "yr": "2026",
+  "role": "Art Direction",
+  "client": "Aperture Optics",
+  "services": [
+    "Identity",
+    "Packaging"
+  ],
+  "intro": "Identity for a precision cinema-lens manufacturer.",
+  "overview": [
+    "Aperture grinds lenses for cinema. The mark is an iris that opens across applications.",
+    "A monochrome system keeps focus on the optics themselves."
+  ],
+  "gallery": [
+    {
+      "label": "Identity",
+      "span": "full"
+    },
+    {
+      "label": "Mark",
+      "span": "half"
+    },
+    {
+      "label": "Specimen",
+      "span": "half"
+    },
+    {
+      "label": "Packaging",
+      "span": "full"
+    }
+  ]
+}

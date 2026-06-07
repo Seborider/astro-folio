@@ -1,0 +1,15 @@
+---
+/**
+ * Header.astro — fixed top bar, identical on every page.
+ * Links use Astro's extensionless routes; chrome.js intercepts them
+ * for the wipe transition.
+ */
+---
+<header class="header">
+  <a class="header__mark" href="/" data-cursor="home">Juno Vestergaard ©</a>
+  <nav class="header__nav">
+    <a href="/work" data-cursor="view">Work</a>
+    <a href="/about" data-cursor="view">About</a>
+    <a href="/archive" data-cursor="view">Archive</a>
+  </nav>
+</header>

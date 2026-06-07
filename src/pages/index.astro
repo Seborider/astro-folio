@@ -1,0 +1,115 @@
+---
+import Base from "../layouts/Base.astro";
+import Footer from "../components/Footer.astro";
+import { getProjects } from "../lib/projects";
+
+const projects = await getProjects();
+const selected = projects.slice(0, 8);
+const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr }));
+---
+
+<Base title="Juno Vestergaard — Design & Art Director" home={true}>
+  <!-- LOADER -->
+  <div class="loader" id="loader">
+    <div class="loader__count" id="loaderCount">0</div>
+    <div class="loader__label meta">
+      <div>( Loading )</div>
+      <div class="paren" id="loaderState">Initialising</div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" data-screen-label="Hero">
+    <div class="hero__bg"></div>
+    <div class="hero__inner">
+      <h1 class="hero__title">
+        <span class="line"><span data-rise>Juno</span></span>
+        <span class="line"><span data-rise>Vestergaard</span></span>
+      </h1>
+      <div class="hero__role" data-rise-soft>Design &amp; Art Director</div>
+
+      <div class="hero__foot">
+        <p class="hero__meta">
+          <span class="scramble" data-text="DESIGN">DESIGN</span>
+          <span class="paren">( Art Director )</span>
+          <span class="scramble" data-text="DIRECTION">DIRECTION</span>
+          <span class="paren">( Copenhagen )</span>
+          <span class="scramble" data-text="PORTFOLIO">PORTFOLIO</span>
+          <span class="paren">( 2026 )</span>
+        </p>
+        <div class="scroll-cue meta"><span class="dot"></span> ( Scroll )</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATEMENT -->
+  <section class="statement" id="about" data-screen-label="Statement">
+    <div class="statement__index meta">
+      <span>( 01 )</span><span class="rule"></span><span>Approach</span>
+    </div>
+    <blockquote class="statement__quote reveal-lines">
+      <span class="line"><span>Everything</span></span>
+      <span class="line"><span>begins as an</span></span>
+      <span class="line"><span><em>accident</em></span></span>
+      <span class="line"><span>of attention.</span></span>
+    </blockquote>
+    <p class="statement__attr meta">
+      A practice across brand, motion and editorial — built on slow looking,
+      sharp typography, and the belief that restraint is its own kind of noise.
+    </p>
+  </section>
+
+  <!-- REEL GRID -->
+  <section class="reel" data-screen-label="Reel">
+    <div class="reel__head">
+      <h2>Selected motion</h2>
+      <span class="meta">( 2021 — 2026 )</span>
+    </div>
+    <div class="reel__grid">
+      <div class="reel__tile s3 r2" data-reveal><span class="tile-no">01</span><div class="placeholder ph-motion"><span>reel 01 · 16:9</span></div></div>
+      <div class="reel__tile s3 r2" data-reveal><span class="tile-no">02</span><div class="placeholder ph-motion"><span>reel 02 · 16:9</span></div></div>
+      <div class="reel__tile s2 r2" data-reveal><span class="tile-no">03</span><div class="placeholder ph-motion"><span>reel 03 · 4:5</span></div></div>
+      <div class="reel__tile s2" data-reveal><span class="tile-no">04</span><div class="placeholder ph-motion"><span>reel 04</span></div></div>
+      <div class="reel__tile s2" data-reveal><span class="tile-no">05</span><div class="placeholder ph-motion"><span>reel 05</span></div></div>
+      <div class="reel__tile s2" data-reveal><span class="tile-no">06</span><div class="placeholder ph-motion"><span>reel 06</span></div></div>
+      <div class="reel__tile s2" data-reveal><span class="tile-no">07</span><div class="placeholder ph-motion"><span>reel 07</span></div></div>
+      <div class="reel__tile s2" data-reveal><span class="tile-no">08</span><div class="placeholder ph-motion"><span>reel 08</span></div></div>
+    </div>
+    <div class="reel__cta">
+      <button id="playReel" data-cursor="play"><span class="tri"></span> Play showreel — 02:14</button>
+    </div>
+  </section>
+
+  <!-- WORK LIST -->
+  <section class="work" id="work" data-screen-label="Work">
+    <div class="statement__index meta" style="margin-bottom:40px">
+      <span>( 02 )</span><span class="rule"></span><span>Selected work</span>
+    </div>
+    <div class="work__list">
+      {selected.map((p, i) => (
+        <a class="work__row" href={`/work/${p.id}`} data-cursor="open" data-name={p.name} data-reveal>
+          <span class="idx">{String(i + 1).padStart(2, "0")}</span>
+          <span class="name" data-scramble>{p.name}</span>
+          <span class="cat">{p.cat}</span>
+          <span class="yr">{p.yr}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <Footer carousel={carousel} />
+
+  <!-- SHOWREEL OVERLAY -->
+  <div class="showreel" id="showreel">
+    <div class="showreel__bar">
+      <span class="meta">( Showreel — 02:14 )</span>
+      <button class="showreel__close" id="closeReel" data-cursor="close">( Close )</button>
+    </div>
+    <div class="showreel__player">
+      <div class="placeholder ph-motion"><span>Full showreel — drop master cut here</span></div>
+    </div>
+  </div>
+
+  <!-- floating work preview -->
+  <div class="work__preview" id="workPreview"><div class="placeholder ph-motion"><span>preview</span></div></div>
+</Base>

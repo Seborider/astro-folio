@@ -1,0 +1,40 @@
+{
+  "order": 0,
+  "name": "Halcyon",
+  "cat": "Brand · Motion",
+  "yr": "2026",
+  "role": "Direction",
+  "client": "Halcyon Audio",
+  "services": [
+    "Brand identity",
+    "Motion system",
+    "Art direction"
+  ],
+  "intro": "A calm-tech identity for a sound-hardware company — a system built to breathe.",
+  "overview": [
+    "Halcyon makes high-fidelity listening hardware. The brief was to make a technology brand feel like an instrument: precise, warm, and unhurried.",
+    "We built the identity around a single modulating mark and a motion grammar tied to waveform — every transition eases like sound settling into a room."
+  ],
+  "gallery": [
+    {
+      "label": "Identity film — 21:9",
+      "span": "full"
+    },
+    {
+      "label": "Mark construction",
+      "span": "half"
+    },
+    {
+      "label": "Type specimen",
+      "span": "half"
+    },
+    {
+      "label": "Packaging system",
+      "span": "full"
+    }
+  ],
+  "quote": [
+    "Restraint is its own",
+    "kind of <em>noise</em>."
+  ]
+}

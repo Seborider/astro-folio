@@ -1,0 +1,36 @@
+{
+  "order": 3,
+  "name": "Meridian",
+  "cat": "Editorial",
+  "yr": "2024",
+  "role": "Direction",
+  "client": "Meridian Press",
+  "services": [
+    "Editorial design",
+    "Typography",
+    "Print direction"
+  ],
+  "intro": "A 320-page monograph on contemporary Nordic landscape photography.",
+  "overview": [
+    "Meridian collects two decades of landscape work into a single volume. The design had to disappear behind the images while holding a strong spine of typography.",
+    "A modular grid lets full-bleed plates breathe against quiet captions; three paper stocks separate the book's movements."
+  ],
+  "gallery": [
+    {
+      "label": "Cover & slipcase",
+      "span": "full"
+    },
+    {
+      "label": "Plate sequence",
+      "span": "half"
+    },
+    {
+      "label": "Caption system",
+      "span": "half"
+    },
+    {
+      "label": "Binding detail",
+      "span": "full"
+    }
+  ]
+}
