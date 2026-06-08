@@ -1,11 +1,14 @@
-// tweaks.jsx — Tweaks panel for the folio (vanilla-JS app, React only for the panel)
-// Writes the --accent CSS variable that folio.css already consumes.
+// Tweaks.jsx — Tweaks panel for the folio (Astro React island).
+// Writes the --accent / --bg / --ink CSS variables that folio.css consumes.
 
-const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+import React from "react";
+import { useTweaks, TweaksPanel, TweakSection, TweakColor } from "./tweaks-panel.jsx";
+
+const TWEAK_DEFAULTS = {
   "accent": "oklch(0.72 0.13 56)",
   "bg": "#080808",
   "ink": "#e9e6df"
-}/*EDITMODE-END*/;
+};
 
 // Curated accents — matched lightness/chroma, hue varied (per the design system)
 const ACCENTS = [
@@ -77,10 +80,4 @@ function FolioTweaks() {
   );
 }
 
-// apply persisted defaults immediately (host rewrites TWEAK_DEFAULTS on disk),
-// so colors match without a flash before React mounts
-applyAccent(TWEAK_DEFAULTS.accent);
-applyVar("--bg", TWEAK_DEFAULTS.bg);
-applyVar("--ink", TWEAK_DEFAULTS.ink);
-
-ReactDOM.createRoot(document.getElementById("tweaks-root")).render(<FolioTweaks />);
+export default FolioTweaks;

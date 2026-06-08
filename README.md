@@ -40,6 +40,8 @@ src/
     Header.astro
     Footer.astro             # lean footer; pass `carousel` for the home variant
     Media.astro              # <img> when a src exists, else labelled placeholder
+    Tweaks.jsx               # Tweaks panel: accent / background / text colors (React island)
+    tweaks-panel.jsx         # reusable panel shell + curated color control
   pages/
     index.astro              # home (loader, hero, statement, reel, work, archive band)
     about.astro
@@ -54,8 +56,6 @@ public/
     home.js                  # home only: loader, showreel, carousel, work preview
     webgl-bg.js              # the shader background (theme-aware)
     chrome.js                # the page-wipe transition (intercepts internal links)
-    tweaks-panel.jsx         # Tweaks panel shell (in-browser Babel React)
-    tweaks.jsx               # Tweaks: accent / background / text colors
 studio/                      # Sanity Studio (optional CMS)
   sanity.config.ts           # schema + plugins; set your projectId
   schemaTypes/project.ts     # mirrors the content contract + media fields
@@ -172,12 +172,12 @@ script is kept because it reproduces the prototype exactly.
 ### Theming / Tweaks
 `folio.css` is driven by `--bg`, `--ink`, and `--accent`; every other token is
 derived via `color-mix`. The Tweaks panel writes those three variables and the
-WebGL background samples them live. Note: the panel is a **design-time
-affordance** — it only appears when activated by the preview host it was built
-in, so on a plain deploy it stays hidden (the chosen defaults still apply). **To
-make it a real user-facing control**, install `@astrojs/react`, convert
-`tweaks.jsx` into an island (`<Tweaks client:idle />`) with its own toggle
-button, and drop the three CDN script tags from `Base.astro`.
+WebGL background samples them live. It's a React island
+(`src/components/Tweaks.jsx`, mounted as `<Tweaks client:idle />` in `Base.astro`)
+with its own toggle button in the bottom-right corner. Changes are **live-only**:
+they apply for the session and reset on reload — there's no persistence layer.
+The defaults match the `:root` values in `folio.css`, so first paint is correct
+before the island hydrates.
 
 ---
 

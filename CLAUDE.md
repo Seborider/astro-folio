@@ -26,7 +26,9 @@ hand-built HTML motion prototype; the animation code is intentionally plain
 ## Script load order (in src/layouts/Base.astro)
 
 GSAP → ScrollTrigger → Lenis → webgl-bg.js → chrome.js → core.js → home.js (home only)
-→ React + Babel + tweaks-panel.jsx + tweaks.jsx
+
+The Tweaks panel is a React island (`<Tweaks client:idle />`, see
+`src/components/Tweaks.jsx`), not an inline script — Astro bundles and hydrates it.
 
 ## Verify after changes
 
@@ -36,8 +38,8 @@ npm run preview
 ```
 
 Then check: home loader → hero reveal; /work filter; /work/<slug> detail with
-prev/next; the page-wipe between routes; no console errors (an in-browser Babel
-notice is expected until the Tweaks panel is converted to an island).
+prev/next; the page-wipe between routes; the Tweaks toggle (bottom-right) opens
+the panel and color changes apply live; no console errors.
 
 ## Good first tasks (in priority order)
 
@@ -46,14 +48,12 @@ notice is expected until the Tweaks panel is converted to an island).
 2. **Real media.** Upload cover + gallery images in the Studio. They resolve via
    `src/lib/sanity.ts` and render through `Media.astro` automatically. For video
    use Mux/Cloudflare Stream (the hero + showreel slots).
-3. **Tweaks → island.** `npm i @astrojs/react`, convert `tweaks.jsx` to
-   `<Tweaks client:idle />`, remove the three CDN `<script>` tags in Base.
-4. **Filter tags.** `work.astro` derives discipline tags from `cat` via regex.
+3. **Filter tags.** `work.astro` derives discipline tags from `cat` via regex.
    Add an explicit `tags: string[]` to BOTH schemas and use it instead.
-5. **Build webhook.** Sanity publish → host build hook, so content edits redeploy.
-6. **Light-theme chrome.** Make the header/cursor `mix-blend-mode` theme-aware
+4. **Build webhook.** Sanity publish → host build hook, so content edits redeploy.
+5. **Light-theme chrome.** Make the header/cursor `mix-blend-mode` theme-aware
    (see README caveat) if a light default ships.
-7. **SEO.** Add per-page `<meta>`/OG tags and a sitemap (`@astrojs/sitemap`).
+6. **SEO.** Add per-page `<meta>`/OG tags and a sitemap (`@astrojs/sitemap`).
 
 ## Collaboration principles
 
