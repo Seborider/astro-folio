@@ -46,12 +46,14 @@ const PROJECT_QUERY = `*[_type == "project"] | order(order asc){
 let cache: Promise<Project[]> | undefined;
 
 export function getProjects(): Promise<Project[]> {
-  return (cache ??= loadProjects());
+  if (import.meta.env.DEV) return loadProjects(); // always fresh in dev
+  return (cache ??= loadProjects());              // memoize once for the static build
 }
 
 async function loadProjects(): Promise<Project[]> {
   if (sanityConfigured) {
     const raw = await sanityFetch<any[]>(PROJECT_QUERY);
+    console.log(`[projects] source=sanity count=${raw.length}`); // TEMP: remove after verifying
     return raw.map((p) => ({
       ...p,
       cover: imageUrl(p.cover, { w: 2200 }),
@@ -65,6 +67,7 @@ async function loadProjects(): Promise<Project[]> {
 
   // Fallback: local content collection (JSON files)
   const entries = await getCollection("projects");
+  console.log(`[projects] source=json count=${entries.length}`); // TEMP: remove after verifying
   return entries
     .map((e) => ({ id: e.id, ...e.data } as Project))
     .sort((a, b) => a.order - b.order);
