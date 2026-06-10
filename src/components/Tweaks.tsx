@@ -1,5 +1,7 @@
 // Tweaks.tsx — Tweaks panel for the folio (Astro React island).
 // Writes the --accent / --bg / --ink CSS variables that folio.css consumes.
+// The theme (data-theme on <html>) is the persistent baseline; tweaks are
+// ephemeral per-page-view overrides on top. Toggling the theme clears them.
 
 import React from "react";
 import { useTweaks, TweaksPanel, TweakSection, TweakColor } from "./tweaks-panel";
@@ -9,6 +11,17 @@ const TWEAK_DEFAULTS = {
   "bg": "#080808",
   "ink": "#e9e6df"
 };
+
+const TOKEN_NAMES = ["accent", "bg", "ink"] as const;
+
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  return {
+    accent: cs.getPropertyValue("--accent").trim() || TWEAK_DEFAULTS.accent,
+    bg: cs.getPropertyValue("--bg").trim() || TWEAK_DEFAULTS.bg,
+    ink: cs.getPropertyValue("--ink").trim() || TWEAK_DEFAULTS.ink,
+  };
+}
 
 // Curated accents — matched lightness/chroma, hue varied (per the design system)
 const ACCENTS = [
@@ -40,19 +53,28 @@ const INKS = [
   "#14110c",  // near-black (pair with a light background)
 ];
 
-function applyAccent(v: string) {
-  document.documentElement.style.setProperty("--accent", v);
-}
-function applyVar(name: string, v: string) {
-  document.documentElement.style.setProperty(name, v);
-}
-
 function FolioTweaks() {
+  // SSR renders with the dark defaults; the mount effect re-syncs to the
+  // active theme without writing any inline styles.
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
 
-  React.useEffect(() => { applyAccent(t.accent); }, [t.accent]);
-  React.useEffect(() => { applyVar("--bg", t.bg); }, [t.bg]);
-  React.useEffect(() => { applyVar("--ink", t.ink); }, [t.ink]);
+  // On mount and on every theme toggle: drop the inline overrides and
+  // mirror the new baseline tokens so the chips show the real values.
+  React.useEffect(() => {
+    const sync = () => {
+      TOKEN_NAMES.forEach((n) => document.documentElement.style.removeProperty("--" + n));
+      setTweak(readTokens());
+    };
+    sync();
+    window.addEventListener("themechange", sync);
+    return () => window.removeEventListener("themechange", sync);
+  }, [setTweak]);
+
+  // user-initiated changes write the override immediately (no effect needed)
+  const change = (name: (typeof TOKEN_NAMES)[number]) => (v: string) => {
+    setTweak(name, v);
+    document.documentElement.style.setProperty("--" + name, v);
+  };
 
   return (
     <TweaksPanel>
@@ -61,20 +83,20 @@ function FolioTweaks() {
         label="Highlight color"
         value={t.accent}
         options={ACCENTS}
-        onChange={(v) => setTweak("accent", v)}
+        onChange={change("accent")}
       />
       <TweakSection label="Canvas" />
       <TweakColor
         label="Background"
         value={t.bg}
         options={BGS}
-        onChange={(v) => setTweak("bg", v)}
+        onChange={change("bg")}
       />
       <TweakColor
         label="Text"
         value={t.ink}
         options={INKS}
-        onChange={(v) => setTweak("ink", v)}
+        onChange={change("ink")}
       />
     </TweaksPanel>
   );
