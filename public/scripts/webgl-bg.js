@@ -106,6 +106,12 @@
     inkCol = resolve("--ink", "#e9e6df");
   }, 250);
 
+  // instant re-sample on theme toggle (chrome.js full-navigations re-init the rest)
+  window.addEventListener("themechange", () => {
+    bgCol = resolve("--bg", "#080808");
+    inkCol = resolve("--ink", "#e9e6df");
+  });
+
   const start = performance.now();
   function render(now) {
     const t = (now - start) / 1000;
