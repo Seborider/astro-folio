@@ -6,6 +6,10 @@ hand-built HTML motion prototype; the animation code is intentionally plain
 
 ## Conventions
 
+- **TypeScript everywhere in source.** All code in `src/` and config files
+  (e.g. `astro.config.ts`) is TypeScript (`.ts`/`.tsx`). Exception:
+  `public/scripts/*.js` stays plain JavaScript — those files are served
+  directly to the browser without bundling.
 - **Don't convert the motion code to a framework.** GSAP/Lenis/WebGL are
   imperative and live in `public/scripts/`. Keep them as `is:inline` scripts.
 - Content has **two interchangeable backends behind one loader**: pages call
@@ -28,7 +32,7 @@ hand-built HTML motion prototype; the animation code is intentionally plain
 GSAP → ScrollTrigger → Lenis → webgl-bg.js → chrome.js → core.js → home.js (home only)
 
 The Tweaks panel is a React island (`<Tweaks client:idle />`, see
-`src/components/Tweaks.jsx`), not an inline script — Astro bundles and hydrates it.
+`src/components/Tweaks.tsx`), not an inline script — Astro bundles and hydrates it.
 
 ## Verify after changes
 

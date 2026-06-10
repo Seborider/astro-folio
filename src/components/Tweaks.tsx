@@ -1,8 +1,8 @@
-// Tweaks.jsx — Tweaks panel for the folio (Astro React island).
+// Tweaks.tsx — Tweaks panel for the folio (Astro React island).
 // Writes the --accent / --bg / --ink CSS variables that folio.css consumes.
 
 import React from "react";
-import { useTweaks, TweaksPanel, TweakSection, TweakColor } from "./tweaks-panel.jsx";
+import { useTweaks, TweaksPanel, TweakSection, TweakColor } from "./tweaks-panel";
 
 const TWEAK_DEFAULTS = {
   "accent": "oklch(0.72 0.13 56)",
@@ -40,10 +40,10 @@ const INKS = [
   "#14110c",  // near-black (pair with a light background)
 ];
 
-function applyAccent(v) {
+function applyAccent(v: string) {
   document.documentElement.style.setProperty("--accent", v);
 }
-function applyVar(name, v) {
+function applyVar(name: string, v: string) {
   document.documentElement.style.setProperty(name, v);
 }
 

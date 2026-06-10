@@ -40,8 +40,8 @@ src/
     Header.astro
     Footer.astro             # lean footer; pass `carousel` for the home variant
     Media.astro              # <img> when a src exists, else labelled placeholder
-    Tweaks.jsx               # Tweaks panel: accent / background / text colors (React island)
-    tweaks-panel.jsx         # reusable panel shell + curated color control
+    Tweaks.tsx               # Tweaks panel: accent / background / text colors (React island)
+    tweaks-panel.tsx         # reusable panel shell + curated color control
   pages/
     index.astro              # home (loader, hero, statement, reel, work, archive band)
     about.astro
@@ -173,7 +173,7 @@ script is kept because it reproduces the prototype exactly.
 `folio.css` is driven by `--bg`, `--ink`, and `--accent`; every other token is
 derived via `color-mix`. The Tweaks panel writes those three variables and the
 WebGL background samples them live. It's a React island
-(`src/components/Tweaks.jsx`, mounted as `<Tweaks client:idle />` in `Base.astro`)
+(`src/components/Tweaks.tsx`, mounted as `<Tweaks client:idle />` in `Base.astro`)
 with its own toggle button in the bottom-right corner. Changes are **live-only**:
 they apply for the session and reset on reload — there's no persistence layer.
 The defaults match the `:root` values in `folio.css`, so first paint is correct
@@ -199,7 +199,7 @@ Static output — host anywhere:
 
 - **Vercel / Netlify / Cloudflare Pages** — connect the repo, build command
   `npm run build`, output dir `dist`. Done.
-- Set `site` in `astro.config.mjs` to the production URL first.
+- Set `site` in `astro.config.ts` to the production URL first.
 
 No database is required. A contact form would use a form service (Formspree) or
 a serverless function → email; only add a DB for auth / commerce / stored

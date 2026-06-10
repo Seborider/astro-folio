@@ -1,7 +1,7 @@
 // @ds-adherence-ignore -- omelette starter scaffold (raw elements/hex/px by design)
 
 /* BEGIN USAGE */
-// tweaks-panel.jsx
+// tweaks-panel.tsx
 // Reusable Tweaks shell + the curated color control the folio uses.
 // Exports: useTweaks, TweaksPanel, TweakSection, TweakColor.
 //
@@ -108,12 +108,14 @@ const __TWEAKS_STYLE = `
 // ── useTweaks ───────────────────────────────────────────────────────────────
 // Single source of truth for tweak values. Live-only: setTweak updates React
 // state, and the consumer's effects apply the values to CSS variables.
-function useTweaks(defaults) {
+type SetTweak<T> = (keyOrEdits: keyof T | Partial<T>, val?: T[keyof T]) => void;
+
+function useTweaks<T extends Record<string, unknown>>(defaults: T): [T, SetTweak<T>] {
   const [values, setValues] = React.useState(defaults);
   // Accepts either setTweak('key', value) or setTweak({ key: value, ... }).
-  const setTweak = React.useCallback((keyOrEdits, val) => {
-    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
-      ? keyOrEdits : { [keyOrEdits]: val };
+  const setTweak = React.useCallback<SetTweak<T>>((keyOrEdits, val) => {
+    const edits = (typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val }) as Partial<T>;
     setValues((prev) => ({ ...prev, ...edits }));
   }, []);
   return [values, setTweak];
@@ -122,9 +124,14 @@ function useTweaks(defaults) {
 // ── TweaksPanel ─────────────────────────────────────────────────────────────
 // Floating shell with its own always-visible toggle button. Closed by default;
 // the toggle opens it, the ✕ (or the toggle) closes it.
-function TweaksPanel({ title = 'Tweaks', children }) {
+interface TweaksPanelProps {
+  title?: string;
+  children?: React.ReactNode;
+}
+
+function TweaksPanel({ title = 'Tweaks', children }: TweaksPanelProps) {
   const [open, setOpen] = React.useState(false);
-  const dragRef = React.useRef(null);
+  const dragRef = React.useRef<HTMLDivElement>(null);
   const offsetRef = React.useRef({ x: 16, y: 16 });
   const PAD = 16;
 
@@ -154,14 +161,14 @@ function TweaksPanel({ title = 'Tweaks', children }) {
     return () => ro.disconnect();
   }, [open, clampToViewport]);
 
-  const onDragStart = (e) => {
+  const onDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
     const panel = dragRef.current;
     if (!panel) return;
     const r = panel.getBoundingClientRect();
     const sx = e.clientX, sy = e.clientY;
     const startRight = window.innerWidth - r.right;
     const startBottom = window.innerHeight - r.bottom;
-    const move = (ev) => {
+    const move = (ev: MouseEvent) => {
       offsetRef.current = {
         x: startRight - (ev.clientX - sx),
         y: startBottom - (ev.clientY - sy),
@@ -208,7 +215,12 @@ function TweaksPanel({ title = 'Tweaks', children }) {
 
 // ── Layout helpers ──────────────────────────────────────────────────────────
 
-function TweakSection({ label, children }) {
+interface TweakSectionProps {
+  label: string;
+  children?: React.ReactNode;
+}
+
+function TweakSection({ label, children }: TweakSectionProps) {
   return (
     <>
       <div className="twk-sect">{label}</div>
@@ -217,7 +229,14 @@ function TweakSection({ label, children }) {
   );
 }
 
-function TweakRow({ label, value, children, inline = false }) {
+interface TweakRowProps {
+  label: string;
+  value?: React.ReactNode;
+  children?: React.ReactNode;
+  inline?: boolean;
+}
+
+function TweakRow({ label, value, children, inline = false }: TweakRowProps) {
   return (
     <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
       <div className="twk-lbl">
@@ -234,7 +253,7 @@ function TweakRow({ label, value, children, inline = false }) {
 // Relative-luminance contrast pick — checkmarks drawn over a swatch need to
 // read on both #111 and #fafafa without per-option configuration. Hex input
 // only (#rgb / #rrggbb); named or rgb()/hsl() colors fall through to "light".
-function __twkIsLight(hex) {
+function __twkIsLight(hex: string) {
   const h = String(hex).replace('#', '');
   const x = h.length === 3 ? h.replace(/./g, (c) => c + c) : h.padEnd(6, '0');
   const n = parseInt(x.slice(0, 6), 16);
@@ -243,7 +262,7 @@ function __twkIsLight(hex) {
   return r * 299 + g * 587 + b * 114 > 148000;
 }
 
-const __TwkCheck = ({ light }) => (
+const __TwkCheck = ({ light }: { light: boolean }) => (
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <path d="M3 7.2 5.8 10 11 4.2" fill="none" strokeWidth="2.2"
           strokeLinecap="round" strokeLinejoin="round"
@@ -257,26 +276,34 @@ const __TwkCheck = ({ light }) => (
 // sharp column on the right. onChange emits the option in the shape it was passed
 // (string stays string, array stays array). Without options it falls back to the
 // native color input for back-compat.
-function TweakColor({ label, value, options, onChange }) {
+interface TweakColorProps<O extends string | string[]> {
+  label: string;
+  value: O;
+  options?: O[];
+  onChange: (v: O) => void;
+}
+
+function TweakColor<O extends string | string[]>({ label, value, options, onChange }: TweakColorProps<O>) {
   if (!options || !options.length) {
+    // The native-input fallback only ever sees single hex strings.
     return (
       <div className="twk-row twk-row-h">
         <div className="twk-lbl"><span>{label}</span></div>
-        <input type="color" className="twk-swatch" value={value}
-               onChange={(e) => onChange(e.target.value)} />
+        <input type="color" className="twk-swatch" value={value as string}
+               onChange={(e) => onChange(e.target.value as O)} />
       </div>
     );
   }
   // Native <input type=color> emits lowercase hex per the HTML spec, so
   // compare case-insensitively. String() guards JSON.stringify(undefined),
   // which returns the primitive undefined (no .toLowerCase).
-  const key = (o) => String(JSON.stringify(o)).toLowerCase();
+  const key = (o: O) => String(JSON.stringify(o)).toLowerCase();
   const cur = key(value);
   return (
     <TweakRow label={label}>
       <div className="twk-chips" role="radiogroup">
         {options.map((o, i) => {
-          const colors = Array.isArray(o) ? o : [o];
+          const colors = (Array.isArray(o) ? o : [o]) as string[];
           const [hero, ...rest] = colors;
           const sup = rest.slice(0, 4);
           const on = key(o) === cur;
