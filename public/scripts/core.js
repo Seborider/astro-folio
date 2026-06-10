@@ -144,7 +144,7 @@
   if (emailBtn) {
     emailBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      if (navigator.clipboard) navigator.clipboard.writeText("hello@studio.demo").catch(() => {});
+      if (navigator.clipboard) navigator.clipboard.writeText(emailBtn.dataset.email || "hello@studio.demo").catch(() => {});
       const o = emailBtn.textContent;
       emailBtn.textContent = "Copied ✓";
       setTimeout(() => (emailBtn.textContent = o), 1600);

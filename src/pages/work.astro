@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import Footer from "../components/Footer.astro";
+import Media from "../components/Media.astro";
 import { getProjects } from "../lib/projects";
 
 const projects = await getProjects();
@@ -51,7 +52,7 @@ function filtersFor(cat: string): string[] {
         <a class={`proj${wide ? " is-wide" : ""}`} href={`/work/${p.id}`} data-cursor="open" data-cat={tags} data-reveal>
           <div class="proj__media">
             <span class="proj__no">{String(i + 1).padStart(2, "0")}</span>
-            <div class="placeholder ph-motion"><span>{p.name}{wide ? " · 21:9" : ""}</span></div>
+            <Media src={p.cover} label={`${p.name}${wide ? " · 21:9" : ""}`} />
           </div>
           <div class="proj__meta">
             <div>

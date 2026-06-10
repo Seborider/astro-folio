@@ -5,7 +5,7 @@ import { getProjects } from "../lib/projects";
 
 const projects = await getProjects();
 const selected = projects.slice(0, 8);
-const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr }));
+const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr, cover: p.cover }));
 ---
 
 <Base title="Juno Vestergaard — Design & Art Director" home={true}>
@@ -87,7 +87,7 @@ const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr }));
     </div>
     <div class="work__list">
       {selected.map((p, i) => (
-        <a class="work__row" href={`/work/${p.id}`} data-cursor="open" data-name={p.name} data-reveal>
+        <a class="work__row" href={`/work/${p.id}`} data-cursor="open" data-name={p.name} data-cover={p.cover} data-reveal>
           <span class="idx">{String(i + 1).padStart(2, "0")}</span>
           <span class="name" data-scramble>{p.name}</span>
           <span class="cat">{p.cat}</span>
@@ -110,6 +110,6 @@ const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr }));
     </div>
   </div>
 
-  <!-- floating work preview -->
-  <div class="work__preview" id="workPreview"><div class="placeholder ph-motion"><span>preview</span></div></div>
+  <!-- floating work preview (home.js swaps the img in when a row has a cover) -->
+  <div class="work__preview" id="workPreview"><img alt="" hidden /><div class="placeholder ph-motion"><span>preview</span></div></div>
 </Base>

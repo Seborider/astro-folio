@@ -4,22 +4,27 @@
  * Pass `carousel` (a list of projects) to render the home page's
  * Archive band with the draggable project carousel. Omit it for the
  * lean footer used on inner pages.
+ * Contact/socials/copy come from siteSettings (CMS with local defaults).
  */
-interface CarouselItem { id: string; name: string; yr: string; }
+import Media from "./Media.astro";
+import { getSiteSettings } from "../lib/site";
+
+interface CarouselItem { id: string; name: string; yr: string; cover?: string | null; }
 interface Props { carousel?: CarouselItem[]; }
 const { carousel } = Astro.props;
+const s = await getSiteSettings();
 ---
 <footer class="footer" id={carousel ? "archive" : undefined} data-screen-label="Footer">
   {carousel && (
     <>
       <div class="footer__head">
-        <h2>Archive</h2>
+        <h2>{s.archiveHeading}</h2>
         <span class="meta" id="carCount">( 1 / {String(carousel.length).padStart(2, "0")} )</span>
       </div>
       <div class="carousel" id="carousel">
         {carousel.map((p) => (
           <a class="carousel__item" href={`/work/${p.id}`} data-cursor="open">
-            <div class="carousel__media"><div class="placeholder ph-motion"><span>{p.name}</span></div></div>
+            <div class="carousel__media"><Media src={p.cover} label={p.name} /></div>
             <div class="carousel__cap"><span>{p.name}</span><span>{p.yr}</span></div>
           </a>
         ))}
@@ -29,14 +34,14 @@ const { carousel } = Astro.props;
 
   <div class="footer__grid">
     <div class="footer__contact">
-      <div class="meta" style="margin-bottom:18px">( Reach out )</div>
-      <a class="big" id="emailBtn" href="#" data-cursor="copy">Say hello ↗</a>
+      <div class="meta" style="margin-bottom:18px">{s.contactLabel}</div>
+      <a class="big" id="emailBtn" href="#" data-email={s.email} data-cursor="copy">{s.contactCta}</a>
     </div>
     <div class="footer__col">
       <h4>Socials</h4>
-      <a href="#" data-cursor="view">Instagram ↗</a>
-      <a href="#" data-cursor="view">LinkedIn ↗</a>
-      <a href="#" data-cursor="view">Savee ↗</a>
+      {s.socials.map((soc) => (
+        <a href={soc.url} data-cursor="view">{soc.label}</a>
+      ))}
     </div>
     <div class="footer__col">
       <h4>Index</h4>
@@ -47,15 +52,15 @@ const { carousel } = Astro.props;
     </div>
     <div class="footer__col">
       <h4>Based</h4>
-      <span>Copenhagen</span>
-      <span>UTC+1</span>
+      <span>{s.location}</span>
+      <span>{s.timezoneLabel}</span>
       <span id="clock">—</span>
     </div>
   </div>
 
   <div class="footer__bottom">
-    <span>© 2026 — Neutral demo, all placeholders</span>
-    <span>Built with Astro · GSAP · Lenis · WebGL</span>
-    <span>Recreation study</span>
+    <span>{s.copyright}</span>
+    <span>{s.colophon}</span>
+    <span>{s.footerNote}</span>
   </div>
 </footer>

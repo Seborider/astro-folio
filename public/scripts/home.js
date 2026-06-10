@@ -99,6 +99,12 @@
         preview.classList.add("is-active");
         const name = row.dataset.name || row.querySelector(".name")?.textContent || "";
         preview.querySelector("span").textContent = name;
+        const img = preview.querySelector("img");
+        if (img) {
+          const cover = row.dataset.cover || "";
+          if (cover && img.getAttribute("src") !== cover) img.src = cover;
+          img.hidden = !cover;
+        }
       });
       row.addEventListener("pointerleave", () => { active = false; preview.classList.remove("is-active"); });
     });

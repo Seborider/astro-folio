@@ -2,11 +2,13 @@
 /**
  * Header.astro — fixed top bar, identical on every page.
  * Links use Astro's extensionless routes; chrome.js intercepts them
- * for the wipe transition.
+ * for the wipe transition. The mark text comes from siteSettings.
  */
+import { getSiteSettings } from "../lib/site";
+const s = await getSiteSettings();
 ---
 <header class="header">
-  <a class="header__mark" href="/" data-cursor="home">Juno Vestergaard ©</a>
+  <a class="header__mark" href="/" data-cursor="home">{s.headerMark}</a>
   <nav class="header__nav">
     <a href="/work" data-cursor="view">Work</a>
     <a href="/about" data-cursor="view">About</a>

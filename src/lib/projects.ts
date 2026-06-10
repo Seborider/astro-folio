@@ -34,11 +34,11 @@ export interface Project {
   gallery: Shot[];
 }
 
-// Spread all scalar fields so new schema fields flow through without editing
-// this query; only the three fields needing transformation are named.
+// Explicit projection matching the Project interface — when adding a field,
+// add it to BOTH schemas (see CLAUDE.md) and name it here.
 const PROJECT_QUERY = `*[_type == "project"] | order(order asc){
-  ...,
   "id": slug.current,
+  order, name, cat, yr, role, client, services, intro, overview, quote,
   "cover": cover.asset._ref,
   "gallery": gallery[]{ label, span, "image": image.asset._ref }
 }`;
@@ -53,7 +53,6 @@ export function getProjects(): Promise<Project[]> {
 async function loadProjects(): Promise<Project[]> {
   if (sanityConfigured) {
     const raw = await sanityFetch<any[]>(PROJECT_QUERY);
-    console.log(`[projects] source=sanity count=${raw.length}`); // TEMP: remove after verifying
     return raw.map((p) => ({
       ...p,
       cover: imageUrl(p.cover, { w: 2200 }),
@@ -67,7 +66,6 @@ async function loadProjects(): Promise<Project[]> {
 
   // Fallback: local content collection (JSON files)
   const entries = await getCollection("projects");
-  console.log(`[projects] source=json count=${entries.length}`); // TEMP: remove after verifying
   return entries
     .map((e) => ({ id: e.id, ...e.data } as Project))
     .sort((a, b) => a.order - b.order);
