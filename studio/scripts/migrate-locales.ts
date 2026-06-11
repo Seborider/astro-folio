@@ -9,7 +9,11 @@
  *
  *   npx sanity exec scripts/migrate-locales.ts --with-user-token
  */
-import { getCliClient } from "sanity/cli";
+// Default-import + destructure: the sanity/cli CJS build defines its exports
+// via getters, which Node's ESM named-import detection cannot see.
+import sanityCli from "sanity/cli";
+
+const { getCliClient } = sanityCli;
 
 const client = getCliClient({ apiVersion: "2024-01-01" });
 
