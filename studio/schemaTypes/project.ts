@@ -4,6 +4,8 @@ import { defineType, defineField, defineArrayMember } from "sanity";
  * project — mirrors the Astro content schema (src/content/config.ts) so the
  * site code barely changes. Image fields are added for production media; they
  * are optional so the seeded placeholder content imports cleanly.
+ * Translatable text uses the locale object types (see ./locale.ts): DE is
+ * required, EN optional with DE fallback at query time.
  */
 export default defineType({
   name: "project",
@@ -13,15 +15,15 @@ export default defineType({
     defineField({
       name: "name",
       title: "Name",
-      type: "string",
+      type: "localeString",
       validation: (r) => r.required(),
     }),
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
-      description: "The URL segment — /work/<slug>.",
-      options: { source: "name", maxLength: 96 },
+      description: "The URL segment — /work/<slug>. Shared by both languages.",
+      options: { source: "name.de", maxLength: 96 },
       validation: (r) => r.required(),
     }),
     defineField({
@@ -31,31 +33,28 @@ export default defineType({
       description: "Lower = earlier / more recent. Drives list order and prev/next.",
       validation: (r) => r.required(),
     }),
-    defineField({ name: "cat", title: "Category", type: "string", description: 'e.g. "Brand · Motion"', validation: (r) => r.required() }),
+    defineField({ name: "cat", title: "Category", type: "localeString", description: 'e.g. "Brand · Motion"', validation: (r) => r.required() }),
     defineField({ name: "yr", title: "Year", type: "string", validation: (r) => r.required() }),
-    defineField({ name: "role", title: "Role", type: "string", validation: (r) => r.required() }),
-    defineField({ name: "client", title: "Client", type: "string", validation: (r) => r.required() }),
+    defineField({ name: "role", title: "Role", type: "localeString", validation: (r) => r.required() }),
+    defineField({ name: "client", title: "Client", type: "localeString", validation: (r) => r.required() }),
     defineField({
       name: "services",
       title: "Services",
-      type: "array",
-      of: [defineArrayMember({ type: "string" })],
-      validation: (r) => r.required().min(1),
+      type: "localeStringArray",
+      validation: (r) => r.required(),
     }),
-    defineField({ name: "intro", title: "Intro (one-line lede)", type: "text", rows: 2, validation: (r) => r.required() }),
+    defineField({ name: "intro", title: "Intro (one-line lede)", type: "localeText", validation: (r) => r.required() }),
     defineField({
       name: "overview",
       title: "Overview paragraphs",
-      type: "array",
-      of: [defineArrayMember({ type: "text", rows: 3 })],
-      validation: (r) => r.required().min(1),
+      type: "localeTextArray",
+      validation: (r) => r.required(),
     }),
     defineField({
       name: "quote",
       title: "Pull-quote lines (optional)",
       description: "Each entry is one line. You may wrap a word in <em>…</em> for the accent.",
-      type: "array",
-      of: [defineArrayMember({ type: "string" })],
+      type: "localeStringArray",
     }),
     // Production media — optional so placeholder content still validates.
     defineField({
@@ -74,7 +73,7 @@ export default defineType({
           name: "shot",
           title: "Shot",
           fields: [
-            defineField({ name: "label", title: "Label / caption", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "label", title: "Label / caption", type: "localeString", validation: (r) => r.required() }),
             defineField({
               name: "span",
               title: "Span",
@@ -86,7 +85,7 @@ export default defineType({
             defineField({ name: "image", title: "Image (optional)", type: "image", options: { hotspot: true } }),
           ],
           preview: {
-            select: { title: "label", subtitle: "span", media: "image" },
+            select: { title: "label.de", subtitle: "span", media: "image" },
           },
         }),
       ],
@@ -97,6 +96,6 @@ export default defineType({
     { title: "Order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] },
   ],
   preview: {
-    select: { title: "name", subtitle: "cat", media: "cover" },
+    select: { title: "name.de", subtitle: "cat.de", media: "cover" },
   },
 });
