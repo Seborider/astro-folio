@@ -1,35 +1,75 @@
 {
   "order": 7,
-  "name": "Low Tide",
-  "cat": "Photography",
+  "name": {
+    "de": "Low Tide",
+    "en": "Low Tide"
+  },
+  "cat": {
+    "de": "Photography",
+    "en": "Photography"
+  },
   "yr": "2021",
-  "role": "Direction",
-  "client": "Self-initiated",
-  "services": [
-    "Photography",
-    "Book",
-    "Exhibition"
-  ],
-  "intro": "A self-initiated photographic study of the North Sea at its lowest tide.",
-  "overview": [
-    "Low Tide is a year of returning to the same stretch of coast at the lowest water of each month.",
-    "The edit became a small book and an exhibition — a study in how little needs to change for everything to."
-  ],
+  "role": {
+    "de": "Direction",
+    "en": "Direction"
+  },
+  "client": {
+    "de": "Self-initiated",
+    "en": "Self-initiated"
+  },
+  "services": {
+    "de": [
+      "Photography",
+      "Book",
+      "Exhibition"
+    ],
+    "en": [
+      "Photography",
+      "Book",
+      "Exhibition"
+    ]
+  },
+  "intro": {
+    "de": "A self-initiated photographic study of the North Sea at its lowest tide.",
+    "en": "A self-initiated photographic study of the North Sea at its lowest tide."
+  },
+  "overview": {
+    "de": [
+      "Low Tide is a year of returning to the same stretch of coast at the lowest water of each month.",
+      "The edit became a small book and an exhibition — a study in how little needs to change for everything to."
+    ],
+    "en": [
+      "Low Tide is a year of returning to the same stretch of coast at the lowest water of each month.",
+      "The edit became a small book and an exhibition — a study in how little needs to change for everything to."
+    ]
+  },
   "gallery": [
     {
-      "label": "Series overview",
+      "label": {
+        "de": "Series overview",
+        "en": "Series overview"
+      },
       "span": "full"
     },
     {
-      "label": "Plate 04",
+      "label": {
+        "de": "Plate 04",
+        "en": "Plate 04"
+      },
       "span": "half"
     },
     {
-      "label": "Plate 11",
+      "label": {
+        "de": "Plate 11",
+        "en": "Plate 11"
+      },
       "span": "half"
     },
     {
-      "label": "Exhibition",
+      "label": {
+        "de": "Exhibition",
+        "en": "Exhibition"
+      },
       "span": "full"
     }
   ]

@@ -1,34 +1,73 @@
 {
   "order": 8,
-  "name": "Aperture",
-  "cat": "Identity",
+  "name": {
+    "de": "Aperture",
+    "en": "Aperture"
+  },
+  "cat": {
+    "de": "Identity",
+    "en": "Identity"
+  },
   "yr": "2026",
-  "role": "Art Direction",
-  "client": "Aperture Optics",
-  "services": [
-    "Identity",
-    "Packaging"
-  ],
-  "intro": "Identity for a precision cinema-lens manufacturer.",
-  "overview": [
-    "Aperture grinds lenses for cinema. The mark is an iris that opens across applications.",
-    "A monochrome system keeps focus on the optics themselves."
-  ],
+  "role": {
+    "de": "Art Direction",
+    "en": "Art Direction"
+  },
+  "client": {
+    "de": "Aperture Optics",
+    "en": "Aperture Optics"
+  },
+  "services": {
+    "de": [
+      "Identity",
+      "Packaging"
+    ],
+    "en": [
+      "Identity",
+      "Packaging"
+    ]
+  },
+  "intro": {
+    "de": "Identity for a precision cinema-lens manufacturer.",
+    "en": "Identity for a precision cinema-lens manufacturer."
+  },
+  "overview": {
+    "de": [
+      "Aperture grinds lenses for cinema. The mark is an iris that opens across applications.",
+      "A monochrome system keeps focus on the optics themselves."
+    ],
+    "en": [
+      "Aperture grinds lenses for cinema. The mark is an iris that opens across applications.",
+      "A monochrome system keeps focus on the optics themselves."
+    ]
+  },
   "gallery": [
     {
-      "label": "Identity",
+      "label": {
+        "de": "Identity",
+        "en": "Identity"
+      },
       "span": "full"
     },
     {
-      "label": "Mark",
+      "label": {
+        "de": "Mark",
+        "en": "Mark"
+      },
       "span": "half"
     },
     {
-      "label": "Specimen",
+      "label": {
+        "de": "Specimen",
+        "en": "Specimen"
+      },
       "span": "half"
     },
     {
-      "label": "Packaging",
+      "label": {
+        "de": "Packaging",
+        "en": "Packaging"
+      },
       "span": "full"
     }
   ]

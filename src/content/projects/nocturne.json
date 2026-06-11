@@ -1,40 +1,86 @@
 {
   "order": 2,
-  "name": "Nocturne",
-  "cat": "Film · Title Design",
+  "name": {
+    "de": "Nocturne",
+    "en": "Nocturne"
+  },
+  "cat": {
+    "de": "Film · Title Design",
+    "en": "Film · Title Design"
+  },
   "yr": "2025",
-  "role": "Title Design",
-  "client": "Nocturne (feature film)",
-  "services": [
-    "Title sequence",
-    "Logotype",
-    "Key art"
-  ],
-  "intro": "Main titles and identity for a nocturnal psychological thriller.",
-  "overview": [
-    "Nocturne needed a title sequence that felt like memory under pressure — legible, then not.",
-    "Type dissolves into grain and reforms; the mark is a single serif N that behaves like a light source moving behind fog."
-  ],
+  "role": {
+    "de": "Title Design",
+    "en": "Title Design"
+  },
+  "client": {
+    "de": "Nocturne (feature film)",
+    "en": "Nocturne (feature film)"
+  },
+  "services": {
+    "de": [
+      "Title sequence",
+      "Logotype",
+      "Key art"
+    ],
+    "en": [
+      "Title sequence",
+      "Logotype",
+      "Key art"
+    ]
+  },
+  "intro": {
+    "de": "Main titles and identity for a nocturnal psychological thriller.",
+    "en": "Main titles and identity for a nocturnal psychological thriller."
+  },
+  "overview": {
+    "de": [
+      "Nocturne needed a title sequence that felt like memory under pressure — legible, then not.",
+      "Type dissolves into grain and reforms; the mark is a single serif N that behaves like a light source moving behind fog."
+    ],
+    "en": [
+      "Nocturne needed a title sequence that felt like memory under pressure — legible, then not.",
+      "Type dissolves into grain and reforms; the mark is a single serif N that behaves like a light source moving behind fog."
+    ]
+  },
+  "quote": {
+    "de": [
+      "Everything begins as an",
+      "<em>accident</em> of attention."
+    ],
+    "en": [
+      "Everything begins as an",
+      "<em>accident</em> of attention."
+    ]
+  },
   "gallery": [
     {
-      "label": "Title sequence",
+      "label": {
+        "de": "Title sequence",
+        "en": "Title sequence"
+      },
       "span": "full"
     },
     {
-      "label": "Logotype",
+      "label": {
+        "de": "Logotype",
+        "en": "Logotype"
+      },
       "span": "half"
     },
     {
-      "label": "Frame study",
+      "label": {
+        "de": "Frame study",
+        "en": "Frame study"
+      },
       "span": "half"
     },
     {
-      "label": "Poster",
+      "label": {
+        "de": "Poster",
+        "en": "Poster"
+      },
       "span": "full"
     }
-  ],
-  "quote": [
-    "Everything begins as an",
-    "<em>accident</em> of attention."
   ]
 }

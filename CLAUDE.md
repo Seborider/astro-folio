@@ -13,17 +13,27 @@ hand-built HTML motion prototype; the animation code is intentionally plain
 - **Don't convert the motion code to a framework.** GSAP/Lenis/WebGL are
   imperative and live in `public/scripts/`. Keep them as `is:inline` scripts.
 - Content has **two interchangeable backends behind one loader**: pages call
-  `getProjects()` from `src/lib/projects.ts`, never `getCollection` directly.
-  It reads Sanity when `PUBLIC_SANITY_PROJECT_ID` is set, else the local JSON
-  collection. Keep the returned `Project` shape stable — it's the contract.
+  `getProjects(locale)` from `src/lib/projects.ts`, never `getCollection`
+  directly. It reads Sanity when `PUBLIC_SANITY_PROJECT_ID` is set, else the
+  local JSON collection. Keep the returned `Project` shape stable — it's the
+  contract (localization is resolved inside the loader, the shape is flat).
+- **Two locales, DE default.** `/` is German, `/en/...` is English; pages live
+  in `src/pages/[...lang]/` (rest param `undefined` = de). Translatable fields
+  are `{ de, en? }` objects in BOTH backends; a missing `en` falls back to `de`
+  (GROQ `coalesce`, JSON `pick()` from `src/i18n`). UI strings outside the CMS
+  live in `src/i18n/ui.ts` (`t(locale)`). Scramble `data-text` attributes must
+  match the localized element text.
 - The JSON schema (`src/content/config.ts`) and the Sanity schema
-  (`studio/schemaTypes/project.ts`) must stay in sync. Update BOTH when adding
-  a field, and map it in the GROQ query in `src/lib/projects.ts`.
+  (`studio/schemaTypes/project.ts`, locale objects in `locale.ts`) must stay
+  in sync. Update BOTH when adding a field, and map it (with `coalesce` if
+  translatable) in the GROQ query in `src/lib/projects.ts`.
 - Styling is one file, `src/styles/folio.css`, token-driven (`--bg`, `--ink`,
   `--accent`; the rest derive via `color-mix`). Reuse tokens; don't hardcode hex.
 - Reveal animations are declarative: `data-reveal`, `.reveal-lines` (with
   `.line > span`), `data-scramble`. `core.js` wires them on every page.
 - Internal links must start with `/` so `chrome.js` applies the wipe transition.
+  Build them with `localePath(locale, "/work")` from `src/i18n` so they stay in
+  the visitor's language.
 - Render media through `Media.astro` (shows `<img>` when a src exists, else the
   labelled placeholder) so layout is identical with or without CMS images.
 
@@ -41,9 +51,14 @@ npm run build      # must pass; content schema is validated here
 npm run preview
 ```
 
-Then check: home loader → hero reveal; /work filter; /work/<slug> detail with
-prev/next; the page-wipe between routes; the Tweaks toggle (bottom-right) opens
-the panel and color changes apply live; no console errors.
+Then check, in BOTH locales (`/` and `/en/...`): home loader → hero reveal;
+/work filter; /work/<slug> detail with prev/next; the page-wipe between routes
+(including the EN/DE switcher in the header); the Tweaks toggle (bottom-right)
+opens the panel and color changes apply live; no console errors.
+
+Note: a Sanity dataset created before the locale migration has flat string
+fields — run `cd studio && npm run migrate:locales` once (idempotent) or the
+GROQ `coalesce` projections return null and the build fails.
 
 ## Good first tasks (in priority order)
 

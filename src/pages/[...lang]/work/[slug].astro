@@ -1,35 +1,47 @@
 ---
-import Base from "../../layouts/Base.astro";
-import Footer from "../../components/Footer.astro";
-import Media from "../../components/Media.astro";
-import { getProjects, neighbours } from "../../lib/projects";
+import Base from "../../../layouts/Base.astro";
+import Footer from "../../../components/Footer.astro";
+import Media from "../../../components/Media.astro";
+import { getProjects, neighbours } from "../../../lib/projects";
+import { DEFAULT_LOCALE, LOCALES, localePath } from "../../../i18n";
+import { t } from "../../../i18n/ui";
 
 export async function getStaticPaths() {
-  const projects = await getProjects();
-  const n = projects.length;
-  return projects.map((entry, i) => ({
-    params: { slug: entry.id },
-    props: {
-      entry,
-      index: i,
-      total: n,
-      ...neighbours(projects, i),
-    },
-  }));
+  // Locale cross-product: each project page exists at /work/<slug> (de)
+  // and /en/work/<slug>. Slugs are shared; only the text differs.
+  const paths = [];
+  for (const locale of LOCALES) {
+    const projects = await getProjects(locale);
+    const n = projects.length;
+    paths.push(
+      ...projects.map((entry, i) => ({
+        params: { lang: locale === DEFAULT_LOCALE ? undefined : locale, slug: entry.id },
+        props: {
+          locale,
+          entry,
+          index: i,
+          total: n,
+          ...neighbours(projects, i),
+        },
+      }))
+    );
+  }
+  return paths;
 }
 
-const { entry, index, total, prev, next } = Astro.props;
+const { locale, entry, index, total, prev, next } = Astro.props;
+const tr = t(locale);
 const p = entry;
 const coverLabel = p.gallery[0] ? `${p.name} — ${p.gallery[0].label.replace(/ — .*/, "")}` : p.name;
 const metaRows: [string, string][] = [
-  ["Client", p.client],
-  ["Year", p.yr],
-  ["Role", p.role],
-  ["Services", p.services.join(", ")],
+  [tr.metaClient, p.client],
+  [tr.metaYear, p.yr],
+  [tr.metaRole, p.role],
+  [tr.metaServices, p.services.join(", ")],
 ];
 ---
 
-<Base title={`${p.name} — Juno Vestergaard`}>
+<Base title={`${p.name} — Juno Vestergaard`} description={p.intro} locale={locale}>
   <!-- HERO -->
   <section class="pd-hero" data-screen-label="Project hero">
     <div class="phero__index meta">
@@ -83,13 +95,13 @@ const metaRows: [string, string][] = [
 
   <!-- PREV / NEXT -->
   <nav class="pd-next">
-    <a class="pd-nav-link prev" href={`/work/${prev.id}`} data-cursor="open">
-      <span class="meta">( Previous )</span><span class="t">{prev.name}</span>
+    <a class="pd-nav-link prev" href={localePath(locale, `/work/${prev.id}`)} data-cursor="open">
+      <span class="meta">{tr.prevLabel}</span><span class="t">{prev.name}</span>
     </a>
-    <a class="pd-nav-link next" href={`/work/${next.id}`} data-cursor="open">
-      <span class="meta">( Next project )</span><span class="t">{next.name}</span>
+    <a class="pd-nav-link next" href={localePath(locale, `/work/${next.id}`)} data-cursor="open">
+      <span class="meta">{tr.nextLabel}</span><span class="t">{next.name}</span>
     </a>
   </nav>
 
-  <Footer />
+  <Footer locale={locale} />
 </Base>

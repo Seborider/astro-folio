@@ -1,35 +1,75 @@
 {
   "order": 5,
-  "name": "Saltfield",
-  "cat": "Campaign · 3D",
+  "name": {
+    "de": "Saltfield",
+    "en": "Saltfield"
+  },
+  "cat": {
+    "de": "Campaign · 3D",
+    "en": "Campaign · 3D"
+  },
   "yr": "2023",
-  "role": "Direction",
-  "client": "Saltfield (outerwear)",
-  "services": [
-    "Campaign",
-    "CG environments",
-    "Lookbook"
-  ],
-  "intro": "A launch campaign for a coastal outerwear label, built in CG and grain.",
-  "overview": [
-    "Saltfield's first season needed weather. We built CG environments — fog, salt, low sun — and dropped the product into them.",
-    "The result sits between product film and landscape painting; stills were pulled directly from the render for print."
-  ],
+  "role": {
+    "de": "Direction",
+    "en": "Direction"
+  },
+  "client": {
+    "de": "Saltfield (outerwear)",
+    "en": "Saltfield (outerwear)"
+  },
+  "services": {
+    "de": [
+      "Campaign",
+      "CG environments",
+      "Lookbook"
+    ],
+    "en": [
+      "Campaign",
+      "CG environments",
+      "Lookbook"
+    ]
+  },
+  "intro": {
+    "de": "A launch campaign for a coastal outerwear label, built in CG and grain.",
+    "en": "A launch campaign for a coastal outerwear label, built in CG and grain."
+  },
+  "overview": {
+    "de": [
+      "Saltfield's first season needed weather. We built CG environments — fog, salt, low sun — and dropped the product into them.",
+      "The result sits between product film and landscape painting; stills were pulled directly from the render for print."
+    ],
+    "en": [
+      "Saltfield's first season needed weather. We built CG environments — fog, salt, low sun — and dropped the product into them.",
+      "The result sits between product film and landscape painting; stills were pulled directly from the render for print."
+    ]
+  },
   "gallery": [
     {
-      "label": "Campaign film",
+      "label": {
+        "de": "Campaign film",
+        "en": "Campaign film"
+      },
       "span": "full"
     },
     {
-      "label": "Environment study",
+      "label": {
+        "de": "Environment study",
+        "en": "Environment study"
+      },
       "span": "half"
     },
     {
-      "label": "Lookbook",
+      "label": {
+        "de": "Lookbook",
+        "en": "Lookbook"
+      },
       "span": "half"
     },
     {
-      "label": "Out-of-home",
+      "label": {
+        "de": "Out-of-home",
+        "en": "Out-of-home"
+      },
       "span": "full"
     }
   ]

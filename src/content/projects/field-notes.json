@@ -1,34 +1,73 @@
 {
   "order": 9,
-  "name": "Field Notes",
-  "cat": "Editorial",
+  "name": {
+    "de": "Field Notes",
+    "en": "Field Notes"
+  },
+  "cat": {
+    "de": "Editorial",
+    "en": "Editorial"
+  },
   "yr": "2025",
-  "role": "Design",
-  "client": "Field Notes Journal",
-  "services": [
-    "Editorial design",
-    "Typography"
-  ],
-  "intro": "A quarterly journal of fieldwork and design research.",
-  "overview": [
-    "Field Notes gathers essays from designers working outside the studio.",
-    "A utilitarian grid and a single accent keep the writing foremost."
-  ],
+  "role": {
+    "de": "Design",
+    "en": "Design"
+  },
+  "client": {
+    "de": "Field Notes Journal",
+    "en": "Field Notes Journal"
+  },
+  "services": {
+    "de": [
+      "Editorial design",
+      "Typography"
+    ],
+    "en": [
+      "Editorial design",
+      "Typography"
+    ]
+  },
+  "intro": {
+    "de": "A quarterly journal of fieldwork and design research.",
+    "en": "A quarterly journal of fieldwork and design research."
+  },
+  "overview": {
+    "de": [
+      "Field Notes gathers essays from designers working outside the studio.",
+      "A utilitarian grid and a single accent keep the writing foremost."
+    ],
+    "en": [
+      "Field Notes gathers essays from designers working outside the studio.",
+      "A utilitarian grid and a single accent keep the writing foremost."
+    ]
+  },
   "gallery": [
     {
-      "label": "Cover system",
+      "label": {
+        "de": "Cover system",
+        "en": "Cover system"
+      },
       "span": "full"
     },
     {
-      "label": "Essay spread",
+      "label": {
+        "de": "Essay spread",
+        "en": "Essay spread"
+      },
       "span": "half"
     },
     {
-      "label": "Grid",
+      "label": {
+        "de": "Grid",
+        "en": "Grid"
+      },
       "span": "half"
     },
     {
-      "label": "Index",
+      "label": {
+        "de": "Index",
+        "en": "Index"
+      },
       "span": "full"
     }
   ]

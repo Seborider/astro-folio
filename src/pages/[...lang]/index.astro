@@ -1,19 +1,27 @@
 ---
-import Base from "../layouts/Base.astro";
-import Footer from "../components/Footer.astro";
-import { getProjects } from "../lib/projects";
+import Base from "../../layouts/Base.astro";
+import Footer from "../../components/Footer.astro";
+import { getProjects } from "../../lib/projects";
+import { localePath, localeStaticPaths } from "../../i18n";
+import { t } from "../../i18n/ui";
 
-const projects = await getProjects();
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const { locale } = Astro.props;
+const tr = t(locale);
+const projects = await getProjects(locale);
 const selected = projects.slice(0, 8);
 const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr, cover: p.cover }));
 ---
 
-<Base title="Juno Vestergaard — Design & Art Director" home={true}>
+<Base title={tr.homeTitle} description={tr.homeDescription} home={true} locale={locale}>
   <!-- LOADER -->
   <div class="loader" id="loader">
     <div class="loader__count" id="loaderCount">0</div>
     <div class="loader__label meta">
-      <div>( Loading )</div>
+      <div>{tr.loadingLabel}</div>
       <div class="paren" id="loaderState">Initialising</div>
     </div>
   </div>
@@ -33,11 +41,11 @@ const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr, cover:
           <span class="scramble" data-text="DESIGN">DESIGN</span>
           <span class="paren">( Art Director )</span>
           <span class="scramble" data-text="DIRECTION">DIRECTION</span>
-          <span class="paren">( Copenhagen )</span>
+          <span class="paren">{tr.heroCity}</span>
           <span class="scramble" data-text="PORTFOLIO">PORTFOLIO</span>
           <span class="paren">( 2026 )</span>
         </p>
-        <div class="scroll-cue meta"><span class="dot"></span> ( Scroll )</div>
+        <div class="scroll-cue meta"><span class="dot"></span> {tr.scrollCue}</div>
       </div>
     </div>
   </section>
@@ -45,24 +53,20 @@ const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr, cover:
   <!-- STATEMENT -->
   <section class="statement" id="about" data-screen-label="Statement">
     <div class="statement__index meta">
-      <span>( 01 )</span><span class="rule"></span><span>Approach</span>
+      <span>( 01 )</span><span class="rule"></span><span>{tr.statementLabel}</span>
     </div>
     <blockquote class="statement__quote reveal-lines">
-      <span class="line"><span>Everything</span></span>
-      <span class="line"><span>begins as an</span></span>
-      <span class="line"><span><em>accident</em></span></span>
-      <span class="line"><span>of attention.</span></span>
+      {tr.statementLines.map((line) => (
+        <span class="line"><span set:html={line}></span></span>
+      ))}
     </blockquote>
-    <p class="statement__attr meta">
-      A practice across brand, motion and editorial — built on slow looking,
-      sharp typography, and the belief that restraint is its own kind of noise.
-    </p>
+    <p class="statement__attr meta">{tr.statementAttr}</p>
   </section>
 
   <!-- REEL GRID -->
   <section class="reel" data-screen-label="Reel">
     <div class="reel__head">
-      <h2>Selected motion</h2>
+      <h2>{tr.reelHeading}</h2>
       <span class="meta">( 2021 — 2026 )</span>
     </div>
     <div class="reel__grid">
@@ -76,18 +80,18 @@ const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr, cover:
       <div class="reel__tile s2" data-reveal><span class="tile-no">08</span><div class="placeholder ph-motion"><span>reel 08</span></div></div>
     </div>
     <div class="reel__cta">
-      <button id="playReel" data-cursor="play"><span class="tri"></span> Play showreel — 02:14</button>
+      <button id="playReel" data-cursor="play"><span class="tri"></span> {tr.playReel}</button>
     </div>
   </section>
 
   <!-- WORK LIST -->
   <section class="work" id="work" data-screen-label="Work">
     <div class="statement__index meta" style="margin-bottom:40px">
-      <span>( 02 )</span><span class="rule"></span><span>Selected work</span>
+      <span>( 02 )</span><span class="rule"></span><span>{tr.workIndexLabel}</span>
     </div>
     <div class="work__list">
       {selected.map((p, i) => (
-        <a class="work__row" href={`/work/${p.id}`} data-cursor="open" data-name={p.name} data-cover={p.cover} data-reveal>
+        <a class="work__row" href={localePath(locale, `/work/${p.id}`)} data-cursor="open" data-name={p.name} data-cover={p.cover} data-reveal>
           <span class="idx">{String(i + 1).padStart(2, "0")}</span>
           <span class="name" data-scramble>{p.name}</span>
           <span class="cat">{p.cat}</span>
@@ -97,16 +101,16 @@ const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr, cover:
     </div>
   </section>
 
-  <Footer carousel={carousel} />
+  <Footer locale={locale} carousel={carousel} />
 
   <!-- SHOWREEL OVERLAY -->
   <div class="showreel" id="showreel">
     <div class="showreel__bar">
-      <span class="meta">( Showreel — 02:14 )</span>
-      <button class="showreel__close" id="closeReel" data-cursor="close">( Close )</button>
+      <span class="meta">{tr.showreelLabel}</span>
+      <button class="showreel__close" id="closeReel" data-cursor="close">{tr.close}</button>
     </div>
     <div class="showreel__player">
-      <div class="placeholder ph-motion"><span>Full showreel — drop master cut here</span></div>
+      <div class="placeholder ph-motion"><span>{tr.showreelPlaceholder}</span></div>
     </div>
   </div>
 

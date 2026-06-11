@@ -1,35 +1,75 @@
 {
   "order": 4,
-  "name": "Verso",
-  "cat": "Identity",
+  "name": {
+    "de": "Verso",
+    "en": "Verso"
+  },
+  "cat": {
+    "de": "Identity",
+    "en": "Identity"
+  },
   "yr": "2024",
-  "role": "Design",
-  "client": "Verso (independent publisher)",
-  "services": [
-    "Identity",
-    "Cover system",
-    "Stationery"
-  ],
-  "intro": "Identity for an independent publisher of translated fiction.",
-  "overview": [
-    "Verso publishes fiction in translation. The mark plays on the recto/verso of a page — a flippable monogram that reads both ways.",
-    "A flexible spine system lets every title share a shelf while keeping its own voice."
-  ],
+  "role": {
+    "de": "Design",
+    "en": "Design"
+  },
+  "client": {
+    "de": "Verso (independent publisher)",
+    "en": "Verso (independent publisher)"
+  },
+  "services": {
+    "de": [
+      "Identity",
+      "Cover system",
+      "Stationery"
+    ],
+    "en": [
+      "Identity",
+      "Cover system",
+      "Stationery"
+    ]
+  },
+  "intro": {
+    "de": "Identity for an independent publisher of translated fiction.",
+    "en": "Identity for an independent publisher of translated fiction."
+  },
+  "overview": {
+    "de": [
+      "Verso publishes fiction in translation. The mark plays on the recto/verso of a page — a flippable monogram that reads both ways.",
+      "A flexible spine system lets every title share a shelf while keeping its own voice."
+    ],
+    "en": [
+      "Verso publishes fiction in translation. The mark plays on the recto/verso of a page — a flippable monogram that reads both ways.",
+      "A flexible spine system lets every title share a shelf while keeping its own voice."
+    ]
+  },
   "gallery": [
     {
-      "label": "Spine system",
+      "label": {
+        "de": "Spine system",
+        "en": "Spine system"
+      },
       "span": "full"
     },
     {
-      "label": "Monogram",
+      "label": {
+        "de": "Monogram",
+        "en": "Monogram"
+      },
       "span": "half"
     },
     {
-      "label": "Cover grid",
+      "label": {
+        "de": "Cover grid",
+        "en": "Cover grid"
+      },
       "span": "half"
     },
     {
-      "label": "Stationery",
+      "label": {
+        "de": "Stationery",
+        "en": "Stationery"
+      },
       "span": "full"
     }
   ]
