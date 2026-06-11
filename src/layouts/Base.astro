@@ -23,8 +23,9 @@ interface Props {
 }
 const { title = "Juno Vestergaard", description, home = false, locale = DEFAULT_LOCALE } = Astro.props;
 
-// hreflang pair — this page in both locales (slugs are shared across locales)
-const path = Astro.url.pathname;
+// hreflang pair — this page in both locales (slugs are shared across locales).
+// Normalize the trailing slash so self and alternate URLs match in style.
+const path = Astro.url.pathname.length > 1 ? Astro.url.pathname.replace(/\/+$/, "") : Astro.url.pathname;
 const dePath = locale === "de" ? path : altLocalePath("en", path);
 const enPath = locale === "en" ? path : altLocalePath("de", path);
 ---
