@@ -1,18 +1,26 @@
 ---
-import Base from "../layouts/Base.astro";
-import Footer from "../components/Footer.astro";
-import Media from "../components/Media.astro";
-import { getAboutPage } from "../lib/site";
+import Base from "../../layouts/Base.astro";
+import Footer from "../../components/Footer.astro";
+import Media from "../../components/Media.astro";
+import { getAboutPage } from "../../lib/site";
+import { localeStaticPaths } from "../../i18n";
+import { t } from "../../i18n/ui";
 
-const about = await getAboutPage();
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const { locale } = Astro.props;
+const tr = t(locale);
+const about = await getAboutPage(locale);
 const capRange = `( 01 — ${String(about.capabilities.length).padStart(2, "0")} )`;
 ---
 
-<Base title={about.metaTitle}>
+<Base title={about.metaTitle} description={about.lede} locale={locale}>
   <!-- PAGE HERO -->
   <section class="phero" data-screen-label="About hero">
     <div class="phero__index meta">
-      <span data-scramble-now data-text="( About )">( About )</span><span class="rule"></span><span>Index 01</span>
+      <span data-scramble-now data-text={tr.aboutScramble}>{tr.aboutScramble}</span><span class="rule"></span><span>Index 01</span>
     </div>
     <h1 class="phero__title">
       <span class="line"><span data-rise>{about.title}</span></span>
@@ -34,7 +42,7 @@ const capRange = `( 01 — ${String(about.capabilities.length).padStart(2, "0")}
 
   <!-- BIO -->
   <section class="about-cols">
-    <div class="about-cols__label meta">( Bio )</div>
+    <div class="about-cols__label meta">{tr.bioLabel}</div>
     <div class="about-cols__body">
       {about.bio.map((t) => <p set:html={t}></p>)}
     </div>
@@ -61,12 +69,12 @@ const capRange = `( 01 — ${String(about.capabilities.length).padStart(2, "0")}
   <section class="idx-list" style="margin-top:clamp(60px,10vh,120px)">
     <div class="idx-list__head">
       <h2>{about.recognitionHeading}</h2>
-      <span class="meta">( Selected )</span>
+      <span class="meta">{tr.selectedLabel}</span>
     </div>
     {about.recognition.map((r) => (
       <div class="idx-row" data-reveal><span class="n">—</span><span class="t" data-scramble>{r.title}</span><span class="d">{r.detail}</span></div>
     ))}
   </section>
 
-  <Footer />
+  <Footer locale={locale} />
 </Base>

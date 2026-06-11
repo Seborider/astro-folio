@@ -3,16 +3,30 @@
  * Header.astro — fixed top bar, identical on every page.
  * Links use Astro's extensionless routes; chrome.js intercepts them
  * for the wipe transition. The mark text comes from siteSettings.
+ * The language switcher links to the SAME page in the other locale
+ * (slugs are shared, so stripping/adding the /en prefix is enough).
  */
 import { getSiteSettings } from "../lib/site";
-const s = await getSiteSettings();
+import { altLocalePath, localePath, type Locale } from "../i18n";
+import { t } from "../i18n/ui";
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const s = await getSiteSettings(locale);
+const tr = t(locale);
+const switchHref = altLocalePath(locale, Astro.url.pathname);
 ---
 <header class="header">
-  <a class="header__mark" href="/" data-cursor="home">{s.headerMark}</a>
+  <a class="header__mark" href={localePath(locale, "/")} data-cursor="home">{s.headerMark}</a>
   <nav class="header__nav">
-    <a href="/work" data-cursor="view">Work</a>
-    <a href="/about" data-cursor="view">About</a>
-    <a href="/archive" data-cursor="view">Archive</a>
-    <button class="theme-toggle" data-theme-toggle aria-label="Toggle color theme">◐</button>
+    <a href={localePath(locale, "/work")} data-cursor="view">{tr.navWork}</a>
+    <a href={localePath(locale, "/about")} data-cursor="view">{tr.navAbout}</a>
+    <a href={localePath(locale, "/archive")} data-cursor="view">{tr.navArchive}</a>
+    <a class="lang-switch" href={switchHref} data-cursor="view" aria-label={tr.langSwitchLabel}>
+      {locale === "de" ? "EN" : "DE"}
+    </a>
+    <button class="theme-toggle" data-theme-toggle aria-label={tr.themeToggleLabel}>◐</button>
   </nav>
 </header>

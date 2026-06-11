@@ -5,26 +5,43 @@
  * a <main> slot, and loads the motion scripts in the correct order.
  *
  * Props:
- *   title — document title
- *   home  — when true, also loads home.js (loader + showreel + carousel)
+ *   title       — document title
+ *   description — per-page meta description (localized by the caller)
+ *   home        — when true, also loads home.js (loader + showreel + carousel)
+ *   locale      — "de" (default) or "en"; drives <html lang> and hreflang
  */
 import "../styles/folio.css";
 import Header from "../components/Header.astro";
 import Tweaks from "../components/Tweaks";
+import { DEFAULT_LOCALE, altLocalePath, type Locale } from "../i18n";
 
 interface Props {
   title?: string;
+  description?: string;
   home?: boolean;
+  locale?: Locale;
 }
-const { title = "Juno Vestergaard", home = false } = Astro.props;
+const { title = "Juno Vestergaard", description, home = false, locale = DEFAULT_LOCALE } = Astro.props;
+
+// hreflang pair — this page in both locales (slugs are shared across locales)
+const path = Astro.url.pathname;
+const dePath = locale === "de" ? path : altLocalePath("en", path);
+const enPath = locale === "en" ? path : altLocalePath("de", path);
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:locale" content={locale === "de" ? "de_DE" : "en_GB"} />
+    <link rel="alternate" hreflang="de" href={new URL(dePath, Astro.site)} />
+    <link rel="alternate" hreflang="en" href={new URL(enPath, Astro.site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL(dePath, Astro.site)} />
     <!-- theme: runs before first paint (no FOUC). Absent attribute = dark. -->
     <script is:inline>
       (function () {
@@ -59,7 +76,7 @@ const { title = "Juno Vestergaard", home = false } = Astro.props;
     <div class="cursor" id="cursor"></div>
     <div class="cursor-label" id="cursorLabel"></div>
 
-    <Header />
+    <Header locale={locale} />
 
     <main id="top">
       <slot />
