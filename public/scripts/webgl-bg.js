@@ -28,8 +28,12 @@
     if (!m) return [0, 0, 0];
     return [m[0] / 255, m[1] / 255, m[2] / 255];
   }
-  let bgCol = resolve("--bg", "#080808");
-  let inkCol = resolve("--ink", "#e9e6df");
+  let bgCol, inkCol;
+  function sampleTheme() {
+    bgCol = resolve("--bg", "#080808");
+    inkCol = resolve("--ink", "#e9e6df");
+  }
+  sampleTheme();
 
   /* ---- shaders ---- */
   const VERT = "attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}";
@@ -101,16 +105,10 @@
   window.addEventListener("resize", resize);
 
   // re-sample theme colors periodically (cheap, follows Tweaks)
-  setInterval(() => {
-    bgCol = resolve("--bg", "#080808");
-    inkCol = resolve("--ink", "#e9e6df");
-  }, 250);
+  setInterval(sampleTheme, 250);
 
   // instant re-sample on theme toggle (chrome.js full-navigations re-init the rest)
-  window.addEventListener("themechange", () => {
-    bgCol = resolve("--bg", "#080808");
-    inkCol = resolve("--ink", "#e9e6df");
-  });
+  window.addEventListener("themechange", sampleTheme);
 
   const start = performance.now();
   function render(now) {
