@@ -1,35 +1,75 @@
 {
   "order": 1,
-  "name": "Pavilion",
-  "cat": "Art Direction",
+  "name": {
+    "de": "Pavilion",
+    "en": "Pavilion"
+  },
+  "cat": {
+    "de": "Art Direction",
+    "en": "Art Direction"
+  },
   "yr": "2025",
-  "role": "Art Direction",
-  "client": "Pavilion Architecture Biennale",
-  "services": [
-    "Art direction",
-    "Wayfinding",
-    "Photography"
-  ],
-  "intro": "Art direction for a temporary architecture biennale staged across a harbour.",
-  "overview": [
-    "Pavilion invited twelve studios to build temporary structures along Copenhagen's waterfront. Our role was the visual world that tied them together.",
-    "A wayfinding-led system used scale and shadow as the primary devices — photography shot at dawn to catch the long light the structures were designed for."
-  ],
+  "role": {
+    "de": "Art Direction",
+    "en": "Art Direction"
+  },
+  "client": {
+    "de": "Pavilion Architecture Biennale",
+    "en": "Pavilion Architecture Biennale"
+  },
+  "services": {
+    "de": [
+      "Art direction",
+      "Wayfinding",
+      "Photography"
+    ],
+    "en": [
+      "Art direction",
+      "Wayfinding",
+      "Photography"
+    ]
+  },
+  "intro": {
+    "de": "Art direction for a temporary architecture biennale staged across a harbour.",
+    "en": "Art direction for a temporary architecture biennale staged across a harbour."
+  },
+  "overview": {
+    "de": [
+      "Pavilion invited twelve studios to build temporary structures along Copenhagen's waterfront. Our role was the visual world that tied them together.",
+      "A wayfinding-led system used scale and shadow as the primary devices — photography shot at dawn to catch the long light the structures were designed for."
+    ],
+    "en": [
+      "Pavilion invited twelve studios to build temporary structures along Copenhagen's waterfront. Our role was the visual world that tied them together.",
+      "A wayfinding-led system used scale and shadow as the primary devices — photography shot at dawn to catch the long light the structures were designed for."
+    ]
+  },
   "gallery": [
     {
-      "label": "Campaign key visual",
+      "label": {
+        "de": "Campaign key visual",
+        "en": "Campaign key visual"
+      },
       "span": "full"
     },
     {
-      "label": "Wayfinding",
+      "label": {
+        "de": "Wayfinding",
+        "en": "Wayfinding"
+      },
       "span": "half"
     },
     {
-      "label": "Poster series",
+      "label": {
+        "de": "Poster series",
+        "en": "Poster series"
+      },
       "span": "half"
     },
     {
-      "label": "Catalogue spread",
+      "label": {
+        "de": "Catalogue spread",
+        "en": "Catalogue spread"
+      },
       "span": "full"
     }
   ]

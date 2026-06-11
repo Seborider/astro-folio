@@ -1,35 +1,75 @@
 {
   "order": 3,
-  "name": "Meridian",
-  "cat": "Editorial",
+  "name": {
+    "de": "Meridian",
+    "en": "Meridian"
+  },
+  "cat": {
+    "de": "Editorial",
+    "en": "Editorial"
+  },
   "yr": "2024",
-  "role": "Direction",
-  "client": "Meridian Press",
-  "services": [
-    "Editorial design",
-    "Typography",
-    "Print direction"
-  ],
-  "intro": "A 320-page monograph on contemporary Nordic landscape photography.",
-  "overview": [
-    "Meridian collects two decades of landscape work into a single volume. The design had to disappear behind the images while holding a strong spine of typography.",
-    "A modular grid lets full-bleed plates breathe against quiet captions; three paper stocks separate the book's movements."
-  ],
+  "role": {
+    "de": "Direction",
+    "en": "Direction"
+  },
+  "client": {
+    "de": "Meridian Press",
+    "en": "Meridian Press"
+  },
+  "services": {
+    "de": [
+      "Editorial design",
+      "Typography",
+      "Print direction"
+    ],
+    "en": [
+      "Editorial design",
+      "Typography",
+      "Print direction"
+    ]
+  },
+  "intro": {
+    "de": "A 320-page monograph on contemporary Nordic landscape photography.",
+    "en": "A 320-page monograph on contemporary Nordic landscape photography."
+  },
+  "overview": {
+    "de": [
+      "Meridian collects two decades of landscape work into a single volume. The design had to disappear behind the images while holding a strong spine of typography.",
+      "A modular grid lets full-bleed plates breathe against quiet captions; three paper stocks separate the book's movements."
+    ],
+    "en": [
+      "Meridian collects two decades of landscape work into a single volume. The design had to disappear behind the images while holding a strong spine of typography.",
+      "A modular grid lets full-bleed plates breathe against quiet captions; three paper stocks separate the book's movements."
+    ]
+  },
   "gallery": [
     {
-      "label": "Cover & slipcase",
+      "label": {
+        "de": "Cover & slipcase",
+        "en": "Cover & slipcase"
+      },
       "span": "full"
     },
     {
-      "label": "Plate sequence",
+      "label": {
+        "de": "Plate sequence",
+        "en": "Plate sequence"
+      },
       "span": "half"
     },
     {
-      "label": "Caption system",
+      "label": {
+        "de": "Caption system",
+        "en": "Caption system"
+      },
       "span": "half"
     },
     {
-      "label": "Binding detail",
+      "label": {
+        "de": "Binding detail",
+        "en": "Binding detail"
+      },
       "span": "full"
     }
   ]

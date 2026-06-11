@@ -1,34 +1,73 @@
 {
   "order": 12,
-  "name": "Halo",
-  "cat": "Identity",
+  "name": {
+    "de": "Halo",
+    "en": "Halo"
+  },
+  "cat": {
+    "de": "Identity",
+    "en": "Identity"
+  },
   "yr": "2022",
-  "role": "Design",
-  "client": "Halo (lighting studio)",
-  "services": [
-    "Identity",
-    "Website"
-  ],
-  "intro": "Identity for an architectural lighting studio.",
-  "overview": [
-    "Halo designs light for buildings. The mark is a soft ring that behaves like a fixture across surfaces.",
-    "Warm neutrals and generous space let the work glow."
-  ],
+  "role": {
+    "de": "Design",
+    "en": "Design"
+  },
+  "client": {
+    "de": "Halo (lighting studio)",
+    "en": "Halo (lighting studio)"
+  },
+  "services": {
+    "de": [
+      "Identity",
+      "Website"
+    ],
+    "en": [
+      "Identity",
+      "Website"
+    ]
+  },
+  "intro": {
+    "de": "Identity for an architectural lighting studio.",
+    "en": "Identity for an architectural lighting studio."
+  },
+  "overview": {
+    "de": [
+      "Halo designs light for buildings. The mark is a soft ring that behaves like a fixture across surfaces.",
+      "Warm neutrals and generous space let the work glow."
+    ],
+    "en": [
+      "Halo designs light for buildings. The mark is a soft ring that behaves like a fixture across surfaces.",
+      "Warm neutrals and generous space let the work glow."
+    ]
+  },
   "gallery": [
     {
-      "label": "Identity",
+      "label": {
+        "de": "Identity",
+        "en": "Identity"
+      },
       "span": "full"
     },
     {
-      "label": "Mark",
+      "label": {
+        "de": "Mark",
+        "en": "Mark"
+      },
       "span": "half"
     },
     {
-      "label": "Stationery",
+      "label": {
+        "de": "Stationery",
+        "en": "Stationery"
+      },
       "span": "half"
     },
     {
-      "label": "Site",
+      "label": {
+        "de": "Site",
+        "en": "Site"
+      },
       "span": "full"
     }
   ]

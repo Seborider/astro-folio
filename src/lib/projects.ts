@@ -11,6 +11,7 @@
  */
 import { getCollection } from "astro:content";
 import { sanityConfigured, sanityFetch, imageUrl } from "./sanity";
+import { DEFAULT_LOCALE, pick, type Locale } from "../i18n";
 
 export interface Shot {
   label: string;
@@ -35,24 +36,38 @@ export interface Project {
 }
 
 // Explicit projection matching the Project interface — when adding a field,
-// add it to BOTH schemas (see CLAUDE.md) and name it here.
-const PROJECT_QUERY = `*[_type == "project"] | order(order asc){
+// add it to BOTH schemas (see CLAUDE.md) and name it here. Translatable
+// fields are locale objects in the Studio; coalesce() falls back to DE.
+const projectQuery = (l: Locale) => `*[_type == "project"] | order(order asc){
   "id": slug.current,
-  order, name, cat, yr, role, client, services, intro, overview, quote,
+  order, yr,
+  "name": coalesce(name.${l}, name.de),
+  "cat": coalesce(cat.${l}, cat.de),
+  "role": coalesce(role.${l}, role.de),
+  "client": coalesce(client.${l}, client.de),
+  "services": coalesce(services.${l}, services.de),
+  "intro": coalesce(intro.${l}, intro.de),
+  "overview": coalesce(overview.${l}, overview.de),
+  "quote": coalesce(quote.${l}, quote.de),
   "cover": cover.asset._ref,
-  "gallery": gallery[]{ label, span, "image": image.asset._ref }
+  "gallery": gallery[]{ "label": coalesce(label.${l}, label.de), span, "image": image.asset._ref }
 }`;
 
-let cache: Promise<Project[]> | undefined;
+const cache = new Map<Locale, Promise<Project[]>>(); // per-locale memo for the static build
 
-export function getProjects(): Promise<Project[]> {
-  if (import.meta.env.DEV) return loadProjects(); // always fresh in dev
-  return (cache ??= loadProjects());              // memoize once for the static build
+export function getProjects(locale: Locale = DEFAULT_LOCALE): Promise<Project[]> {
+  if (import.meta.env.DEV) return loadProjects(locale); // always fresh in dev
+  let p = cache.get(locale);
+  if (!p) {
+    p = loadProjects(locale);
+    cache.set(locale, p);
+  }
+  return p;
 }
 
-async function loadProjects(): Promise<Project[]> {
+async function loadProjects(locale: Locale): Promise<Project[]> {
   if (sanityConfigured) {
-    const raw = await sanityFetch<any[]>(PROJECT_QUERY);
+    const raw = await sanityFetch<any[]>(projectQuery(locale));
     return raw.map((p) => ({
       ...p,
       cover: imageUrl(p.cover, { w: 2200 }),
@@ -64,10 +79,27 @@ async function loadProjects(): Promise<Project[]> {
     }));
   }
 
-  // Fallback: local content collection (JSON files)
+  // Fallback: local content collection (JSON files). pick() = coalesce twin.
   const entries = await getCollection("projects");
   return entries
-    .map((e) => ({ id: e.id, ...e.data } as Project))
+    .map((e): Project => {
+      const d = e.data;
+      return {
+        id: e.id,
+        order: d.order,
+        yr: d.yr,
+        name: pick(d.name, locale),
+        cat: pick(d.cat, locale),
+        role: pick(d.role, locale),
+        client: pick(d.client, locale),
+        services: pick(d.services, locale),
+        intro: pick(d.intro, locale),
+        overview: pick(d.overview, locale),
+        quote: d.quote && pick(d.quote, locale),
+        cover: d.cover,
+        gallery: d.gallery.map((g) => ({ label: pick(g.label, locale), span: g.span, image: g.image })),
+      };
+    })
     .sort((a, b) => a.order - b.order);
 }
 

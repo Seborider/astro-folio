@@ -1,34 +1,73 @@
 {
   "order": 11,
-  "name": "Murmur",
-  "cat": "Motion",
+  "name": {
+    "de": "Murmur",
+    "en": "Murmur"
+  },
+  "cat": {
+    "de": "Motion",
+    "en": "Motion"
+  },
   "yr": "2023",
-  "role": "Animation",
-  "client": "Murmur (podcast network)",
-  "services": [
-    "Motion identity",
-    "Toolkit"
-  ],
-  "intro": "A motion identity for a conversation-led podcast network.",
-  "overview": [
-    "Murmur needed an identity you could hear. The mark animates to voice — a waveform that gathers and disperses.",
-    "A toolkit of loops lets each show brand itself within the system."
-  ],
+  "role": {
+    "de": "Animation",
+    "en": "Animation"
+  },
+  "client": {
+    "de": "Murmur (podcast network)",
+    "en": "Murmur (podcast network)"
+  },
+  "services": {
+    "de": [
+      "Motion identity",
+      "Toolkit"
+    ],
+    "en": [
+      "Motion identity",
+      "Toolkit"
+    ]
+  },
+  "intro": {
+    "de": "A motion identity for a conversation-led podcast network.",
+    "en": "A motion identity for a conversation-led podcast network."
+  },
+  "overview": {
+    "de": [
+      "Murmur needed an identity you could hear. The mark animates to voice — a waveform that gathers and disperses.",
+      "A toolkit of loops lets each show brand itself within the system."
+    ],
+    "en": [
+      "Murmur needed an identity you could hear. The mark animates to voice — a waveform that gathers and disperses.",
+      "A toolkit of loops lets each show brand itself within the system."
+    ]
+  },
   "gallery": [
     {
-      "label": "Identity loop",
+      "label": {
+        "de": "Identity loop",
+        "en": "Identity loop"
+      },
       "span": "full"
     },
     {
-      "label": "Show bumpers",
+      "label": {
+        "de": "Show bumpers",
+        "en": "Show bumpers"
+      },
       "span": "half"
     },
     {
-      "label": "Waveform",
+      "label": {
+        "de": "Waveform",
+        "en": "Waveform"
+      },
       "span": "half"
     },
     {
-      "label": "Social",
+      "label": {
+        "de": "Social",
+        "en": "Social"
+      },
       "span": "full"
     }
   ]

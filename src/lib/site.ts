@@ -3,8 +3,13 @@
  * mirroring the projects.ts pattern: read Sanity when configured, fall back
  * to the built-in defaults below otherwise. The merge is per-field, so a
  * half-filled Studio document still renders a complete page.
+ *
+ * Localization: text fields are locale objects in the Studio; the queries
+ * coalesce(field.<locale>, field.de). The defaults are authored per locale
+ * below — DE prose is currently an EN duplicate pending real translation.
  */
 import { sanityConfigured, sanityFetch, imageUrl } from "./sanity";
+import { DEFAULT_LOCALE, type Locale } from "../i18n";
 
 export interface SocialLink {
   label: string;
@@ -46,7 +51,7 @@ export interface AboutPage {
   recognition: AboutRow[];
 }
 
-const SITE_DEFAULTS: SiteSettings = {
+const SITE_DEFAULTS_EN: SiteSettings = {
   headerMark: "Juno Vestergaard ©",
   email: "hello@studio.demo",
   contactLabel: "( Reach out )",
@@ -64,7 +69,20 @@ const SITE_DEFAULTS: SiteSettings = {
   footerNote: "Recreation study",
 };
 
-const ABOUT_DEFAULTS: AboutPage = {
+const SITE_DEFAULTS: Record<Locale, SiteSettings> = {
+  en: SITE_DEFAULTS_EN,
+  de: {
+    ...SITE_DEFAULTS_EN,
+    contactLabel: "( Kontakt )",
+    contactCta: "Sag hallo ↗",
+    archiveHeading: "Archiv",
+    location: "Kopenhagen",
+    copyright: "© 2026 — Neutrale Demo, alles Platzhalter",
+    footerNote: "Rekonstruktionsstudie",
+  },
+};
+
+const ABOUT_DEFAULTS_EN: AboutPage = {
   metaTitle: "About — Juno Vestergaard",
   title: "About",
   lede: "Design & art director working between brand, motion and the printed page.",
@@ -95,18 +113,47 @@ const ABOUT_DEFAULTS: AboutPage = {
   ],
 };
 
-const SITE_QUERY = `*[_type == "siteSettings"][0]{
-  headerMark, email, contactLabel, contactCta,
-  socials[]{ label, url },
-  archiveHeading, location, timezoneLabel, copyright, colophon, footerNote
+// DE prose is the EN copy for now (translation pending); short labels are German.
+const ABOUT_DEFAULTS: Record<Locale, AboutPage> = {
+  en: ABOUT_DEFAULTS_EN,
+  de: {
+    ...ABOUT_DEFAULTS_EN,
+    metaTitle: "Über — Juno Vestergaard",
+    title: "Über",
+    subMeta: "( Kopenhagen — seit 2014 )",
+    capabilitiesHeading: "Fähigkeiten",
+    recognitionHeading: "Auszeichnungen",
+  },
+};
+
+const siteQuery = (l: Locale) => `*[_type == "siteSettings"][0]{
+  "headerMark": coalesce(headerMark.${l}, headerMark.de),
+  email,
+  "contactLabel": coalesce(contactLabel.${l}, contactLabel.de),
+  "contactCta": coalesce(contactCta.${l}, contactCta.de),
+  "socials": socials[]{ "label": coalesce(label.${l}, label.de), url },
+  "archiveHeading": coalesce(archiveHeading.${l}, archiveHeading.de),
+  "location": coalesce(location.${l}, location.de),
+  "timezoneLabel": coalesce(timezoneLabel.${l}, timezoneLabel.de),
+  "copyright": coalesce(copyright.${l}, copyright.de),
+  "colophon": coalesce(colophon.${l}, colophon.de),
+  "footerNote": coalesce(footerNote.${l}, footerNote.de)
 }`;
 
-const ABOUT_QUERY = `*[_type == "aboutPage"][0]{
-  metaTitle, title, lede, subMeta, introQuote, bio,
+const aboutQuery = (l: Locale) => `*[_type == "aboutPage"][0]{
+  "metaTitle": coalesce(metaTitle.${l}, metaTitle.de),
+  "title": coalesce(title.${l}, title.de),
+  "lede": coalesce(lede.${l}, lede.de),
+  "subMeta": coalesce(subMeta.${l}, subMeta.de),
+  "introQuote": coalesce(introQuote.${l}, introQuote.de),
+  "bio": coalesce(bio.${l}, bio.de),
   "portrait": portrait.asset._ref,
-  portraitCaption, portraitYear,
-  capabilitiesHeading, capabilities[]{ title, detail },
-  recognitionHeading, recognition[]{ title, detail }
+  "portraitCaption": coalesce(portraitCaption.${l}, portraitCaption.de),
+  portraitYear,
+  "capabilitiesHeading": coalesce(capabilitiesHeading.${l}, capabilitiesHeading.de),
+  "capabilities": capabilities[]{ "title": coalesce(title.${l}, title.de), "detail": coalesce(detail.${l}, detail.de) },
+  "recognitionHeading": coalesce(recognitionHeading.${l}, recognitionHeading.de),
+  "recognition": recognition[]{ "title": coalesce(title.${l}, title.de), "detail": coalesce(detail.${l}, detail.de) }
 }`;
 
 // Sanity returns null for unset fields — keep the default in that case.
@@ -121,29 +168,39 @@ function withDefaults<T extends object>(defaults: T, doc: Record<string, unknown
   return out;
 }
 
-let siteCache: Promise<SiteSettings> | undefined;
-let aboutCache: Promise<AboutPage> | undefined;
+const siteCache = new Map<Locale, Promise<SiteSettings>>();
+const aboutCache = new Map<Locale, Promise<AboutPage>>();
 
-export function getSiteSettings(): Promise<SiteSettings> {
-  if (import.meta.env.DEV) return loadSiteSettings();
-  return (siteCache ??= loadSiteSettings());
+export function getSiteSettings(locale: Locale = DEFAULT_LOCALE): Promise<SiteSettings> {
+  if (import.meta.env.DEV) return loadSiteSettings(locale);
+  let p = siteCache.get(locale);
+  if (!p) {
+    p = loadSiteSettings(locale);
+    siteCache.set(locale, p);
+  }
+  return p;
 }
 
-export function getAboutPage(): Promise<AboutPage> {
-  if (import.meta.env.DEV) return loadAboutPage();
-  return (aboutCache ??= loadAboutPage());
+export function getAboutPage(locale: Locale = DEFAULT_LOCALE): Promise<AboutPage> {
+  if (import.meta.env.DEV) return loadAboutPage(locale);
+  let p = aboutCache.get(locale);
+  if (!p) {
+    p = loadAboutPage(locale);
+    aboutCache.set(locale, p);
+  }
+  return p;
 }
 
-async function loadSiteSettings(): Promise<SiteSettings> {
-  if (!sanityConfigured) return SITE_DEFAULTS;
-  const doc = await sanityFetch<Record<string, unknown> | null>(SITE_QUERY);
-  return withDefaults(SITE_DEFAULTS, doc);
+async function loadSiteSettings(locale: Locale): Promise<SiteSettings> {
+  if (!sanityConfigured) return SITE_DEFAULTS[locale];
+  const doc = await sanityFetch<Record<string, unknown> | null>(siteQuery(locale));
+  return withDefaults(SITE_DEFAULTS[locale], doc);
 }
 
-async function loadAboutPage(): Promise<AboutPage> {
-  if (!sanityConfigured) return ABOUT_DEFAULTS;
-  const doc = await sanityFetch<Record<string, unknown> | null>(ABOUT_QUERY);
-  const about = withDefaults(ABOUT_DEFAULTS, doc);
+async function loadAboutPage(locale: Locale): Promise<AboutPage> {
+  if (!sanityConfigured) return ABOUT_DEFAULTS[locale];
+  const doc = await sanityFetch<Record<string, unknown> | null>(aboutQuery(locale));
+  const about = withDefaults(ABOUT_DEFAULTS[locale], doc);
   about.portrait = imageUrl(about.portrait ?? undefined, { w: 1600 });
   return about;
 }

@@ -1,34 +1,73 @@
 {
   "order": 10,
-  "name": "Cinder",
-  "cat": "Packaging",
+  "name": {
+    "de": "Cinder",
+    "en": "Cinder"
+  },
+  "cat": {
+    "de": "Packaging",
+    "en": "Packaging"
+  },
   "yr": "2024",
-  "role": "Art Direction",
-  "client": "Cinder (coffee roaster)",
-  "services": [
-    "Packaging",
-    "Art direction"
-  ],
-  "intro": "Packaging for a small-batch coffee roaster.",
-  "overview": [
-    "Cinder roasts dark. The packaging leans into char — matte black with a single burned mark.",
-    "A tactile, unbleached stock carries the range across origins."
-  ],
+  "role": {
+    "de": "Art Direction",
+    "en": "Art Direction"
+  },
+  "client": {
+    "de": "Cinder (coffee roaster)",
+    "en": "Cinder (coffee roaster)"
+  },
+  "services": {
+    "de": [
+      "Packaging",
+      "Art direction"
+    ],
+    "en": [
+      "Packaging",
+      "Art direction"
+    ]
+  },
+  "intro": {
+    "de": "Packaging for a small-batch coffee roaster.",
+    "en": "Packaging for a small-batch coffee roaster."
+  },
+  "overview": {
+    "de": [
+      "Cinder roasts dark. The packaging leans into char — matte black with a single burned mark.",
+      "A tactile, unbleached stock carries the range across origins."
+    ],
+    "en": [
+      "Cinder roasts dark. The packaging leans into char — matte black with a single burned mark.",
+      "A tactile, unbleached stock carries the range across origins."
+    ]
+  },
   "gallery": [
     {
-      "label": "Range",
+      "label": {
+        "de": "Range",
+        "en": "Range"
+      },
       "span": "full"
     },
     {
-      "label": "Bag detail",
+      "label": {
+        "de": "Bag detail",
+        "en": "Bag detail"
+      },
       "span": "half"
     },
     {
-      "label": "Mark",
+      "label": {
+        "de": "Mark",
+        "en": "Mark"
+      },
       "span": "half"
     },
     {
-      "label": "Shelf",
+      "label": {
+        "de": "Shelf",
+        "en": "Shelf"
+      },
       "span": "full"
     }
   ]
