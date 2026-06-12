@@ -1,4 +1,4 @@
-# Juno Folio — Astro
+# Astro Folio
 
 An art-director portfolio built on **Astro** (static output), with the original
 hand-crafted motion layer intact: **GSAP + ScrollTrigger**, **Lenis** smooth

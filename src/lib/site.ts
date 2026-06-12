@@ -63,7 +63,7 @@ export interface HomePage {
 }
 
 const SITE_DEFAULTS_EN: SiteSettings = {
-  headerMark: "Juno Vestergaard ©",
+  headerMark: "Sebo Mayer ©",
   email: "hello@studio.demo",
   contactLabel: "( Reach out )",
   contactCta: "Say hello ↗",
@@ -94,7 +94,7 @@ const SITE_DEFAULTS: Record<Locale, SiteSettings> = {
 };
 
 const ABOUT_DEFAULTS_EN: AboutPage = {
-  metaTitle: "About — Juno Vestergaard",
+  metaTitle: "About — Sebo Mayer",
   title: "About",
   lede: "Design & art director working between brand, motion and the printed page.",
   subMeta: "( Copenhagen — est. 2014 )",
@@ -105,7 +105,7 @@ const ABOUT_DEFAULTS_EN: AboutPage = {
     "to <em>meaning</em>.",
   ],
   bio: [
-    "Juno Vestergaard is a Copenhagen-based design and art director with a decade of practice spanning identity systems, motion, and editorial. The work is led by typography and pacing — treating a brand less as a logo and more as a tempo that recurs across every surface.",
+    "Sebo Mayer is a Copenhagen-based design and art director with a decade of practice spanning identity systems, motion, and editorial. The work is led by typography and pacing — treating a brand less as a logo and more as a tempo that recurs across every surface.",
     '<span class="dim">Previously</span> design lead at a Scandinavian studio and an independent for cultural institutions, fashion houses and technology brands. Current focus: long-form brand worlds and the moving image.',
     '<span class="dim">Approach</span> — slow looking, sharp type, generous white space, and the conviction that restraint is its own kind of noise.',
   ],
@@ -140,7 +140,7 @@ const ABOUT_DEFAULTS: Record<Locale, AboutPage> = {
   en: ABOUT_DEFAULTS_EN,
   de: {
     ...ABOUT_DEFAULTS_EN,
-    metaTitle: "Über — Juno Vestergaard",
+    metaTitle: "Über — Sebo Mayer",
     title: "Über",
     subMeta: "( Kopenhagen — seit 2014 )",
     capabilitiesHeading: "Fähigkeiten",

@@ -112,7 +112,7 @@ export const ui: Record<Locale, UIDict> = {
     showreelPlaceholder: "Showreel in voller Länge — Master-Cut hier ablegen",
 
     workTitle: "Arbeiten",
-    workMetaTitle: "Arbeiten — Juno Vestergaard",
+    workMetaTitle: "Arbeiten — Sebo Mayer",
     workDescription:
       "Ausgewählte Projekte aus Brand, Motion, Editorial und Digital — 2021 bis heute.",
     workScramble: "( Arbeiten )",
@@ -137,7 +137,7 @@ export const ui: Record<Locale, UIDict> = {
     selectedLabel: "( Auswahl )",
 
     archiveTitle: "Archiv",
-    archiveMetaTitle: "Archiv — Juno Vestergaard",
+    archiveMetaTitle: "Archiv — Sebo Mayer",
     archiveDescription:
       "Der vollständige Index — jedes Projekt, chronologisch, mit Typ und Rolle.",
     archiveScramble: "( Archiv )",
@@ -161,9 +161,9 @@ export const ui: Record<Locale, UIDict> = {
     footHome: "Home",
     footBased: "Based",
 
-    homeTitle: "Juno Vestergaard — Design & Art Director",
+    homeTitle: "Sebo Mayer — Design & Art Director",
     homeDescription:
-      "Design and art direction across brand, motion and editorial — the portfolio of Juno Vestergaard.",
+      "Design and art direction across brand, motion and editorial — the portfolio of Sebo Mayer.",
     loadingLabel: "( Loading )",
     heroCity: "( Copenhagen )",
     scrollCue: "( Scroll )",
@@ -184,7 +184,7 @@ export const ui: Record<Locale, UIDict> = {
     showreelPlaceholder: "Full showreel — drop master cut here",
 
     workTitle: "Work",
-    workMetaTitle: "Work — Juno Vestergaard",
+    workMetaTitle: "Work — Sebo Mayer",
     workDescription:
       "Selected projects across brand, motion, editorial and digital — 2021 to now.",
     workScramble: "( Work )",
@@ -209,7 +209,7 @@ export const ui: Record<Locale, UIDict> = {
     selectedLabel: "( Selected )",
 
     archiveTitle: "Archive",
-    archiveMetaTitle: "Archive — Juno Vestergaard",
+    archiveMetaTitle: "Archive — Sebo Mayer",
     archiveDescription:
       "The full index — every project, chronological, type and role.",
     archiveScramble: "( Archive )",

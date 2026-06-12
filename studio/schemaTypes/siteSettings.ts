@@ -11,7 +11,7 @@ export default defineType({
   title: "Site Settings",
   type: "document",
   fields: [
-    defineField({ name: "headerMark", title: "Header mark", type: "localeString", description: 'Top-left logo text, e.g. "Juno Vestergaard ©".' }),
+    defineField({ name: "headerMark", title: "Header mark", type: "localeString", description: 'Top-left logo text, e.g. "Sebo Mayer ©".' }),
     defineField({ name: "email", title: "Contact email", type: "string", description: "Copied to the clipboard by the footer's contact button." }),
     defineField({ name: "contactLabel", title: "Contact label", type: "localeString", description: 'Small label above the contact button, e.g. "( Kontakt )".' }),
     defineField({ name: "contactCta", title: "Contact button text", type: "localeString", description: 'e.g. "Sag hallo ↗".' }),
