@@ -18,16 +18,8 @@
     "en": "Self-initiated"
   },
   "services": {
-    "de": [
-      "Photography",
-      "Book",
-      "Exhibition"
-    ],
-    "en": [
-      "Photography",
-      "Book",
-      "Exhibition"
-    ]
+    "de": ["Photography", "Book", "Exhibition"],
+    "en": ["Photography", "Book", "Exhibition"]
   },
   "intro": {
     "de": "A self-initiated photographic study of the North Sea at its lowest tide.",

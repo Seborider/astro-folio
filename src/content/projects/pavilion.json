@@ -18,16 +18,8 @@
     "en": "Pavilion Architecture Biennale"
   },
   "services": {
-    "de": [
-      "Art direction",
-      "Wayfinding",
-      "Photography"
-    ],
-    "en": [
-      "Art direction",
-      "Wayfinding",
-      "Photography"
-    ]
+    "de": ["Art direction", "Wayfinding", "Photography"],
+    "en": ["Art direction", "Wayfinding", "Photography"]
   },
   "intro": {
     "de": "Art direction for a temporary architecture biennale staged across a harbour.",

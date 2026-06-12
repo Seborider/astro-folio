@@ -18,16 +18,8 @@
     "en": "Verso (independent publisher)"
   },
   "services": {
-    "de": [
-      "Identity",
-      "Cover system",
-      "Stationery"
-    ],
-    "en": [
-      "Identity",
-      "Cover system",
-      "Stationery"
-    ]
+    "de": ["Identity", "Cover system", "Stationery"],
+    "en": ["Identity", "Cover system", "Stationery"]
   },
   "intro": {
     "de": "Identity for an independent publisher of translated fiction.",

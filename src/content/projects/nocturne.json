@@ -18,16 +18,8 @@
     "en": "Nocturne (feature film)"
   },
   "services": {
-    "de": [
-      "Title sequence",
-      "Logotype",
-      "Key art"
-    ],
-    "en": [
-      "Title sequence",
-      "Logotype",
-      "Key art"
-    ]
+    "de": ["Title sequence", "Logotype", "Key art"],
+    "en": ["Title sequence", "Logotype", "Key art"]
   },
   "intro": {
     "de": "Main titles and identity for a nocturnal psychological thriller.",
@@ -44,14 +36,8 @@
     ]
   },
   "quote": {
-    "de": [
-      "Everything begins as an",
-      "<em>accident</em> of attention."
-    ],
-    "en": [
-      "Everything begins as an",
-      "<em>accident</em> of attention."
-    ]
+    "de": ["Everything begins as an", "<em>accident</em> of attention."],
+    "en": ["Everything begins as an", "<em>accident</em> of attention."]
   },
   "gallery": [
     {

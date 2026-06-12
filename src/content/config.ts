@@ -23,12 +23,12 @@ const projects = defineCollection({
     // are otherwise unordered). Lower = earlier / more recent.
     order: z.number(),
     name: localized(z.string()),
-    cat: localized(z.string()),    // e.g. "Brand · Motion"
-    yr: z.string(),                // string so "2026" stays as-authored
+    cat: localized(z.string()), // e.g. "Brand · Motion"
+    yr: z.string(), // string so "2026" stays as-authored
     role: localized(z.string()),
     client: localized(z.string()),
     services: localized(z.array(z.string())),
-    intro: localized(z.string()),          // one-line lede
+    intro: localized(z.string()), // one-line lede
     overview: localized(z.array(z.string())), // paragraphs
     quote: localized(z.array(z.string())).optional(), // pull-quote lines (may contain <em>)
     cover: z.string().optional(), // image URL/path; placeholder when absent
@@ -37,7 +37,7 @@ const projects = defineCollection({
         label: localized(z.string()),
         span: z.enum(["full", "half"]),
         image: z.string().optional(), // image URL/path; placeholder when absent
-      })
+      }),
     ),
   }),
 });

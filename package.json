@@ -17,6 +17,8 @@
   },
   "devDependencies": {
     "@types/react": "^18.3.31",
-    "@types/react-dom": "^18.3.7"
+    "@types/react-dom": "^18.3.7",
+    "prettier": "^3.8.4",
+    "prettier-plugin-astro": "^0.14.1"
   }
 }

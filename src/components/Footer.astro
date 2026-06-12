@@ -11,47 +11,86 @@ import { getSiteSettings } from "../lib/site";
 import { localePath, type Locale } from "../i18n";
 import { t } from "../i18n/ui";
 
-interface CarouselItem { id: string; name: string; yr: string; cover?: string | null; }
-interface Props { locale: Locale; carousel?: CarouselItem[]; }
+interface CarouselItem {
+  id: string;
+  name: string;
+  yr: string;
+  cover?: string | null;
+}
+interface Props {
+  locale: Locale;
+  carousel?: CarouselItem[];
+}
 const { locale, carousel } = Astro.props;
 const s = await getSiteSettings(locale);
 const tr = t(locale);
 ---
-<footer class="footer" id={carousel ? "archive" : undefined} data-screen-label="Footer">
-  {carousel && (
-    <>
-      <div class="footer__head">
-        <h2>{s.archiveHeading}</h2>
-        <span class="meta" id="carCount">( 1 / {String(carousel.length).padStart(2, "0")} )</span>
-      </div>
-      <div class="carousel" id="carousel">
-        {carousel.map((p) => (
-          <a class="carousel__item" href={localePath(locale, `/work/${p.id}`)} data-cursor="open">
-            <div class="carousel__media"><Media src={p.cover} label={p.name} /></div>
-            <div class="carousel__cap"><span>{p.name}</span><span>{p.yr}</span></div>
-          </a>
-        ))}
-      </div>
-    </>
-  )}
+
+<footer
+  class="footer"
+  id={carousel ? "archive" : undefined}
+  data-screen-label="Footer"
+>
+  {
+    carousel && (
+      <>
+        <div class="footer__head">
+          <h2>{s.archiveHeading}</h2>
+          <span class="meta" id="carCount">
+            ( 1 / {String(carousel.length).padStart(2, "0")} )
+          </span>
+        </div>
+        <div class="carousel" id="carousel">
+          {carousel.map((p) => (
+            <a
+              class="carousel__item"
+              href={localePath(locale, `/work/${p.id}`)}
+              data-cursor="open"
+            >
+              <div class="carousel__media">
+                <Media src={p.cover} label={p.name} />
+              </div>
+              <div class="carousel__cap">
+                <span>{p.name}</span>
+                <span>{p.yr}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </>
+    )
+  }
 
   <div class="footer__grid">
     <div class="footer__contact">
       <div class="meta" style="margin-bottom:18px">{s.contactLabel}</div>
-      <a class="big" id="emailBtn" href="#" data-email={s.email} data-cursor="copy">{s.contactCta}</a>
+      <a
+        class="big"
+        id="emailBtn"
+        href="#"
+        data-email={s.email}
+        data-cursor="copy">{s.contactCta}</a
+      >
     </div>
     <div class="footer__col">
       <h4>{tr.footSocials}</h4>
-      {s.socials.map((soc) => (
-        <a href={soc.url} data-cursor="view">{soc.label}</a>
-      ))}
+      {
+        s.socials.map((soc) => (
+          <a href={soc.url} data-cursor="view">
+            {soc.label}
+          </a>
+        ))
+      }
     </div>
     <div class="footer__col">
       <h4>{tr.footIndex}</h4>
       <a href={localePath(locale, "/")} data-cursor="home">{tr.footHome}</a>
       <a href={localePath(locale, "/work")} data-cursor="view">{tr.navWork}</a>
-      <a href={localePath(locale, "/about")} data-cursor="view">{tr.navAbout}</a>
-      <a href={localePath(locale, "/archive")} data-cursor="view">{tr.navArchive}</a>
+      <a href={localePath(locale, "/about")} data-cursor="view">{tr.navAbout}</a
+      >
+      <a href={localePath(locale, "/archive")} data-cursor="view"
+        >{tr.navArchive}</a
+      >
     </div>
     <div class="footer__col">
       <h4>{tr.footBased}</h4>

@@ -18,16 +18,8 @@
     "en": "Saltfield (outerwear)"
   },
   "services": {
-    "de": [
-      "Campaign",
-      "CG environments",
-      "Lookbook"
-    ],
-    "en": [
-      "Campaign",
-      "CG environments",
-      "Lookbook"
-    ]
+    "de": ["Campaign", "CG environments", "Lookbook"],
+    "en": ["Campaign", "CG environments", "Lookbook"]
   },
   "intro": {
     "de": "A launch campaign for a coastal outerwear label, built in CG and grain.",

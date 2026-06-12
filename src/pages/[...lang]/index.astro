@@ -15,14 +15,24 @@ const { locale } = Astro.props;
 const tr = t(locale);
 const projects = await getProjects(locale);
 const selected = projects.slice(0, 8);
-const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr, cover: p.cover }));
+const carousel = projects.map((p) => ({
+  id: p.id,
+  name: p.name,
+  yr: p.yr,
+  cover: p.cover,
+}));
 const home = await getHomePage(locale);
 // Fixed 8-slot reel layout — editors fill tiles in order and only set
 // tiles render. Keep in sync with REEL_WIDTHS in src/lib/site.ts.
 const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
 ---
 
-<Base title={tr.homeTitle} description={tr.homeDescription} home={true} locale={locale}>
+<Base
+  title={tr.homeTitle}
+  description={tr.homeDescription}
+  home={true}
+  locale={locale}
+>
   <!-- LOADER -->
   <div class="loader" id="loader">
     <div class="loader__count" id="loaderCount">0</div>
@@ -51,7 +61,10 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
           <span class="scramble" data-text="PORTFOLIO">PORTFOLIO</span>
           <span class="paren">( 2026 )</span>
         </p>
-        <div class="scroll-cue meta"><span class="dot"></span> {tr.scrollCue}</div>
+        <div class="scroll-cue meta">
+          <span class="dot"></span>
+          {tr.scrollCue}
+        </div>
       </div>
     </div>
   </section>
@@ -59,12 +72,18 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
   <!-- STATEMENT -->
   <section class="statement" id="about" data-screen-label="Statement">
     <div class="statement__index meta">
-      <span>( 01 )</span><span class="rule"></span><span>{tr.statementLabel}</span>
+      <span>( 01 )</span><span class="rule"></span><span
+        >{tr.statementLabel}</span
+      >
     </div>
     <blockquote class="statement__quote reveal-lines">
-      {tr.statementLines.map((line) => (
-        <span class="line"><span set:html={line}></span></span>
-      ))}
+      {
+        tr.statementLines.map((line) => (
+          <span class="line">
+            <span set:html={line} />
+          </span>
+        ))
+      }
     </blockquote>
     <p class="statement__attr meta">{tr.statementAttr}</p>
   </section>
@@ -76,32 +95,49 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
       <span class="meta">( 2021 — 2026 )</span>
     </div>
     <div class="reel__grid">
-      {home.reelTiles.map((tile, i) => (
-        <div class={`reel__tile ${reelSlots[i]}`} data-reveal>
-          <span class="tile-no">{String(i + 1).padStart(2, "0")}</span>
-          <Media src={tile.image} video={tile.video} label={tile.label} />
-        </div>
-      ))}
+      {
+        home.reelTiles.map((tile, i) => (
+          <div class={`reel__tile ${reelSlots[i]}`} data-reveal>
+            <span class="tile-no">{String(i + 1).padStart(2, "0")}</span>
+            <Media src={tile.image} video={tile.video} label={tile.label} />
+          </div>
+        ))
+      }
     </div>
     <div class="reel__cta">
-      <button id="playReel" data-cursor="play"><span class="tri"></span> {tr.playReel}</button>
+      <button id="playReel" data-cursor="play"
+        ><span class="tri"></span> {tr.playReel}</button
+      >
     </div>
   </section>
 
   <!-- WORK LIST -->
   <section class="work" id="work" data-screen-label="Work">
     <div class="statement__index meta" style="margin-bottom:40px">
-      <span>( 02 )</span><span class="rule"></span><span>{tr.workIndexLabel}</span>
+      <span>( 02 )</span><span class="rule"></span><span
+        >{tr.workIndexLabel}</span
+      >
     </div>
     <div class="work__list">
-      {selected.map((p, i) => (
-        <a class="work__row" href={localePath(locale, `/work/${p.id}`)} data-cursor="open" data-name={p.name} data-cover={p.cover} data-reveal>
-          <span class="idx">{String(i + 1).padStart(2, "0")}</span>
-          <span class="name" data-scramble>{p.name}</span>
-          <span class="cat">{p.cat}</span>
-          <span class="yr">{p.yr}</span>
-        </a>
-      ))}
+      {
+        selected.map((p, i) => (
+          <a
+            class="work__row"
+            href={localePath(locale, `/work/${p.id}`)}
+            data-cursor="open"
+            data-name={p.name}
+            data-cover={p.cover}
+            data-reveal
+          >
+            <span class="idx">{String(i + 1).padStart(2, "0")}</span>
+            <span class="name" data-scramble>
+              {p.name}
+            </span>
+            <span class="cat">{p.cat}</span>
+            <span class="yr">{p.yr}</span>
+          </a>
+        ))
+      }
     </div>
   </section>
 
@@ -111,13 +147,21 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
   <div class="showreel" id="showreel">
     <div class="showreel__bar">
       <span class="meta">{tr.showreelLabel}</span>
-      <button class="showreel__close" id="closeReel" data-cursor="close">{tr.close}</button>
+      <button class="showreel__close" id="closeReel" data-cursor="close"
+        >{tr.close}</button
+      >
     </div>
     <div class="showreel__player">
-      <div class="placeholder ph-motion"><span>{tr.showreelPlaceholder}</span></div>
+      <div class="placeholder ph-motion">
+        <span>{tr.showreelPlaceholder}</span>
+      </div>
     </div>
   </div>
 
   <!-- floating work preview (home.js swaps the img in when a row has a cover) -->
-  <div class="work__preview" id="workPreview"><img alt="" hidden /><div class="placeholder ph-motion"><span>preview</span></div></div>
+  <div class="work__preview" id="workPreview">
+    <img alt="" hidden /><div class="placeholder ph-motion">
+      <span>preview</span>
+    </div>
+  </div>
 </Base>

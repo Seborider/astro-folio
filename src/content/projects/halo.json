@@ -18,14 +18,8 @@
     "en": "Halo (lighting studio)"
   },
   "services": {
-    "de": [
-      "Identity",
-      "Website"
-    ],
-    "en": [
-      "Identity",
-      "Website"
-    ]
+    "de": ["Identity", "Website"],
+    "en": ["Identity", "Website"]
   },
   "intro": {
     "de": "Identity for an architectural lighting studio.",

@@ -20,11 +20,15 @@ const API_HOST = import.meta.env.DEV ? "api.sanity.io" : "apicdn.sanity.io";
 export const sanityConfigured = Boolean(PROJECT_ID);
 
 export async function sanityFetch<T>(query: string): Promise<T> {
-  if (!PROJECT_ID) throw new Error("Sanity is not configured (PUBLIC_SANITY_PROJECT_ID missing).");
+  if (!PROJECT_ID)
+    throw new Error(
+      "Sanity is not configured (PUBLIC_SANITY_PROJECT_ID missing).",
+    );
   const encoded = encodeURIComponent(query);
   const url = `https://${PROJECT_ID}.${API_HOST}/v${API_VERSION}/data/query/${DATASET}?query=${encoded}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Sanity query failed: ${res.status} ${res.statusText}`);
+  if (!res.ok)
+    throw new Error(`Sanity query failed: ${res.status} ${res.statusText}`);
   const json = await res.json();
   return json.result as T;
 }
@@ -33,7 +37,10 @@ export async function sanityFetch<T>(query: string): Promise<T> {
  * Build an image CDN URL from a Sanity image asset ref.
  * `image.asset._ref` looks like: image-<id>-<w>x<h>-<ext>
  */
-export function imageUrl(ref: string | undefined, opts: { w?: number; h?: number } = {}): string | null {
+export function imageUrl(
+  ref: string | undefined,
+  opts: { w?: number; h?: number } = {},
+): string | null {
   if (!ref || !PROJECT_ID) return null;
   const [, id, dims, ext] = ref.split("-");
   if (!id || !dims || !ext) return null;

@@ -11,7 +11,11 @@ import { defineType, defineField } from "sanity";
  * { de, en? } shape — keep the two in sync.
  */
 const englishFieldset = [
-  { name: "english", title: "English", options: { collapsible: true, collapsed: true } },
+  {
+    name: "english",
+    title: "English",
+    options: { collapsible: true, collapsed: true },
+  },
 ];
 
 export const localeString = defineType({
@@ -20,8 +24,18 @@ export const localeString = defineType({
   type: "object",
   fieldsets: englishFieldset,
   fields: [
-    defineField({ name: "de", title: "Deutsch", type: "string", validation: (r) => r.required() }),
-    defineField({ name: "en", title: "English", type: "string", fieldset: "english" }),
+    defineField({
+      name: "de",
+      title: "Deutsch",
+      type: "string",
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "en",
+      title: "English",
+      type: "string",
+      fieldset: "english",
+    }),
   ],
 });
 
@@ -31,8 +45,20 @@ export const localeText = defineType({
   type: "object",
   fieldsets: englishFieldset,
   fields: [
-    defineField({ name: "de", title: "Deutsch", type: "text", rows: 3, validation: (r) => r.required() }),
-    defineField({ name: "en", title: "English", type: "text", rows: 3, fieldset: "english" }),
+    defineField({
+      name: "de",
+      title: "Deutsch",
+      type: "text",
+      rows: 3,
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "en",
+      title: "English",
+      type: "text",
+      rows: 3,
+      fieldset: "english",
+    }),
   ],
 });
 
@@ -49,7 +75,13 @@ export const localeStringArray = defineType({
       of: [{ type: "string" }],
       validation: (r) => r.required().min(1),
     }),
-    defineField({ name: "en", title: "English", type: "array", of: [{ type: "string" }], fieldset: "english" }),
+    defineField({
+      name: "en",
+      title: "English",
+      type: "array",
+      of: [{ type: "string" }],
+      fieldset: "english",
+    }),
   ],
 });
 
@@ -66,6 +98,12 @@ export const localeTextArray = defineType({
       of: [{ type: "text", rows: 3 }],
       validation: (r) => r.required().min(1),
     }),
-    defineField({ name: "en", title: "English", type: "array", of: [{ type: "text", rows: 3 }], fieldset: "english" }),
+    defineField({
+      name: "en",
+      title: "English",
+      type: "array",
+      of: [{ type: "text", rows: 3 }],
+      fieldset: "english",
+    }),
   ],
 });

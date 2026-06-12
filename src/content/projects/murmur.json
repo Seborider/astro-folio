@@ -18,14 +18,8 @@
     "en": "Murmur (podcast network)"
   },
   "services": {
-    "de": [
-      "Motion identity",
-      "Toolkit"
-    ],
-    "en": [
-      "Motion identity",
-      "Toolkit"
-    ]
+    "de": ["Motion identity", "Toolkit"],
+    "en": ["Motion identity", "Toolkit"]
   },
   "intro": {
     "de": "A motion identity for a conversation-led podcast network.",

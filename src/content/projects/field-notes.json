@@ -18,14 +18,8 @@
     "en": "Field Notes Journal"
   },
   "services": {
-    "de": [
-      "Editorial design",
-      "Typography"
-    ],
-    "en": [
-      "Editorial design",
-      "Typography"
-    ]
+    "de": ["Editorial design", "Typography"],
+    "en": ["Editorial design", "Typography"]
   },
   "intro": {
     "de": "A quarterly journal of fieldwork and design research.",

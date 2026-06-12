@@ -18,15 +18,29 @@ const s = await getSiteSettings(locale);
 const tr = t(locale);
 const switchHref = altLocalePath(locale, Astro.url.pathname);
 ---
+
 <header class="header">
-  <a class="header__mark" href={localePath(locale, "/")} data-cursor="home">{s.headerMark}</a>
+  <a class="header__mark" href={localePath(locale, "/")} data-cursor="home"
+    >{s.headerMark}</a
+  >
   <nav class="header__nav">
     <a href={localePath(locale, "/work")} data-cursor="view">{tr.navWork}</a>
     <a href={localePath(locale, "/about")} data-cursor="view">{tr.navAbout}</a>
-    <a href={localePath(locale, "/archive")} data-cursor="view">{tr.navArchive}</a>
-    <a class="lang-switch" href={switchHref} data-cursor="view" aria-label={tr.langSwitchLabel}>
+    <a href={localePath(locale, "/archive")} data-cursor="view"
+      >{tr.navArchive}</a
+    >
+    <a
+      class="lang-switch"
+      href={switchHref}
+      data-cursor="view"
+      aria-label={tr.langSwitchLabel}
+    >
       {locale === "de" ? "EN" : "DE"}
     </a>
-    <button class="theme-toggle" data-theme-toggle aria-label={tr.themeToggleLabel}>◐</button>
+    <button
+      class="theme-toggle"
+      data-theme-toggle
+      aria-label={tr.themeToggleLabel}>◐</button
+    >
   </nav>
 </header>

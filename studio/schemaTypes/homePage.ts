@@ -28,7 +28,8 @@ export default defineType({
               name: "label",
               title: "Label",
               type: "localeString",
-              description: "Alt text; also the placeholder caption if no media is set.",
+              description:
+                "Alt text; also the placeholder caption if no media is set.",
               validation: (r) => r.required(),
             }),
             defineField({
@@ -45,7 +46,8 @@ export default defineType({
               title: "Video loop",
               type: "file",
               options: { accept: "video/mp4" },
-              description: "Short muted mp4 (autoplays, loops). The image is used as poster.",
+              description:
+                "Short muted mp4 (autoplays, loops). The image is used as poster.",
             }),
           ],
           preview: { select: { title: "label.de", media: "image" } },

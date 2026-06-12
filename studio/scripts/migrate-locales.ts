@@ -15,14 +15,37 @@ const client = getCliClient({ apiVersion: "2024-01-01" });
 
 type Doc = Record<string, any>;
 
-const PROJECT_FIELDS = ["name", "cat", "role", "client", "services", "intro", "overview", "quote"];
+const PROJECT_FIELDS = [
+  "name",
+  "cat",
+  "role",
+  "client",
+  "services",
+  "intro",
+  "overview",
+  "quote",
+];
 const SITE_FIELDS = [
-  "headerMark", "contactLabel", "contactCta", "archiveHeading", "location",
-  "timezoneLabel", "copyright", "colophon", "footerNote",
+  "headerMark",
+  "contactLabel",
+  "contactCta",
+  "archiveHeading",
+  "location",
+  "timezoneLabel",
+  "copyright",
+  "colophon",
+  "footerNote",
 ];
 const ABOUT_FIELDS = [
-  "metaTitle", "title", "lede", "subMeta", "introQuote", "bio",
-  "portraitCaption", "capabilitiesHeading", "recognitionHeading",
+  "metaTitle",
+  "title",
+  "lede",
+  "subMeta",
+  "introQuote",
+  "bio",
+  "portraitCaption",
+  "capabilitiesHeading",
+  "recognitionHeading",
 ];
 
 const isFlat = (v: unknown) =>
@@ -42,7 +65,11 @@ function localize(doc: Doc, fields: string[]): Doc {
 // social labels, capabilities/recognition rows)
 function localizeRows(doc: Doc, field: string, keys: string[]): Doc {
   const rows = doc[field];
-  if (!Array.isArray(rows) || !rows.some((r) => keys.some((k) => isFlat(r?.[k])))) return {};
+  if (
+    !Array.isArray(rows) ||
+    !rows.some((r) => keys.some((k) => isFlat(r?.[k])))
+  )
+    return {};
   return {
     [field]: rows.map((r: Doc) => {
       const out = { ...r };
@@ -54,16 +81,22 @@ function localizeRows(doc: Doc, field: string, keys: string[]): Doc {
 
 async function run() {
   const docs: Doc[] = await client.fetch(
-    `*[_type in ["project", "siteSettings", "aboutPage"]]`
+    `*[_type in ["project", "siteSettings", "aboutPage"]]`,
   );
   let patched = 0;
 
   for (const doc of docs) {
     let set: Doc = {};
     if (doc._type === "project") {
-      set = { ...localize(doc, PROJECT_FIELDS), ...localizeRows(doc, "gallery", ["label"]) };
+      set = {
+        ...localize(doc, PROJECT_FIELDS),
+        ...localizeRows(doc, "gallery", ["label"]),
+      };
     } else if (doc._type === "siteSettings") {
-      set = { ...localize(doc, SITE_FIELDS), ...localizeRows(doc, "socials", ["label"]) };
+      set = {
+        ...localize(doc, SITE_FIELDS),
+        ...localizeRows(doc, "socials", ["label"]),
+      };
     } else if (doc._type === "aboutPage") {
       set = {
         ...localize(doc, ABOUT_FIELDS),
@@ -77,11 +110,15 @@ async function run() {
       continue;
     }
     await client.patch(doc._id).set(set).commit();
-    console.log(`→ ${doc._type} ${doc._id} — localized: ${Object.keys(set).join(", ")}`);
+    console.log(
+      `→ ${doc._type} ${doc._id} — localized: ${Object.keys(set).join(", ")}`,
+    );
     patched++;
   }
 
-  console.log(`Done. ${patched} document(s) patched, ${docs.length - patched} already migrated.`);
+  console.log(
+    `Done. ${patched} document(s) patched, ${docs.length - patched} already migrated.`,
+  );
 }
 
 run().catch((err) => {

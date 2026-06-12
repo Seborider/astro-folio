@@ -18,16 +18,8 @@
     "en": "Halcyon Audio"
   },
   "services": {
-    "de": [
-      "Brand identity",
-      "Motion system",
-      "Art direction"
-    ],
-    "en": [
-      "Brand identity",
-      "Motion system",
-      "Art direction"
-    ]
+    "de": ["Brand identity", "Motion system", "Art direction"],
+    "en": ["Brand identity", "Motion system", "Art direction"]
   },
   "intro": {
     "de": "A calm-tech identity for a sound-hardware company — a system built to breathe.",
@@ -44,14 +36,8 @@
     ]
   },
   "quote": {
-    "de": [
-      "Restraint is its own",
-      "kind of <em>noise</em>."
-    ],
-    "en": [
-      "Restraint is its own",
-      "kind of <em>noise</em>."
-    ]
+    "de": ["Restraint is its own", "kind of <em>noise</em>."],
+    "en": ["Restraint is its own", "kind of <em>noise</em>."]
   },
   "gallery": [
     {

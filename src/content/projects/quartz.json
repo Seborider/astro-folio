@@ -18,16 +18,8 @@
     "en": "Quartz (museum show)"
   },
   "services": {
-    "de": [
-      "Spatial design",
-      "Wayfinding",
-      "Catalogue"
-    ],
-    "en": [
-      "Spatial design",
-      "Wayfinding",
-      "Catalogue"
-    ]
+    "de": ["Spatial design", "Wayfinding", "Catalogue"],
+    "en": ["Spatial design", "Wayfinding", "Catalogue"]
   },
   "intro": {
     "de": "Spatial and graphic design for a mineralogy exhibition.",

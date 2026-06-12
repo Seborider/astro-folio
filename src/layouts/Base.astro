@@ -21,16 +21,24 @@ interface Props {
   home?: boolean;
   locale?: Locale;
 }
-const { title = "Sebo Mayer", description, home = false, locale = DEFAULT_LOCALE } = Astro.props;
+const {
+  title = "Sebo Mayer",
+  description,
+  home = false,
+  locale = DEFAULT_LOCALE,
+} = Astro.props;
 
 // hreflang pair — this page in both locales (slugs are shared across locales).
 // Normalize the trailing slash so self and alternate URLs match in style.
-const path = Astro.url.pathname.length > 1 ? Astro.url.pathname.replace(/\/+$/, "") : Astro.url.pathname;
+const path =
+  Astro.url.pathname.length > 1
+    ? Astro.url.pathname.replace(/\/+$/, "")
+    : Astro.url.pathname;
 const dePath = locale === "de" ? path : altLocalePath("en", path);
 const enPath = locale === "en" ? path : altLocalePath("de", path);
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang={locale}>
   <head>
     <meta charset="UTF-8" />
@@ -42,23 +50,40 @@ const enPath = locale === "en" ? path : altLocalePath("de", path);
     <meta property="og:locale" content={locale === "de" ? "de_DE" : "en_GB"} />
     <link rel="alternate" hreflang="de" href={new URL(dePath, Astro.site)} />
     <link rel="alternate" hreflang="en" href={new URL(enPath, Astro.site)} />
-    <link rel="alternate" hreflang="x-default" href={new URL(dePath, Astro.site)} />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(dePath, Astro.site)}
+    />
     <!-- theme: runs before first paint (no FOUC). Absent attribute = dark. -->
     <script is:inline>
       (function () {
         function apply(theme) {
-          if (theme === "light") document.documentElement.dataset.theme = "light";
+          if (theme === "light")
+            document.documentElement.dataset.theme = "light";
           else delete document.documentElement.dataset.theme;
         }
         let stored = null;
-        try { stored = localStorage.getItem("theme"); } catch (e) {}
-        apply(stored || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"));
+        try {
+          stored = localStorage.getItem("theme");
+        } catch (e) {}
+        apply(
+          stored ||
+            (matchMedia("(prefers-color-scheme: light)").matches
+              ? "light"
+              : "dark"),
+        );
         // delegated so it works even though the button parses later
         document.addEventListener("click", function (e) {
           if (!e.target.closest("[data-theme-toggle]")) return;
-          const theme = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+          const theme =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
           apply(theme);
-          try { localStorage.setItem("theme", theme); } catch (e) {}
+          try {
+            localStorage.setItem("theme", theme);
+          } catch (e) {}
           window.dispatchEvent(new Event("themechange"));
         });
       })();
@@ -86,14 +111,21 @@ const enPath = locale === "en" ? path : altLocalePath("de", path);
     <Tweaks client:idle />
 
     <!-- libraries -->
-    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script is:inline src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+    <script
+      is:inline
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+    ></script>
+    <script
+      is:inline
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+    ></script>
+    <script is:inline src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"
+    ></script>
 
     <!-- app (order matters) -->
     <script is:inline src="/scripts/webgl-bg.js"></script>
     <script is:inline src="/scripts/chrome.js"></script>
     <script is:inline src="/scripts/core.js"></script>
-    {home && <script is:inline src="/scripts/home.js"></script>}
+    {home && <script is:inline src="/scripts/home.js" />}
   </body>
 </html>

@@ -18,14 +18,8 @@
     "en": "Aperture Optics"
   },
   "services": {
-    "de": [
-      "Identity",
-      "Packaging"
-    ],
-    "en": [
-      "Identity",
-      "Packaging"
-    ]
+    "de": ["Identity", "Packaging"],
+    "en": ["Identity", "Packaging"]
   },
   "intro": {
     "de": "Identity for a precision cinema-lens manufacturer.",

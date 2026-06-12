@@ -20,7 +20,7 @@ export interface Shot {
 }
 
 export interface Project {
-  id: string;          // slug
+  id: string; // slug
   order: number;
   name: string;
   cat: string;
@@ -55,7 +55,9 @@ const projectQuery = (l: Locale) => `*[_type == "project"] | order(order asc){
 
 const cache = new Map<Locale, Promise<Project[]>>(); // per-locale memo for the static build
 
-export function getProjects(locale: Locale = DEFAULT_LOCALE): Promise<Project[]> {
+export function getProjects(
+  locale: Locale = DEFAULT_LOCALE,
+): Promise<Project[]> {
   if (import.meta.env.DEV) return loadProjects(locale); // always fresh in dev
   let p = cache.get(locale);
   if (!p) {
@@ -97,7 +99,11 @@ async function loadProjects(locale: Locale): Promise<Project[]> {
         overview: pick(d.overview, locale),
         quote: d.quote && pick(d.quote, locale),
         cover: d.cover,
-        gallery: d.gallery.map((g) => ({ label: pick(g.label, locale), span: g.span, image: g.image })),
+        gallery: d.gallery.map((g) => ({
+          label: pick(g.label, locale),
+          span: g.span,
+          image: g.image,
+        })),
       };
     })
     .sort((a, b) => a.order - b.order);

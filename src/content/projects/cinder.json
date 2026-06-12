@@ -18,14 +18,8 @@
     "en": "Cinder (coffee roaster)"
   },
   "services": {
-    "de": [
-      "Packaging",
-      "Art direction"
-    ],
-    "en": [
-      "Packaging",
-      "Art direction"
-    ]
+    "de": ["Packaging", "Art direction"],
+    "en": ["Packaging", "Art direction"]
   },
   "intro": {
     "de": "Packaging for a small-batch coffee roaster.",

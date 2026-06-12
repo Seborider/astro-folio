@@ -63,6 +63,7 @@ studio/                      # Sanity Studio (optional CMS)
 ```
 
 ### The content model
+
 Projects are **structured data**, not long-form articles, so they live in a
 `type: "data"` collection — one JSON file per project in `src/content/projects/`.
 The **filename is the slug**: `halcyon.json` → `/work/halcyon`.
@@ -80,11 +81,13 @@ gallery: { label: string; span: "full" | "half" }[]
 ```
 
 ### Add or edit a project
+
 1. Drop a new JSON file in `src/content/projects/` (copy an existing one).
 2. Give it a unique `order`. That's it — the detail page, the work grid, the
    archive table, and the home lists all pick it up automatically.
 
 ### Two backends, one shape
+
 Pages never read content directly — they call `getProjects()` from
 `src/lib/projects.ts`, which returns the same `Project[]` shape from either
 backend:
@@ -104,24 +107,30 @@ mirrors the content contract exactly, and adds optional `cover` + per-shot
 `image` fields for real media.
 
 ### One-time setup
+
 ```bash
 cd studio
 npm install
 npx sanity login
 npx sanity init --reconfigure   # create/select a project; choose dataset "production"
 ```
+
 Put the resulting **project id** in two places:
+
 - `studio/sanity.config.ts` and `studio/sanity.cli.ts` (or set `SANITY_STUDIO_PROJECT_ID`)
 - the Astro app's `.env`: `PUBLIC_SANITY_PROJECT_ID=<id>` (copy `.env.example`)
 
 ### Seed the 14 current projects
+
 The prototype content is exported to NDJSON so the client starts with real data:
+
 ```bash
 cd studio
 npm run import:seed     # imports seed/projects.ndjson into the production dataset
 ```
 
 ### Run the Studio
+
 ```bash
 cd studio
 npm run dev             # http://localhost:3333 — edit content here
@@ -134,6 +143,7 @@ Sanity hosts it for free at `https://<name>.sanity.studio` — log in there from
 any browser to edit content. Nothing to configure on the site host.
 
 ### Go live with the CMS
+
 1. Set `PUBLIC_SANITY_PROJECT_ID` + `PUBLIC_SANITY_DATASET` **wherever the
    build runs** — they're build-time vars, baked in by `npm run build`. On
    Vercel/Netlify/CF Pages/Hostinger that's the project's build env settings.
@@ -166,19 +176,21 @@ any browser to edit content. Nothing to configure on the site host.
   webgl-bg → chrome → core → (home).
 
 ### Page transitions
+
 `chrome.js` does the CSS-driven cover-wipe and intercepts internal links
 (`href` starting with `/`). **Alternative:** delete `chrome.js` and add Astro's
 native transitions to `Base.astro`:
 
 ```astro
-import { ViewTransitions } from "astro:transitions";
-// in <head>:
+import {ViewTransitions} from "astro:transitions"; // in <head>:
 <ViewTransitions />
 ```
+
 You'd then re-create the wipe with `::view-transition-old/new` CSS. The custom
 script is kept because it reproduces the prototype exactly.
 
 ### Theming / Tweaks
+
 `folio.css` is driven by `--bg`, `--ink`, and `--accent`; every other token is
 derived via `color-mix`. The Tweaks panel writes those three variables and the
 WebGL background samples them live. It's a React island
@@ -220,6 +232,7 @@ submissions.
 ---
 
 ## Known caveat carried over from the prototype
+
 The header nav and custom cursor use `mix-blend-mode: difference` so they stay
 legible over the dark hero. On a **light** Tweaks theme that blend inverts and
 can look faint — make the chrome theme-aware if you ship a light default.

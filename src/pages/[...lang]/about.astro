@@ -20,7 +20,9 @@ const capRange = `( 01 — ${String(about.capabilities.length).padStart(2, "0")}
   <!-- PAGE HERO -->
   <section class="phero" data-screen-label="About hero">
     <div class="phero__index meta">
-      <span data-scramble-now data-text={tr.aboutScramble}>{tr.aboutScramble}</span><span class="rule"></span><span>Index 01</span>
+      <span data-scramble-now data-text={tr.aboutScramble}
+        >{tr.aboutScramble}</span
+      ><span class="rule"></span><span>Index 01</span>
     </div>
     <h1 class="phero__title">
       <span class="line"><span data-rise>{about.title}</span></span>
@@ -34,9 +36,13 @@ const capRange = `( 01 — ${String(about.capabilities.length).padStart(2, "0")}
   <!-- INTRO QUOTE -->
   <section class="about-intro">
     <blockquote class="about-intro__quote reveal-lines">
-      {about.introQuote.map((line) => (
-        <span class="line"><span set:html={line}></span></span>
-      ))}
+      {
+        about.introQuote.map((line) => (
+          <span class="line">
+            <span set:html={line} />
+          </span>
+        ))
+      }
     </blockquote>
   </section>
 
@@ -44,14 +50,18 @@ const capRange = `( 01 — ${String(about.capabilities.length).padStart(2, "0")}
   <section class="about-cols">
     <div class="about-cols__label meta">{tr.bioLabel}</div>
     <div class="about-cols__body">
-      {about.bio.map((t) => <p set:html={t}></p>)}
+      {about.bio.map((t) => <p set:html={t} />)}
     </div>
   </section>
 
   <!-- PORTRAIT -->
   <section class="about-portrait">
-    <div class="frame"><Media src={about.portrait} label={about.portraitCaption} /></div>
-    <div class="cap meta"><span>{about.portraitCaption}</span><span>{about.portraitYear}</span></div>
+    <div class="frame">
+      <Media src={about.portrait} label={about.portraitCaption} />
+    </div>
+    <div class="cap meta">
+      <span>{about.portraitCaption}</span><span>{about.portraitYear}</span>
+    </div>
   </section>
 
   <!-- CAPABILITIES -->
@@ -60,9 +70,19 @@ const capRange = `( 01 — ${String(about.capabilities.length).padStart(2, "0")}
       <h2>{about.capabilitiesHeading}</h2>
       <span class="meta">{capRange}</span>
     </div>
-    {about.capabilities.map((c, i) => (
-      <div class="idx-row" data-reveal><span class="n">{String(i + 1).padStart(2, "0")}</span><span class="t" data-scramble>{c.title}</span><span class="d">{c.detail}</span></div>
-    ))}
+    {
+      about.capabilities.map((c, i) => (
+        <div class="idx-row" data-reveal>
+          <>
+            <span class="n">{String(i + 1).padStart(2, "0")}</span>
+            <span class="t" data-scramble>
+              {c.title}
+            </span>
+            <span class="d">{c.detail}</span>
+          </>
+        </div>
+      ))
+    }
   </section>
 
   <!-- RECOGNITION -->
@@ -71,9 +91,19 @@ const capRange = `( 01 — ${String(about.capabilities.length).padStart(2, "0")}
       <h2>{about.recognitionHeading}</h2>
       <span class="meta">{tr.selectedLabel}</span>
     </div>
-    {about.recognition.map((r) => (
-      <div class="idx-row" data-reveal><span class="n">—</span><span class="t" data-scramble>{r.title}</span><span class="d">{r.detail}</span></div>
-    ))}
+    {
+      about.recognition.map((r) => (
+        <div class="idx-row" data-reveal>
+          <>
+            <span class="n">—</span>
+            <span class="t" data-scramble>
+              {r.title}
+            </span>
+            <span class="d">{r.detail}</span>
+          </>
+        </div>
+      ))
+    }
   </section>
 
   <Footer locale={locale} />

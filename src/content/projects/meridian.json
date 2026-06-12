@@ -18,16 +18,8 @@
     "en": "Meridian Press"
   },
   "services": {
-    "de": [
-      "Editorial design",
-      "Typography",
-      "Print direction"
-    ],
-    "en": [
-      "Editorial design",
-      "Typography",
-      "Print direction"
-    ]
+    "de": ["Editorial design", "Typography", "Print direction"],
+    "en": ["Editorial design", "Typography", "Print direction"]
   },
   "intro": {
     "de": "A 320-page monograph on contemporary Nordic landscape photography.",

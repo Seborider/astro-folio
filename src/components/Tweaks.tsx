@@ -17,7 +17,9 @@ const TWEAK_DEFAULTS = {
   ink: "#e9e6df",
 };
 
-const TOKEN_NAMES = Object.keys(TWEAK_DEFAULTS) as (keyof typeof TWEAK_DEFAULTS)[];
+const TOKEN_NAMES = Object.keys(
+  TWEAK_DEFAULTS,
+) as (keyof typeof TWEAK_DEFAULTS)[];
 
 function readTokens() {
   const cs = getComputedStyle(document.documentElement);

@@ -16,11 +16,17 @@ const first = projects[0]?.yr ?? "";
 const last = projects[projects.length - 1]?.yr ?? "";
 ---
 
-<Base title={tr.archiveMetaTitle} description={tr.archiveDescription} locale={locale}>
+<Base
+  title={tr.archiveMetaTitle}
+  description={tr.archiveDescription}
+  locale={locale}
+>
   <!-- PAGE HERO -->
   <section class="phero" data-screen-label="Archive hero">
     <div class="phero__index meta">
-      <span data-scramble-now data-text={tr.archiveScramble}>{tr.archiveScramble}</span><span class="rule"></span><span>Index 03</span>
+      <span data-scramble-now data-text={tr.archiveScramble}
+        >{tr.archiveScramble}</span
+      ><span class="rule"></span><span>Index 03</span>
     </div>
     <h1 class="phero__title">
       <span class="line"><span data-rise>{tr.archiveTitle}</span></span>
@@ -35,17 +41,29 @@ const last = projects[projects.length - 1]?.yr ?? "";
   <section class="arch" data-screen-label="Archive table">
     <div class="arch__table">
       <div class="arch__row head">
-        <span>{tr.thYear}</span><span>{tr.thProject}</span><span>{tr.thType}</span><span>{tr.thRole}</span><span style="text-align:right">{tr.thLink}</span>
+        <span>{tr.thYear}</span><span>{tr.thProject}</span><span
+          >{tr.thType}</span
+        ><span>{tr.thRole}</span><span style="text-align:right"
+          >{tr.thLink}</span
+        >
       </div>
-      {projects.map((p) => (
-        <a class="arch__row" data-cursor="open" href={localePath(locale, `/work/${p.id}`)}>
-          <span class="yr">{p.yr}</span>
-          <span class="ttl" data-scramble>{p.name}</span>
-          <span class="ty">{p.cat}</span>
-          <span class="ro">{p.role}</span>
-          <span class="lk">{tr.viewLink}</span>
-        </a>
-      ))}
+      {
+        projects.map((p) => (
+          <a
+            class="arch__row"
+            data-cursor="open"
+            href={localePath(locale, `/work/${p.id}`)}
+          >
+            <span class="yr">{p.yr}</span>
+            <span class="ttl" data-scramble>
+              {p.name}
+            </span>
+            <span class="ty">{p.cat}</span>
+            <span class="ro">{p.role}</span>
+            <span class="lk">{tr.viewLink}</span>
+          </a>
+        ))
+      }
     </div>
   </section>
 

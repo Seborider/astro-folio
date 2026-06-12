@@ -30,20 +30,47 @@ export default defineType({
       name: "order",
       title: "Order",
       type: "number",
-      description: "Lower = earlier / more recent. Drives list order and prev/next.",
+      description:
+        "Lower = earlier / more recent. Drives list order and prev/next.",
       validation: (r) => r.required(),
     }),
-    defineField({ name: "cat", title: "Category", type: "localeString", description: 'e.g. "Brand · Motion"', validation: (r) => r.required() }),
-    defineField({ name: "yr", title: "Year", type: "string", validation: (r) => r.required() }),
-    defineField({ name: "role", title: "Role", type: "localeString", validation: (r) => r.required() }),
-    defineField({ name: "client", title: "Client", type: "localeString", validation: (r) => r.required() }),
+    defineField({
+      name: "cat",
+      title: "Category",
+      type: "localeString",
+      description: 'e.g. "Brand · Motion"',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "yr",
+      title: "Year",
+      type: "string",
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "role",
+      title: "Role",
+      type: "localeString",
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "client",
+      title: "Client",
+      type: "localeString",
+      validation: (r) => r.required(),
+    }),
     defineField({
       name: "services",
       title: "Services",
       type: "localeStringArray",
       validation: (r) => r.required(),
     }),
-    defineField({ name: "intro", title: "Intro (one-line lede)", type: "localeText", validation: (r) => r.required() }),
+    defineField({
+      name: "intro",
+      title: "Intro (one-line lede)",
+      type: "localeText",
+      validation: (r) => r.required(),
+    }),
     defineField({
       name: "overview",
       title: "Overview paragraphs",
@@ -53,7 +80,8 @@ export default defineType({
     defineField({
       name: "quote",
       title: "Pull-quote lines (optional)",
-      description: "Each entry is one line. You may wrap a word in <em>…</em> for the accent.",
+      description:
+        "Each entry is one line. You may wrap a word in <em>…</em> for the accent.",
       type: "localeStringArray",
     }),
     // Production media — optional so placeholder content still validates.
@@ -73,16 +101,32 @@ export default defineType({
           name: "shot",
           title: "Shot",
           fields: [
-            defineField({ name: "label", title: "Label / caption", type: "localeString", validation: (r) => r.required() }),
+            defineField({
+              name: "label",
+              title: "Label / caption",
+              type: "localeString",
+              validation: (r) => r.required(),
+            }),
             defineField({
               name: "span",
               title: "Span",
               type: "string",
-              options: { list: [{ title: "Full (16:9 band)", value: "full" }, { title: "Half (4:5 card)", value: "half" }], layout: "radio" },
+              options: {
+                list: [
+                  { title: "Full (16:9 band)", value: "full" },
+                  { title: "Half (4:5 card)", value: "half" },
+                ],
+                layout: "radio",
+              },
               initialValue: "full",
               validation: (r) => r.required(),
             }),
-            defineField({ name: "image", title: "Image (optional)", type: "image", options: { hotspot: true } }),
+            defineField({
+              name: "image",
+              title: "Image (optional)",
+              type: "image",
+              options: { hotspot: true },
+            }),
           ],
           preview: {
             select: { title: "label.de", subtitle: "span", media: "image" },
@@ -93,7 +137,11 @@ export default defineType({
     }),
   ],
   orderings: [
-    { title: "Order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] },
+    {
+      title: "Order",
+      name: "orderAsc",
+      by: [{ field: "order", direction: "asc" }],
+    },
   ],
   preview: {
     select: { title: "name.de", subtitle: "cat.de", media: "cover" },

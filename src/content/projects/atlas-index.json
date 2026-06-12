@@ -18,16 +18,8 @@
     "en": "Atlas (research institute)"
   },
   "services": {
-    "de": [
-      "Art direction",
-      "WebGL",
-      "Front-end"
-    ],
-    "en": [
-      "Art direction",
-      "WebGL",
-      "Front-end"
-    ]
+    "de": ["Art direction", "WebGL", "Front-end"],
+    "en": ["Art direction", "WebGL", "Front-end"]
   },
   "intro": {
     "de": "A living index of a research institute's archive, rendered in WebGL.",
@@ -44,14 +36,8 @@
     ]
   },
   "quote": {
-    "de": [
-      "An archive should feel",
-      "<em>alive</em>, not filed."
-    ],
-    "en": [
-      "An archive should feel",
-      "<em>alive</em>, not filed."
-    ]
+    "de": ["An archive should feel", "<em>alive</em>, not filed."],
+    "en": ["An archive should feel", "<em>alive</em>, not filed."]
   },
   "gallery": [
     {

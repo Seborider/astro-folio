@@ -110,12 +110,17 @@ const __TWEAKS_STYLE = `
 // state, and the consumer's effects apply the values to CSS variables.
 type SetTweak<T> = (keyOrEdits: keyof T | Partial<T>, val?: T[keyof T]) => void;
 
-function useTweaks<T extends Record<string, unknown>>(defaults: T): [T, SetTweak<T>] {
+function useTweaks<T extends Record<string, unknown>>(
+  defaults: T,
+): [T, SetTweak<T>] {
   const [values, setValues] = React.useState(defaults);
   // Accepts either setTweak('key', value) or setTweak({ key: value, ... }).
   const setTweak = React.useCallback<SetTweak<T>>((keyOrEdits, val) => {
-    const edits = (typeof keyOrEdits === 'object' && keyOrEdits !== null
-      ? keyOrEdits : { [keyOrEdits]: val }) as Partial<T>;
+    const edits = (
+      typeof keyOrEdits === "object" && keyOrEdits !== null
+        ? keyOrEdits
+        : { [keyOrEdits]: val }
+    ) as Partial<T>;
     setValues((prev) => ({ ...prev, ...edits }));
   }, []);
   return [values, setTweak];
@@ -129,7 +134,7 @@ interface TweaksPanelProps {
   children?: React.ReactNode;
 }
 
-function TweaksPanel({ title = 'Tweaks', children }: TweaksPanelProps) {
+function TweaksPanel({ title = "Tweaks", children }: TweaksPanelProps) {
   const [open, setOpen] = React.useState(false);
   const dragRef = React.useRef<HTMLDivElement>(null);
   const offsetRef = React.useRef({ x: 16, y: 16 });
@@ -138,23 +143,24 @@ function TweaksPanel({ title = 'Tweaks', children }: TweaksPanelProps) {
   const clampToViewport = React.useCallback(() => {
     const panel = dragRef.current;
     if (!panel) return;
-    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const w = panel.offsetWidth,
+      h = panel.offsetHeight;
     const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
     const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
     offsetRef.current = {
       x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
       y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
     };
-    panel.style.right = offsetRef.current.x + 'px';
-    panel.style.bottom = offsetRef.current.y + 'px';
+    panel.style.right = offsetRef.current.x + "px";
+    panel.style.bottom = offsetRef.current.y + "px";
   }, []);
 
   React.useEffect(() => {
     if (!open) return;
     clampToViewport();
-    if (typeof ResizeObserver === 'undefined') {
-      window.addEventListener('resize', clampToViewport);
-      return () => window.removeEventListener('resize', clampToViewport);
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", clampToViewport);
+      return () => window.removeEventListener("resize", clampToViewport);
     }
     const ro = new ResizeObserver(clampToViewport);
     ro.observe(document.documentElement);
@@ -165,7 +171,8 @@ function TweaksPanel({ title = 'Tweaks', children }: TweaksPanelProps) {
     const panel = dragRef.current;
     if (!panel) return;
     const r = panel.getBoundingClientRect();
-    const sx = e.clientX, sy = e.clientY;
+    const sx = e.clientX,
+      sy = e.clientY;
     const startRight = window.innerWidth - r.right;
     const startBottom = window.innerHeight - r.bottom;
     const move = (ev: MouseEvent) => {
@@ -176,20 +183,25 @@ function TweaksPanel({ title = 'Tweaks', children }: TweaksPanelProps) {
       clampToViewport();
     };
     const up = () => {
-      window.removeEventListener('mousemove', move);
-      window.removeEventListener('mouseup', up);
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseup", up);
     };
-    window.addEventListener('mousemove', move);
-    window.addEventListener('mouseup', up);
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", up);
   };
 
   if (!open) {
     return (
       <>
         <style dangerouslySetInnerHTML={{ __html: __TWEAKS_STYLE }} />
-        <button type="button" className="twk-toggle-btn" data-omelette-chrome=""
-                onClick={() => setOpen(true)}>
-          <i />{title}
+        <button
+          type="button"
+          className="twk-toggle-btn"
+          data-omelette-chrome=""
+          onClick={() => setOpen(true)}
+        >
+          <i />
+          {title}
         </button>
       </>
     );
@@ -197,17 +209,24 @@ function TweaksPanel({ title = 'Tweaks', children }: TweaksPanelProps) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: __TWEAKS_STYLE }} />
-      <div ref={dragRef} className="twk-panel" data-omelette-chrome=""
-           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+      <div
+        ref={dragRef}
+        className="twk-panel"
+        data-omelette-chrome=""
+        style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}
+      >
         <div className="twk-hd" onMouseDown={onDragStart}>
           <b>{title}</b>
-          <button className="twk-x" aria-label="Close tweaks"
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={() => setOpen(false)}>✕</button>
+          <button
+            className="twk-x"
+            aria-label="Close tweaks"
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={() => setOpen(false)}
+          >
+            ✕
+          </button>
         </div>
-        <div className="twk-body">
-          {children}
-        </div>
+        <div className="twk-body">{children}</div>
       </div>
     </>
   );
@@ -238,7 +257,7 @@ interface TweakRowProps {
 
 function TweakRow({ label, value, children, inline = false }: TweakRowProps) {
   return (
-    <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
+    <div className={inline ? "twk-row twk-row-h" : "twk-row"}>
       <div className="twk-lbl">
         <span>{label}</span>
         {value != null && <span className="twk-val">{value}</span>}
@@ -254,19 +273,26 @@ function TweakRow({ label, value, children, inline = false }: TweakRowProps) {
 // read on both #111 and #fafafa without per-option configuration. Hex input
 // only (#rgb / #rrggbb); named or rgb()/hsl() colors fall through to "light".
 function __twkIsLight(hex: string) {
-  const h = String(hex).replace('#', '');
-  const x = h.length === 3 ? h.replace(/./g, (c) => c + c) : h.padEnd(6, '0');
+  const h = String(hex).replace("#", "");
+  const x = h.length === 3 ? h.replace(/./g, (c) => c + c) : h.padEnd(6, "0");
   const n = parseInt(x.slice(0, 6), 16);
   if (Number.isNaN(n)) return true;
-  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const r = (n >> 16) & 255,
+    g = (n >> 8) & 255,
+    b = n & 255;
   return r * 299 + g * 587 + b * 114 > 148000;
 }
 
 const __TwkCheck = ({ light }: { light: boolean }) => (
   <svg viewBox="0 0 14 14" aria-hidden="true">
-    <path d="M3 7.2 5.8 10 11 4.2" fill="none" strokeWidth="2.2"
-          strokeLinecap="round" strokeLinejoin="round"
-          stroke={light ? 'rgba(0,0,0,.78)' : '#fff'} />
+    <path
+      d="M3 7.2 5.8 10 11 4.2"
+      fill="none"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      stroke={light ? "rgba(0,0,0,.78)" : "#fff"}
+    />
   </svg>
 );
 
@@ -283,14 +309,25 @@ interface TweakColorProps<O extends string | string[]> {
   onChange: (v: O) => void;
 }
 
-function TweakColor<O extends string | string[]>({ label, value, options, onChange }: TweakColorProps<O>) {
+function TweakColor<O extends string | string[]>({
+  label,
+  value,
+  options,
+  onChange,
+}: TweakColorProps<O>) {
   if (!options || !options.length) {
     // The native-input fallback only ever sees single hex strings.
     return (
       <div className="twk-row twk-row-h">
-        <div className="twk-lbl"><span>{label}</span></div>
-        <input type="color" className="twk-swatch" value={value as string}
-               onChange={(e) => onChange(e.target.value as O)} />
+        <div className="twk-lbl">
+          <span>{label}</span>
+        </div>
+        <input
+          type="color"
+          className="twk-swatch"
+          value={value as string}
+          onChange={(e) => onChange(e.target.value as O)}
+        />
       </div>
     );
   }
@@ -308,14 +345,23 @@ function TweakColor<O extends string | string[]>({ label, value, options, onChan
           const sup = rest.slice(0, 4);
           const on = key(o) === cur;
           return (
-            <button key={i} type="button" className="twk-chip" role="radio"
-                    aria-checked={on} data-on={on ? '1' : '0'}
-                    aria-label={colors.join(', ')} title={colors.join(' · ')}
-                    style={{ background: hero }}
-                    onClick={() => onChange(o)}>
+            <button
+              key={i}
+              type="button"
+              className="twk-chip"
+              role="radio"
+              aria-checked={on}
+              data-on={on ? "1" : "0"}
+              aria-label={colors.join(", ")}
+              title={colors.join(" · ")}
+              style={{ background: hero }}
+              onClick={() => onChange(o)}
+            >
               {sup.length > 0 && (
                 <span>
-                  {sup.map((c, j) => <i key={j} style={{ background: c }} />)}
+                  {sup.map((c, j) => (
+                    <i key={j} style={{ background: c }} />
+                  ))}
                 </span>
               )}
               {on && <__TwkCheck light={__twkIsLight(hero)} />}
