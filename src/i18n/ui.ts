@@ -89,14 +89,19 @@ export const ui: Record<Locale, UIDict> = {
     footHome: "Start",
     footBased: "Standort",
 
-    homeTitle: "Juno Vestergaard — Design & Art Director",
+    homeTitle: "Sebo Mayer — Design & Art Director",
     homeDescription:
-      "Design- und Art-Direction zwischen Brand, Motion und Editorial — Portfolio von Juno Vestergaard.",
+      "Design- und Art-Direction zwischen Brand, Motion und Editorial — Portfolio von Sebo Mayer.",
     loadingLabel: "( Laden )",
     heroCity: "( Kopenhagen )",
     scrollCue: "( Scrollen )",
     statementLabel: "Ansatz",
-    statementLines: ["Alles", "beginnt als ein", "<em>Zufall</em>", "der Aufmerksamkeit."],
+    statementLines: [
+      "Alles",
+      "beginnt als ein",
+      "<em>Zufall</em>",
+      "der Aufmerksamkeit.",
+    ],
     statementAttr:
       "Eine Praxis zwischen Brand, Motion und Editorial — gebaut auf langsames Sehen, scharfe Typografie und die Überzeugung, dass Zurückhaltung ihre eigene Art von Lärm ist.",
     reelHeading: "Ausgewählte Motion",
@@ -111,7 +116,8 @@ export const ui: Record<Locale, UIDict> = {
     workDescription:
       "Ausgewählte Projekte aus Brand, Motion, Editorial und Digital — 2021 bis heute.",
     workScramble: "( Arbeiten )",
-    workLede: "Ausgewählte Projekte aus Brand, Motion, Editorial und Digital — 2021 bis heute.",
+    workLede:
+      "Ausgewählte Projekte aus Brand, Motion, Editorial und Digital — 2021 bis heute.",
     projectsCountLabel: "Projekte",
     filterAll: "Alle",
     filterBrand: "Brand",
@@ -135,7 +141,8 @@ export const ui: Record<Locale, UIDict> = {
     archiveDescription:
       "Der vollständige Index — jedes Projekt, chronologisch, mit Typ und Rolle.",
     archiveScramble: "( Archiv )",
-    archiveLede: "Der vollständige Index — jedes Projekt, chronologisch, mit Typ und Rolle.",
+    archiveLede:
+      "Der vollständige Index — jedes Projekt, chronologisch, mit Typ und Rolle.",
     thYear: "Jahr",
     thProject: "Projekt",
     thType: "Typ",
@@ -161,7 +168,12 @@ export const ui: Record<Locale, UIDict> = {
     heroCity: "( Copenhagen )",
     scrollCue: "( Scroll )",
     statementLabel: "Approach",
-    statementLines: ["Everything", "begins as an", "<em>accident</em>", "of attention."],
+    statementLines: [
+      "Everything",
+      "begins as an",
+      "<em>accident</em>",
+      "of attention.",
+    ],
     statementAttr:
       "A practice across brand, motion and editorial — built on slow looking, sharp typography, and the belief that restraint is its own kind of noise.",
     reelHeading: "Selected motion",
@@ -176,7 +188,8 @@ export const ui: Record<Locale, UIDict> = {
     workDescription:
       "Selected projects across brand, motion, editorial and digital — 2021 to now.",
     workScramble: "( Work )",
-    workLede: "Selected projects across brand, motion, editorial and digital — 2021 to now.",
+    workLede:
+      "Selected projects across brand, motion, editorial and digital — 2021 to now.",
     projectsCountLabel: "projects",
     filterAll: "All",
     filterBrand: "Brand",
@@ -197,9 +210,11 @@ export const ui: Record<Locale, UIDict> = {
 
     archiveTitle: "Archive",
     archiveMetaTitle: "Archive — Juno Vestergaard",
-    archiveDescription: "The full index — every project, chronological, type and role.",
+    archiveDescription:
+      "The full index — every project, chronological, type and role.",
     archiveScramble: "( Archive )",
-    archiveLede: "The full index — every project, chronological, type and role.",
+    archiveLede:
+      "The full index — every project, chronological, type and role.",
     thYear: "Year",
     thProject: "Project",
     thType: "Type",

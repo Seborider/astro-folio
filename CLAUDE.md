@@ -69,7 +69,10 @@ GROQ `coalesce` projections return null and the build fails.
    use Mux/Cloudflare Stream (the hero + showreel slots).
 3. **Filter tags.** `work.astro` derives discipline tags from `cat` via regex.
    Add an explicit `tags: string[]` to BOTH schemas and use it instead.
-4. **Build webhook.** Sanity publish → host build hook, so content edits redeploy.
+4. **Build webhook.** Sanity publish → host build hook, so content edits
+   redeploy. The host (incl. Hostinger) builds from the GitHub repo; if it has
+   no public build-hook URL, bridge via Sanity webhook → `repository_dispatch`
+   → GitHub Action redeploy (see README → Deploy).
 5. **Light-theme chrome.** Make the header/cursor `mix-blend-mode` theme-aware
    (see README caveat) if a light default ships.
 6. **SEO.** Add per-page `<meta>`/OG tags and a sitemap (`@astrojs/sitemap`).

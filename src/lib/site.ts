@@ -1,8 +1,8 @@
 /**
- * site.ts — loaders for the singleton documents (siteSettings, aboutPage),
- * mirroring the projects.ts pattern: read Sanity when configured, fall back
- * to the built-in defaults below otherwise. The merge is per-field, so a
- * half-filled Studio document still renders a complete page.
+ * site.ts — loaders for the singleton documents (siteSettings, aboutPage,
+ * homePage), mirroring the projects.ts pattern: read Sanity when configured,
+ * fall back to the built-in defaults below otherwise. The merge is per-field,
+ * so a half-filled Studio document still renders a complete page.
  *
  * Localization: text fields are locale objects in the Studio; the queries
  * coalesce(field.<locale>, field.de). The defaults are authored per locale
@@ -51,6 +51,17 @@ export interface AboutPage {
   recognition: AboutRow[];
 }
 
+export interface ReelTile {
+  label: string;
+  image: string | null; // resolved CDN url, or null for the placeholder
+  video: string | null; // resolved CDN file url (muted loop), or null
+}
+
+export interface HomePage {
+  reelTiles: ReelTile[]; // only the tiles set in the Studio (max 8); the
+  // placeholder defaults below are used only when Sanity is unconfigured
+}
+
 const SITE_DEFAULTS_EN: SiteSettings = {
   headerMark: "Juno Vestergaard ©",
   email: "hello@studio.demo",
@@ -77,7 +88,7 @@ const SITE_DEFAULTS: Record<Locale, SiteSettings> = {
     contactCta: "Sag hallo ↗",
     archiveHeading: "Archiv",
     location: "Kopenhagen",
-    copyright: "© 2026 — Neutrale Demo, alles Platzhalter",
+    copyright: "© 2026",
     footerNote: "Rekonstruktionsstudie",
   },
 };
@@ -87,7 +98,12 @@ const ABOUT_DEFAULTS_EN: AboutPage = {
   title: "About",
   lede: "Design & art director working between brand, motion and the printed page.",
   subMeta: "( Copenhagen — est. 2014 )",
-  introQuote: ["I shape the space", "between images,", "where rhythm turns", "to <em>meaning</em>."],
+  introQuote: [
+    "I shape the space",
+    "between images,",
+    "where rhythm turns",
+    "to <em>meaning</em>.",
+  ],
   bio: [
     "Juno Vestergaard is a Copenhagen-based design and art director with a decade of practice spanning identity systems, motion, and editorial. The work is led by typography and pacing — treating a brand less as a logo and more as a tempo that recurs across every surface.",
     '<span class="dim">Previously</span> design lead at a Scandinavian studio and an independent for cultural institutions, fashion houses and technology brands. Current focus: long-form brand worlds and the moving image.',
@@ -98,10 +114,16 @@ const ABOUT_DEFAULTS_EN: AboutPage = {
   portraitYear: "2026",
   capabilitiesHeading: "Capabilities",
   capabilities: [
-    { title: "Brand systems", detail: "Identity, naming, voice, guidelines, rollout" },
+    {
+      title: "Brand systems",
+      detail: "Identity, naming, voice, guidelines, rollout",
+    },
     { title: "Art direction", detail: "Campaigns, photography, casting, set" },
     { title: "Motion", detail: "Title design, brand films, sound partners" },
-    { title: "Editorial", detail: "Books, catalogues, type design, print craft" },
+    {
+      title: "Editorial",
+      detail: "Books, catalogues, type design, print craft",
+    },
     { title: "Digital", detail: "Sites, WebGL, prototypes with dev partners" },
   ],
   recognitionHeading: "Recognition",
@@ -125,6 +147,24 @@ const ABOUT_DEFAULTS: Record<Locale, AboutPage> = {
     recognitionHeading: "Auszeichnungen",
   },
 };
+
+// Current placeholder labels; locale-neutral, same for both locales.
+const HOME_DEFAULTS: HomePage = {
+  reelTiles: [
+    "reel 01 · 16:9",
+    "reel 02 · 16:9",
+    "reel 03 · 4:5",
+    "reel 04",
+    "reel 05",
+    "reel 06",
+    "reel 07",
+    "reel 08",
+  ].map((label) => ({ label, image: null, video: null })),
+};
+
+// Per-slot image widths; indices mirror reelSlots in index.astro
+// (slots 0–1 span 3 of 6 grid columns, the rest 2).
+const REEL_WIDTHS = [1600, 1600, 1000, 1000, 1000, 1000, 1000, 1000];
 
 const siteQuery = (l: Locale) => `*[_type == "siteSettings"][0]{
   "headerMark": coalesce(headerMark.${l}, headerMark.de),
@@ -156,8 +196,19 @@ const aboutQuery = (l: Locale) => `*[_type == "aboutPage"][0]{
   "recognition": recognition[]{ "title": coalesce(title.${l}, title.de), "detail": coalesce(detail.${l}, detail.de) }
 }`;
 
+const homeQuery = (l: Locale) => `*[_type == "homePage"][0]{
+  "reelTiles": reelTiles[]{
+    "label": coalesce(label.${l}, label.de),
+    "image": image.asset._ref,
+    "video": video.asset->url
+  }
+}`;
+
 // Sanity returns null for unset fields — keep the default in that case.
-function withDefaults<T extends object>(defaults: T, doc: Record<string, unknown> | null): T {
+function withDefaults<T extends object>(
+  defaults: T,
+  doc: Record<string, unknown> | null,
+): T {
   const out = { ...defaults };
   if (doc) {
     for (const key of Object.keys(defaults) as (keyof T)[]) {
@@ -170,8 +221,11 @@ function withDefaults<T extends object>(defaults: T, doc: Record<string, unknown
 
 const siteCache = new Map<Locale, Promise<SiteSettings>>();
 const aboutCache = new Map<Locale, Promise<AboutPage>>();
+const homeCache = new Map<Locale, Promise<HomePage>>();
 
-export function getSiteSettings(locale: Locale = DEFAULT_LOCALE): Promise<SiteSettings> {
+export function getSiteSettings(
+  locale: Locale = DEFAULT_LOCALE,
+): Promise<SiteSettings> {
   if (import.meta.env.DEV) return loadSiteSettings(locale);
   let p = siteCache.get(locale);
   if (!p) {
@@ -181,7 +235,9 @@ export function getSiteSettings(locale: Locale = DEFAULT_LOCALE): Promise<SiteSe
   return p;
 }
 
-export function getAboutPage(locale: Locale = DEFAULT_LOCALE): Promise<AboutPage> {
+export function getAboutPage(
+  locale: Locale = DEFAULT_LOCALE,
+): Promise<AboutPage> {
   if (import.meta.env.DEV) return loadAboutPage(locale);
   let p = aboutCache.get(locale);
   if (!p) {
@@ -191,16 +247,49 @@ export function getAboutPage(locale: Locale = DEFAULT_LOCALE): Promise<AboutPage
   return p;
 }
 
+export function getHomePage(
+  locale: Locale = DEFAULT_LOCALE,
+): Promise<HomePage> {
+  if (import.meta.env.DEV) return loadHomePage(locale);
+  let p = homeCache.get(locale);
+  if (!p) {
+    p = loadHomePage(locale);
+    homeCache.set(locale, p);
+  }
+  return p;
+}
+
 async function loadSiteSettings(locale: Locale): Promise<SiteSettings> {
   if (!sanityConfigured) return SITE_DEFAULTS[locale];
-  const doc = await sanityFetch<Record<string, unknown> | null>(siteQuery(locale));
+  const doc = await sanityFetch<Record<string, unknown> | null>(
+    siteQuery(locale),
+  );
   return withDefaults(SITE_DEFAULTS[locale], doc);
 }
 
 async function loadAboutPage(locale: Locale): Promise<AboutPage> {
   if (!sanityConfigured) return ABOUT_DEFAULTS[locale];
-  const doc = await sanityFetch<Record<string, unknown> | null>(aboutQuery(locale));
+  const doc = await sanityFetch<Record<string, unknown> | null>(
+    aboutQuery(locale),
+  );
   const about = withDefaults(ABOUT_DEFAULTS[locale], doc);
   about.portrait = imageUrl(about.portrait ?? undefined, { w: 1600 });
   return about;
+}
+
+// No withDefaults here: with Sanity configured, only the tiles actually set
+// in the Studio are rendered — no placeholder padding.
+async function loadHomePage(locale: Locale): Promise<HomePage> {
+  if (!sanityConfigured) return HOME_DEFAULTS;
+  const doc = await sanityFetch<{
+    reelTiles?: Array<{ label?: string; image?: string; video?: string }>;
+  } | null>(homeQuery(locale));
+  const raw = doc?.reelTiles ?? [];
+  return {
+    reelTiles: raw.slice(0, REEL_WIDTHS.length).map((t, i) => ({
+      label: t.label ?? "",
+      image: imageUrl(t.image, { w: REEL_WIDTHS[i] }),
+      video: t.video ?? null,
+    })),
+  };
 }

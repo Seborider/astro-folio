@@ -125,17 +125,26 @@ npm run import:seed     # imports seed/projects.ndjson into the production datas
 ```bash
 cd studio
 npm run dev             # http://localhost:3333 — edit content here
-npm run deploy          # host the Studio at <name>.sanity.studio (optional)
+npm run deploy          # host the Studio at https://<name>.sanity.studio
 ```
 
+The Studio is **not part of the deployed site**. Content lives in Sanity's
+cloud; the Studio is just an editing UI for it. Run `npm run deploy` once and
+Sanity hosts it for free at `https://<name>.sanity.studio` — log in there from
+any browser to edit content. Nothing to configure on the site host.
+
 ### Go live with the CMS
-1. Set `PUBLIC_SANITY_PROJECT_ID` + `PUBLIC_SANITY_DATASET` in the Astro host's
-   env (Vercel/Netlify/CF Pages project settings).
+1. Set `PUBLIC_SANITY_PROJECT_ID` + `PUBLIC_SANITY_DATASET` **wherever the
+   build runs** — they're build-time vars, baked in by `npm run build`. On
+   Vercel/Netlify/CF Pages/Hostinger that's the project's build env settings.
 2. Rebuild. `getProjects()` now reads Sanity; images resolve through the Sanity
    image CDN via `src/lib/sanity.ts` and render through `Media.astro`.
-3. For auto-rebuild on content publish, add a **deploy webhook** (Sanity →
-   GoTrue/Vercel build hook). For instant updates without rebuilds, switch the
-   page(s) to SSR with an adapter — but static + webhook is plenty here.
+3. Publishing in the Studio does **not** update the live site by itself — the
+   static HTML holds the old content until the next build. For auto-rebuild on
+   publish, add a webhook (Sanity → manage → API → Webhooks) pointing at the
+   host's build hook — see **Deploy** below. For instant updates without
+   rebuilds, switch the page(s) to SSR with an adapter — but static + webhook
+   is plenty here.
 
 > Note: `src/lib/sanity.ts` uses a single `fetch` against the read-only image/query
 > CDN — no SDK. Swap in `@sanity/client` + `@sanity/image-url` if you prefer.
@@ -197,8 +206,11 @@ Everything visual is a labelled placeholder right now. For production:
 
 Static output — host anywhere:
 
-- **Vercel / Netlify / Cloudflare Pages** — connect the repo, build command
-  `npm run build`, output dir `dist`. Done.
+- **Vercel / Netlify / Cloudflare Pages / Hostinger** — connect the GitHub
+  repo, build command `npm run build`, output dir `dist`. Done.
+- Rebuild-on-publish: Sanity webhook → the host's build/deploy hook URL. If
+  the host only rebuilds on git push (no public hook URL), bridge it: Sanity
+  webhook → `repository_dispatch` → a GitHub Action that triggers a redeploy.
 - Set `site` in `astro.config.ts` to the production URL first.
 
 No database is required. A contact form would use a form service (Formspree) or

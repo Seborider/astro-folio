@@ -1,7 +1,9 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
+import Media from "../../components/Media.astro";
 import { getProjects } from "../../lib/projects";
+import { getHomePage } from "../../lib/site";
 import { localePath, localeStaticPaths } from "../../i18n";
 import { t } from "../../i18n/ui";
 
@@ -14,6 +16,10 @@ const tr = t(locale);
 const projects = await getProjects(locale);
 const selected = projects.slice(0, 8);
 const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr, cover: p.cover }));
+const home = await getHomePage(locale);
+// Fixed 8-slot reel layout — editors fill tiles in order and only set
+// tiles render. Keep in sync with REEL_WIDTHS in src/lib/site.ts.
+const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
 ---
 
 <Base title={tr.homeTitle} description={tr.homeDescription} home={true} locale={locale}>
@@ -70,14 +76,12 @@ const carousel = projects.map((p) => ({ id: p.id, name: p.name, yr: p.yr, cover:
       <span class="meta">( 2021 — 2026 )</span>
     </div>
     <div class="reel__grid">
-      <div class="reel__tile s3 r2" data-reveal><span class="tile-no">01</span><div class="placeholder ph-motion"><span>reel 01 · 16:9</span></div></div>
-      <div class="reel__tile s3 r2" data-reveal><span class="tile-no">02</span><div class="placeholder ph-motion"><span>reel 02 · 16:9</span></div></div>
-      <div class="reel__tile s2 r2" data-reveal><span class="tile-no">03</span><div class="placeholder ph-motion"><span>reel 03 · 4:5</span></div></div>
-      <div class="reel__tile s2" data-reveal><span class="tile-no">04</span><div class="placeholder ph-motion"><span>reel 04</span></div></div>
-      <div class="reel__tile s2" data-reveal><span class="tile-no">05</span><div class="placeholder ph-motion"><span>reel 05</span></div></div>
-      <div class="reel__tile s2" data-reveal><span class="tile-no">06</span><div class="placeholder ph-motion"><span>reel 06</span></div></div>
-      <div class="reel__tile s2" data-reveal><span class="tile-no">07</span><div class="placeholder ph-motion"><span>reel 07</span></div></div>
-      <div class="reel__tile s2" data-reveal><span class="tile-no">08</span><div class="placeholder ph-motion"><span>reel 08</span></div></div>
+      {home.reelTiles.map((tile, i) => (
+        <div class={`reel__tile ${reelSlots[i]}`} data-reveal>
+          <span class="tile-no">{String(i + 1).padStart(2, "0")}</span>
+          <Media src={tile.image} video={tile.video} label={tile.label} />
+        </div>
+      ))}
     </div>
     <div class="reel__cta">
       <button id="playReel" data-cursor="play"><span class="tri"></span> {tr.playReel}</button>

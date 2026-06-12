@@ -1,19 +1,23 @@
 ---
 /**
- * Media.astro — renders a real image when a `src` is provided (e.g. from
- * Sanity's image CDN), otherwise falls back to the labelled striped
- * placeholder. Keeps the same `.placeholder` box so layout/animation are
- * identical whether or not media exists yet.
+ * Media.astro — renders a muted looping video when a `video` URL is provided,
+ * else a real image when a `src` is provided (e.g. from Sanity's CDN),
+ * otherwise falls back to the labelled striped placeholder. Keeps the same
+ * box so layout/animation are identical whether or not media exists yet.
  *
  * Props:
- *   src?   — resolved image URL (or null/undefined for placeholder)
+ *   src?   — resolved image URL (or null/undefined for placeholder);
+ *            doubles as the poster when `video` is set
+ *   video? — resolved video file URL (autoplays muted, loops)
  *   label  — caption shown in the placeholder + used as alt text
  *   motion — add the ph-motion sweep (default true)
  */
-interface Props { src?: string | null; label: string; motion?: boolean; }
-const { src, label, motion = true } = Astro.props;
+interface Props { src?: string | null; video?: string | null; label: string; motion?: boolean; }
+const { src, video, label, motion = true } = Astro.props;
 ---
-{src ? (
+{video ? (
+  <video class={`media-img${motion ? " ph-motion" : ""}`} src={video} poster={src ?? undefined} autoplay muted loop playsinline preload="metadata" aria-label={label}></video>
+) : src ? (
   <img class={`media-img${motion ? " ph-motion" : ""}`} src={src} alt={label} loading="lazy" />
 ) : (
   <div class={`placeholder${motion ? " ph-motion" : ""}`}><span>{label}</span></div>
