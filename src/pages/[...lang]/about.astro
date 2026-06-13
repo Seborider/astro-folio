@@ -14,11 +14,12 @@ const { locale } = Astro.props;
 const tr = t(locale);
 const about = await getAboutPage(locale);
 const capRange = `( 01 — ${String(about.capabilities.length).padStart(2, "0")} )`;
+const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
 ---
 
 <Base title={about.metaTitle} description={about.lede} locale={locale}>
   <!-- PAGE HERO -->
-  <section class="phero" data-screen-label="About hero">
+  <section class="phero" data-screen-label={tr.sections.aboutHero}>
     <div class="phero__index meta">
       <span data-scramble-now data-text={tr.aboutScramble}
         >{tr.aboutScramble}</span
@@ -72,6 +73,31 @@ const capRange = `( 01 — ${String(about.capabilities.length).padStart(2, "0")}
     </div>
     {
       about.capabilities.map((c, i) => (
+        <div class="idx-row" data-reveal>
+          <>
+            <span class="n">{String(i + 1).padStart(2, "0")}</span>
+            <span class="t" data-scramble>
+              {c.title}
+            </span>
+            <span class="d">{c.detail}</span>
+          </>
+        </div>
+      ))
+    }
+  </section>
+
+  <!-- PROCESS -->
+  <section
+    class="idx-list"
+    style="margin-top:clamp(60px,10vh,120px)"
+    data-screen-label={tr.sections.aboutProcess}
+  >
+    <div class="idx-list__head">
+      <h2>{about.processHeading}</h2>
+      <span class="meta">{procRange}</span>
+    </div>
+    {
+      about.process.map((c, i) => (
         <div class="idx-row" data-reveal>
           <>
             <span class="n">{String(i + 1).padStart(2, "0")}</span>

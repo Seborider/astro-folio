@@ -95,6 +95,13 @@ export default defineType({
     }),
     row("capabilities", "Capabilities"),
     defineField({
+      name: "processHeading",
+      title: "Process heading",
+      type: "localeString",
+      description: 'e.g. "How I work".',
+    }),
+    row("process", "Process"),
+    defineField({
       name: "recognitionHeading",
       title: "Recognition heading",
       type: "localeString",
