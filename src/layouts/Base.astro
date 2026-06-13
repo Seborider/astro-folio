@@ -108,6 +108,16 @@ const enPath = locale === "en" ? path : altLocalePath("de", path);
       <slot />
     </main>
 
+    <!-- live section index — core.js fills it from each section's data-screen-label -->
+    <div class="section-index meta" id="sectionIndex" aria-hidden="true"></div>
+
+    <!-- floating cover preview (core.js trails it over .work__row / .arch__row) -->
+    <div class="work__preview" id="workPreview">
+      <img alt="" hidden /><div class="placeholder ph-motion">
+        <span>preview</span>
+      </div>
+    </div>
+
     <Tweaks client:idle />
 
     <!-- libraries -->

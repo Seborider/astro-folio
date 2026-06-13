@@ -22,7 +22,7 @@ const last = projects[projects.length - 1]?.yr ?? "";
   locale={locale}
 >
   <!-- PAGE HERO -->
-  <section class="phero" data-screen-label="Archive hero">
+  <section class="phero" data-screen-label={tr.sections.archiveHero}>
     <div class="phero__index meta">
       <span data-scramble-now data-text={tr.archiveScramble}
         >{tr.archiveScramble}</span
@@ -38,7 +38,7 @@ const last = projects[projects.length - 1]?.yr ?? "";
   </section>
 
   <!-- TABLE -->
-  <section class="arch" data-screen-label="Archive table">
+  <section class="arch" data-screen-label={tr.sections.archiveTable}>
     <div class="arch__table">
       <div class="arch__row head">
         <span>{tr.thYear}</span><span>{tr.thProject}</span><span
@@ -52,6 +52,8 @@ const last = projects[projects.length - 1]?.yr ?? "";
           <a
             class="arch__row"
             data-cursor="open"
+            data-name={p.name}
+            data-cover={p.cover}
             href={localePath(locale, `/work/${p.id}`)}
           >
             <span class="yr">{p.yr}</span>

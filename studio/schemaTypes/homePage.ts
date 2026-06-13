@@ -54,6 +54,52 @@ export default defineType({
         }),
       ],
     }),
+    defineField({
+      name: "showreelVideo",
+      title: "Showreel video",
+      type: "file",
+      options: { accept: "video/mp4" },
+      description:
+        "Full-length mp4 for the fullscreen 'Play reel' overlay (plays with " +
+        "sound and controls). Uploaded directly to Sanity, like the reel " +
+        "tiles. Leave empty to show the labelled placeholder.",
+    }),
+    defineField({
+      name: "testimonials",
+      title: "Testimonials",
+      type: "array",
+      description:
+        "Client quotes shown on the home page. The section stays hidden " +
+        "until at least one entry has both a quote and an attribution.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "testimonial",
+          fields: [
+            defineField({
+              name: "quote",
+              title: "Quote",
+              type: "localeText",
+              validation: (r) => r.required(),
+            }),
+            defineField({
+              name: "attribution",
+              title: "Attribution",
+              type: "string",
+              description: 'Name, e.g. "Ludwig Binder".',
+              validation: (r) => r.required(),
+            }),
+            defineField({
+              name: "role",
+              title: "Role / company",
+              type: "localeString",
+              description: 'e.g. "Founder, Sprudelludi".',
+            }),
+          ],
+          preview: { select: { title: "attribution", subtitle: "quote.de" } },
+        }),
+      ],
+    }),
   ],
   preview: { prepare: () => ({ title: "Home Page" }) },
 });

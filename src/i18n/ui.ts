@@ -75,6 +75,26 @@ export interface UIDict {
   thRole: string;
   thLink: string;
   viewLink: string;
+
+  // localized section labels — surfaced by the floating section index
+  // (core.js reads each section's data-screen-label).
+  sections: {
+    hero: string;
+    statement: string;
+    reel: string;
+    voices: string;
+    work: string;
+    contact: string;
+    workHero: string;
+    projectGrid: string;
+    aboutHero: string;
+    aboutProcess: string;
+    archiveHero: string;
+    archiveTable: string;
+    projectHero: string;
+    projectInfo: string;
+    projectGallery: string;
+  };
 }
 
 export const ui: Record<Locale, UIDict> = {
@@ -149,6 +169,24 @@ export const ui: Record<Locale, UIDict> = {
     thRole: "Rolle",
     thLink: "Link",
     viewLink: "Ansehen ↗",
+
+    sections: {
+      hero: "Intro",
+      statement: "Ansatz",
+      reel: "Motion",
+      voices: "Stimmen",
+      work: "Arbeiten",
+      contact: "Kontakt",
+      workHero: "Arbeiten",
+      projectGrid: "Projekte",
+      aboutHero: "Über",
+      aboutProcess: "Arbeitsweise",
+      archiveHero: "Archiv",
+      archiveTable: "Index",
+      projectHero: "Projekt",
+      projectInfo: "Details",
+      projectGallery: "Galerie",
+    },
   },
   en: {
     navWork: "Work",
@@ -221,6 +259,24 @@ export const ui: Record<Locale, UIDict> = {
     thRole: "Role",
     thLink: "Link",
     viewLink: "View ↗",
+
+    sections: {
+      hero: "Intro",
+      statement: "Approach",
+      reel: "Motion",
+      voices: "Voices",
+      work: "Work",
+      contact: "Contact",
+      workHero: "Work",
+      projectGrid: "Projects",
+      aboutHero: "About",
+      aboutProcess: "Process",
+      archiveHero: "Archive",
+      archiveTable: "Index",
+      projectHero: "Project",
+      projectInfo: "Details",
+      projectGallery: "Gallery",
+    },
   },
 };
 

@@ -67,6 +67,84 @@
     window.__bindCursor = bindCursor; // for any dynamically-added targets
   }
 
+  /* ---------------- magnetic CTAs ---------------- */
+  // [data-magnetic] elements ease toward the pointer while hovered, then
+  // settle back. Skipped on touch / reduced-motion.
+  function bindMagnetic(el) {
+    const strength = 0.3;
+    const setX = gsap.quickTo(el, "x", { duration: 0.5, ease: "expo.out" });
+    const setY = gsap.quickTo(el, "y", { duration: 0.5, ease: "expo.out" });
+    el.addEventListener("pointermove", (e) => {
+      const r = el.getBoundingClientRect();
+      setX((e.clientX - (r.left + r.width / 2)) * strength);
+      setY((e.clientY - (r.top + r.height / 2)) * strength);
+    });
+    el.addEventListener("pointerleave", () => { setX(0); setY(0); });
+  }
+  if (!reduce && !isTouch && typeof gsap !== "undefined") {
+    document.querySelectorAll("[data-magnetic]").forEach(bindMagnetic);
+  }
+
+  /* ---------------- work preview (cursor follow) ---------------- */
+  // Floating cover thumbnail that trails the pointer over project rows.
+  // Shared by the home work list (.work__row) and the archive table
+  // (.arch__row); the #workPreview element lives in Base.astro.
+  const preview = document.getElementById("workPreview");
+  if (preview && !isTouch && !reduce && typeof gsap !== "undefined") {
+    const tgt = window.__pointer || { x: innerWidth / 2, y: innerHeight / 2 };
+    const pv = { x: tgt.x, y: tgt.y };
+    let active = false;
+    const label = preview.querySelector("span");
+    const img = preview.querySelector("img");
+    document.querySelectorAll(".work__row, .arch__row").forEach((row) => {
+      row.addEventListener("pointerenter", () => {
+        active = true;
+        preview.classList.add("is-active");
+        const name = row.dataset.name || row.querySelector(".name")?.textContent || "";
+        label.textContent = name;
+        if (img) {
+          const cover = row.dataset.cover || "";
+          if (cover && img.getAttribute("src") !== cover) img.src = cover;
+          img.hidden = !cover;
+        }
+      });
+      row.addEventListener("pointerleave", () => { active = false; preview.classList.remove("is-active"); });
+    });
+    gsap.ticker.add(() => {
+      pv.x += (tgt.x - pv.x) * 0.12;
+      pv.y += (tgt.y - pv.y) * 0.12;
+      const s = active ? 1 : 0.85;
+      preview.style.transform = "translate(" + pv.x + "px," + pv.y + "px) translate(-50%,-50%) scale(" + s + ")";
+    });
+  }
+
+  /* ---------------- section index ---------------- */
+  // Surfaces the active section's localized data-screen-label in the fixed
+  // corner marker. Pure IntersectionObserver — works without Lenis and under
+  // reduced motion.
+  function initSectionIndex() {
+    const el = document.getElementById("sectionIndex");
+    if (!el) return;
+    const sections = document.querySelectorAll("[data-screen-label]");
+    if (!sections.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const label = e.target.getAttribute("data-screen-label");
+          if (label) el.textContent = "( " + label + " )";
+        });
+      },
+      { rootMargin: "-45% 0px -45% 0px" },
+    );
+    sections.forEach((s) => io.observe(s));
+    // Reveal only after the hero so it never clashes with hero corner copy.
+    const onScroll = () =>
+      el.classList.toggle("is-visible", window.scrollY > innerHeight * 0.6);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+
   /* ---------------- Lenis ---------------- */
   let lenis = null;
   if (!reduce && typeof Lenis !== "undefined") {
@@ -173,5 +251,6 @@
     setTimeout(revealHero, 350);
   }
   initReveals();
+  initSectionIndex();
   if (document.fonts) document.fonts.ready.then(() => ScrollTrigger.refresh());
 })();

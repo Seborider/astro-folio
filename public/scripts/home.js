@@ -1,9 +1,8 @@
 /* ============================================================
    home.js — interactions unique to the home page.
-   Loader count-up (once per session), showreel overlay, carousel
-   drag + counter, and the cursor-following work preview.
-   Depends on core.js (window.__revealHero, window.scramble,
-   window.__lenis, window.__pointer). Loaded only on index.
+   Loader count-up (once per session), showreel overlay, and carousel
+   drag + counter. Depends on core.js (window.__revealHero,
+   window.scramble, window.__lenis). Loaded only on index.
    ============================================================ */
 (function () {
   "use strict";
@@ -51,15 +50,41 @@
 
   /* ---------------- showreel overlay ---------------- */
   const showreel = document.getElementById("showreel");
+  const reelVideo = showreel ? showreel.querySelector(".showreel__video") : null;
+  // The full showreel source the "Play reel" CTA returns to (tiles swap it out).
+  const showreelSrc = reelVideo ? reelVideo.getAttribute("src") : null;
   const lenis = () => window.__lenis;
-  const openReel = () => { showreel.classList.add("is-open"); if (lenis()) lenis().stop(); };
-  const closeReel = () => { showreel.classList.remove("is-open"); if (lenis()) lenis().start(); };
+  const openReel = (src) => {
+    if (reelVideo) {
+      if (src && reelVideo.getAttribute("src") !== src) {
+        reelVideo.setAttribute("src", src); // resets + loads the new source at 0
+      } else {
+        reelVideo.currentTime = 0; // same source → rewind
+      }
+      reelVideo.play().catch(() => {});
+    }
+    showreel.classList.add("is-open");
+    document.documentElement.classList.add("reel-open");
+    if (lenis()) lenis().stop();
+  };
+  const closeReel = () => {
+    showreel.classList.remove("is-open");
+    document.documentElement.classList.remove("reel-open");
+    if (reelVideo) reelVideo.pause();
+    if (lenis()) lenis().start();
+  };
   if (showreel) {
     const play = document.getElementById("playReel");
     const close = document.getElementById("closeReel");
-    if (play) play.addEventListener("click", openReel);
+    if (play) play.addEventListener("click", () => openReel(showreelSrc));
     if (close) close.addEventListener("click", closeReel);
-    document.querySelectorAll(".reel__tile").forEach((t) => t.addEventListener("click", openReel));
+    // Only tiles that actually have a video open the overlay — playing their own.
+    document.querySelectorAll(".reel__tile[data-video]").forEach((t) =>
+      t.addEventListener("click", () => openReel(t.dataset.video)),
+    );
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && showreel.classList.contains("is-open")) closeReel();
+    });
   }
 
   /* ---------------- carousel ---------------- */
@@ -86,33 +111,6 @@
     carousel.addEventListener("click", (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
   }
 
-  /* ---------------- work preview (cursor follow) ---------------- */
-  const preview = document.getElementById("workPreview");
-  const isTouch = matchMedia("(hover: none)").matches;
-  if (preview && !isTouch && typeof gsap !== "undefined") {
-    const tgt = window.__pointer || { x: innerWidth / 2, y: innerHeight / 2 };
-    const pv = { x: tgt.x, y: tgt.y };
-    let active = false;
-    document.querySelectorAll(".work__row").forEach((row) => {
-      row.addEventListener("pointerenter", () => {
-        active = true;
-        preview.classList.add("is-active");
-        const name = row.dataset.name || row.querySelector(".name")?.textContent || "";
-        preview.querySelector("span").textContent = name;
-        const img = preview.querySelector("img");
-        if (img) {
-          const cover = row.dataset.cover || "";
-          if (cover && img.getAttribute("src") !== cover) img.src = cover;
-          img.hidden = !cover;
-        }
-      });
-      row.addEventListener("pointerleave", () => { active = false; preview.classList.remove("is-active"); });
-    });
-    gsap.ticker.add(() => {
-      pv.x += (tgt.x - pv.x) * 0.12;
-      pv.y += (tgt.y - pv.y) * 0.12;
-      const s = active ? 1 : 0.85;
-      preview.style.transform = "translate(" + pv.x + "px," + pv.y + "px) translate(-50%,-50%) scale(" + s + ")";
-    });
-  }
+  // The cursor-following work preview now lives in core.js (shared with the
+  // archive table); the #workPreview element lives in Base.astro.
 })();

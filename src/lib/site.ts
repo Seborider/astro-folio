@@ -23,6 +23,7 @@ export interface SiteSettings {
   contactCta: string;
   socials: SocialLink[];
   archiveHeading: string;
+  availability: string;
   location: string;
   timezoneLabel: string;
   copyright: string;
@@ -47,6 +48,8 @@ export interface AboutPage {
   portraitYear: string;
   capabilitiesHeading: string;
   capabilities: AboutRow[];
+  processHeading: string;
+  process: AboutRow[];
   recognitionHeading: string;
   recognition: AboutRow[];
 }
@@ -57,9 +60,17 @@ export interface ReelTile {
   video: string | null; // resolved CDN file url (muted loop), or null
 }
 
+export interface Testimonial {
+  quote: string;
+  attribution: string;
+  role?: string;
+}
+
 export interface HomePage {
   reelTiles: ReelTile[]; // only the tiles set in the Studio (max 8); the
   // placeholder defaults below are used only when Sanity is unconfigured
+  testimonials: Testimonial[]; // empty until real client quotes are added
+  showreelVideo: string | null; // overlay player URL; null → placeholder
 }
 
 const SITE_DEFAULTS_EN: SiteSettings = {
@@ -73,6 +84,7 @@ const SITE_DEFAULTS_EN: SiteSettings = {
     { label: "Savee ↗", url: "#" },
   ],
   archiveHeading: "Archive",
+  availability: "Available for projects",
   location: "Copenhagen",
   timezoneLabel: "UTC+1",
   copyright: "© 2026 — Neutral demo, all placeholders",
@@ -87,6 +99,7 @@ const SITE_DEFAULTS: Record<Locale, SiteSettings> = {
     contactLabel: "( Kontakt )",
     contactCta: "Sag hallo ↗",
     archiveHeading: "Archiv",
+    availability: "Verfügbar für Projekte",
     location: "Kopenhagen",
     copyright: "© 2026",
     footerNote: "Rekonstruktionsstudie",
@@ -126,6 +139,20 @@ const ABOUT_DEFAULTS_EN: AboutPage = {
     },
     { title: "Digital", detail: "Sites, WebGL, prototypes with dev partners" },
   ],
+  processHeading: "How I work",
+  process: [
+    {
+      title: "Discovery",
+      detail: "Goals, audience, scope — what success looks like",
+    },
+    { title: "Design", detail: "Direction, system, prototype, sign-off" },
+    {
+      title: "Build",
+      detail: "Front + back end, CMS, accessible and performant",
+    },
+    { title: "Launch", detail: "Testing, deploy, handover, docs" },
+    { title: "Support", detail: "Iteration, analytics, ongoing care" },
+  ],
   recognitionHeading: "Recognition",
   recognition: [
     { title: "Awwwards", detail: "Site of the Day × 3, Developer Award" },
@@ -144,6 +171,7 @@ const ABOUT_DEFAULTS: Record<Locale, AboutPage> = {
     title: "Über",
     subMeta: "( Kopenhagen — seit 2014 )",
     capabilitiesHeading: "Fähigkeiten",
+    processHeading: "Arbeitsweise",
     recognitionHeading: "Auszeichnungen",
   },
 };
@@ -160,6 +188,12 @@ const HOME_DEFAULTS: HomePage = {
     "reel 07",
     "reel 08",
   ].map((label) => ({ label, image: null, video: null })),
+  // Empty by design — the testimonial strip stays hidden until real client
+  // quotes are added in the Studio (no fabricated proof ships).
+  testimonials: [],
+  // Null by design — the overlay shows its labelled placeholder until a real
+  // showreel URL is set in the Studio.
+  showreelVideo: null,
 };
 
 // Per-slot image widths; indices mirror reelSlots in index.astro
@@ -173,6 +207,7 @@ const siteQuery = (l: Locale) => `*[_type == "siteSettings"][0]{
   "contactCta": coalesce(contactCta.${l}, contactCta.de),
   "socials": socials[]{ "label": coalesce(label.${l}, label.de), url },
   "archiveHeading": coalesce(archiveHeading.${l}, archiveHeading.de),
+  "availability": coalesce(availability.${l}, availability.de),
   "location": coalesce(location.${l}, location.de),
   "timezoneLabel": coalesce(timezoneLabel.${l}, timezoneLabel.de),
   "copyright": coalesce(copyright.${l}, copyright.de),
@@ -192,6 +227,8 @@ const aboutQuery = (l: Locale) => `*[_type == "aboutPage"][0]{
   portraitYear,
   "capabilitiesHeading": coalesce(capabilitiesHeading.${l}, capabilitiesHeading.de),
   "capabilities": capabilities[]{ "title": coalesce(title.${l}, title.de), "detail": coalesce(detail.${l}, detail.de) },
+  "processHeading": coalesce(processHeading.${l}, processHeading.de),
+  "process": process[]{ "title": coalesce(title.${l}, title.de), "detail": coalesce(detail.${l}, detail.de) },
   "recognitionHeading": coalesce(recognitionHeading.${l}, recognitionHeading.de),
   "recognition": recognition[]{ "title": coalesce(title.${l}, title.de), "detail": coalesce(detail.${l}, detail.de) }
 }`;
@@ -201,7 +238,13 @@ const homeQuery = (l: Locale) => `*[_type == "homePage"][0]{
     "label": coalesce(label.${l}, label.de),
     "image": image.asset._ref,
     "video": video.asset->url
-  }
+  },
+  "testimonials": testimonials[]{
+    "quote": coalesce(quote.${l}, quote.de),
+    "attribution": attribution,
+    "role": coalesce(role.${l}, role.de)
+  },
+  "showreelVideo": showreelVideo.asset->url
 }`;
 
 // Sanity returns null for unset fields — keep the default in that case.
@@ -283,6 +326,8 @@ async function loadHomePage(locale: Locale): Promise<HomePage> {
   if (!sanityConfigured) return HOME_DEFAULTS;
   const doc = await sanityFetch<{
     reelTiles?: Array<{ label?: string; image?: string; video?: string }>;
+    testimonials?: Array<{ quote?: string; attribution?: string; role?: string }>;
+    showreelVideo?: string;
   } | null>(homeQuery(locale));
   const raw = doc?.reelTiles ?? [];
   return {
@@ -291,5 +336,15 @@ async function loadHomePage(locale: Locale): Promise<HomePage> {
       image: imageUrl(t.image, { w: REEL_WIDTHS[i] }),
       video: t.video ?? null,
     })),
+    // Only keep entries with both a quote and an attribution — a half-filled
+    // row never renders an anonymous or empty testimonial.
+    testimonials: (doc?.testimonials ?? [])
+      .filter((t) => t.quote && t.attribution)
+      .map((t) => ({
+        quote: t.quote as string,
+        attribution: t.attribution as string,
+        role: t.role ?? undefined,
+      })),
+    showreelVideo: doc?.showreelVideo ?? null,
   };
 }

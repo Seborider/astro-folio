@@ -48,7 +48,7 @@ const metaRows: [string, string][] = [
 
 <Base title={`${p.name} — Sebo Mayer`} description={p.intro} locale={locale}>
   <!-- HERO -->
-  <section class="pd-hero" data-screen-label="Project hero">
+  <section class="pd-hero" data-screen-label={tr.sections.projectHero}>
     <div class="phero__index meta">
       <span>( {p.cat} )</span><span class="rule"></span>
       <span
@@ -72,7 +72,7 @@ const metaRows: [string, string][] = [
   </section>
 
   <!-- INFO -->
-  <section class="pd-info" data-screen-label="Project info">
+  <section class="pd-info" data-screen-label={tr.sections.projectInfo}>
     <div class="pd-info__meta">
       {
         metaRows.map(([k, v]) => (
@@ -91,7 +91,7 @@ const metaRows: [string, string][] = [
   </section>
 
   <!-- GALLERY -->
-  <section class="pd-gallery" data-screen-label="Project gallery">
+  <section class="pd-gallery" data-screen-label={tr.sections.projectGallery}>
     {
       p.gallery.map((g, i) => (
         <figure class={`pd-shot ${g.span}`} data-reveal>

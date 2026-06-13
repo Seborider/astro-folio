@@ -43,7 +43,7 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
   </div>
 
   <!-- HERO -->
-  <section class="hero" data-screen-label="Hero">
+  <section class="hero" data-screen-label={tr.sections.hero}>
     <div class="hero__bg"></div>
     <div class="hero__inner">
       <h1 class="hero__title">
@@ -70,7 +70,7 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
   </section>
 
   <!-- STATEMENT -->
-  <section class="statement" id="about" data-screen-label="Statement">
+  <section class="statement" id="about" data-screen-label={tr.sections.statement}>
     <div class="statement__index meta">
       <span>( 01 )</span><span class="rule"></span><span
         >{tr.statementLabel}</span
@@ -89,7 +89,7 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
   </section>
 
   <!-- REEL GRID -->
-  <section class="reel" data-screen-label="Reel">
+  <section class="reel" data-screen-label={tr.sections.reel}>
     <div class="reel__head">
       <h2>{tr.reelHeading}</h2>
       <span class="meta">( 2021 — 2026 )</span>
@@ -97,7 +97,11 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
     <div class="reel__grid">
       {
         home.reelTiles.map((tile, i) => (
-          <div class={`reel__tile ${reelSlots[i]}`} data-reveal>
+          <div
+            class={`reel__tile ${reelSlots[i]}`}
+            data-reveal
+            data-video={tile.video}
+          >
             <span class="tile-no">{String(i + 1).padStart(2, "0")}</span>
             <Media src={tile.image} video={tile.video} label={tile.label} />
           </div>
@@ -105,14 +109,14 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
       }
     </div>
     <div class="reel__cta">
-      <button id="playReel" data-cursor="play"
+      <button id="playReel" data-cursor="play" data-magnetic
         ><span class="tri"></span> {tr.playReel}</button
       >
     </div>
   </section>
 
   <!-- WORK LIST -->
-  <section class="work" id="work" data-screen-label="Work">
+  <section class="work" id="work" data-screen-label={tr.sections.work}>
     <div class="statement__index meta" style="margin-bottom:40px">
       <span>( 02 )</span><span class="rule"></span><span
         >{tr.workIndexLabel}</span
@@ -141,6 +145,28 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
     </div>
   </section>
 
+  <!-- VOICES (client testimonials — hidden until real quotes exist) -->
+  {
+    home.testimonials.length > 0 && (
+      <section class="voices" data-screen-label={tr.sections.voices}>
+        <div class="statement__index meta" style="margin-bottom:40px">
+          <span>( 03 )</span>
+          <span class="rule" />
+          <span>{tr.sections.voices}</span>
+        </div>
+        {home.testimonials.map((tm) => (
+          <figure class="voices__item" data-reveal>
+            <blockquote class="voices__quote">{tm.quote}</blockquote>
+            <figcaption class="voices__attr meta">
+              {tm.attribution}
+              {tm.role && <span class="paren"> — {tm.role}</span>}
+            </figcaption>
+          </figure>
+        ))}
+      </section>
+    )
+  }
+
   <Footer locale={locale} carousel={carousel} />
 
   <!-- SHOWREEL OVERLAY -->
@@ -152,16 +178,24 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
       >
     </div>
     <div class="showreel__player">
-      <div class="placeholder ph-motion">
-        <span>{tr.showreelPlaceholder}</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- floating work preview (home.js swaps the img in when a row has a cover) -->
-  <div class="work__preview" id="workPreview">
-    <img alt="" hidden /><div class="placeholder ph-motion">
-      <span>preview</span>
+      {
+        home.showreelVideo || home.reelTiles.some((t) => t.video) ? (
+          <video
+            class="showreel__video"
+            src={home.showreelVideo ?? undefined}
+            controls
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label={tr.showreelLabel}
+          />
+        ) : (
+          <div class="placeholder ph-motion">
+            <span>{tr.showreelPlaceholder}</span>
+          </div>
+        )
+      }
     </div>
   </div>
 </Base>

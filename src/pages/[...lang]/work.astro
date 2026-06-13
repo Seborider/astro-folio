@@ -37,7 +37,7 @@ function filtersFor(cat: string): string[] {
 
 <Base title={tr.workMetaTitle} description={tr.workDescription} locale={locale}>
   <!-- PAGE HERO -->
-  <section class="phero" data-screen-label="Work hero">
+  <section class="phero" data-screen-label={tr.sections.workHero}>
     <div class="phero__index meta">
       <span data-scramble-now data-text={tr.workScramble}
         >{tr.workScramble}</span
@@ -69,7 +69,7 @@ function filtersFor(cat: string): string[] {
   </div>
 
   <!-- PROJECT GRID -->
-  <section class="proj-grid" id="projGrid" data-screen-label="Project grid">
+  <section class="proj-grid" id="projGrid" data-screen-label={tr.sections.projectGrid}>
     {
       projects.map((p, i) => {
         const wide = i % 5 === 0;
