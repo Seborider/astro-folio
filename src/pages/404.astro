@@ -1,0 +1,36 @@
+---
+/**
+ * 404.astro — static not-found page (built to /404.html, served by the host
+ * for any unmatched route). A single static file can only ship one locale, so
+ * this is German-primary (the site default) with an English sub-line. It reuses
+ * the .phero layout and the page-hero rise/scramble wired by core.js.
+ */
+import Base from "../layouts/Base.astro";
+import Footer from "../components/Footer.astro";
+import { DEFAULT_LOCALE } from "../i18n";
+---
+
+<Base title="404 — Sebo Mayer" locale={DEFAULT_LOCALE}>
+  <section class="phero notfound" data-screen-label="404">
+    <div class="phero__index meta">
+      <span data-scramble-now data-text="( Fehler 404 )">( Fehler 404 )</span>
+      <span class="rule"></span>
+      <span>Nicht gefunden</span>
+    </div>
+    <h1 class="phero__title">
+      <span class="line"><span data-rise>404</span></span>
+    </h1>
+    <div class="phero__sub">
+      <p class="phero__lede" data-rise-soft>
+        Diese Seite existiert nicht — oder ist umgezogen.
+      </p>
+      <span class="meta" data-rise-soft>This page could not be found.</span>
+    </div>
+    <nav class="notfound__links" data-rise-soft>
+      <a href="/" data-cursor="home">Startseite ↗</a>
+      <a href="/work" data-cursor="view">Arbeiten ↗</a>
+    </nav>
+  </section>
+
+  <Footer locale={DEFAULT_LOCALE} />
+</Base>
