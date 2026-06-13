@@ -68,6 +68,13 @@ export default defineType({
       description: "Heading above the home-page footer carousel.",
     }),
     defineField({
+      name: "availability",
+      title: "Availability status",
+      type: "localeString",
+      description:
+        'Footer line beside the clock, e.g. "Verfügbar für Projekte".',
+    }),
+    defineField({
       name: "location",
       title: "Location",
       type: "localeString",

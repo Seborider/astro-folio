@@ -29,7 +29,7 @@ const tr = t(locale);
 <footer
   class="footer"
   id={carousel ? "archive" : undefined}
-  data-screen-label="Footer"
+  data-screen-label={tr.sections.contact}
 >
   {
     carousel && (
@@ -69,7 +69,8 @@ const tr = t(locale);
         id="emailBtn"
         href="#"
         data-email={s.email}
-        data-cursor="copy">{s.contactCta}</a
+        data-cursor="copy"
+        data-magnetic>{s.contactCta}</a
       >
     </div>
     <div class="footer__col">
@@ -94,6 +95,9 @@ const tr = t(locale);
     </div>
     <div class="footer__col">
       <h4>{tr.footBased}</h4>
+      <span class="footer__avail"><span class="avail-dot"></span>{
+          s.availability
+        }</span>
       <span>{s.location}</span>
       <span>{s.timezoneLabel}</span>
       <span id="clock">—</span>
