@@ -232,14 +232,15 @@
   /* ---------------- clock ---------------- */
   const clock = document.getElementById("clock");
   if (clock) {
+    const fmt = new Intl.DateTimeFormat("de-DE", {
+      timeZone: "Europe/Berlin",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
     const setClock = () => {
-      const d = new Date();
-      const utc = d.getTime() + d.getTimezoneOffset() * 60000;
-      const cph = new Date(utc + 3600000);
-      clock.textContent =
-        String(cph.getHours()).padStart(2, "0") + ":" +
-        String(cph.getMinutes()).padStart(2, "0") + ":" +
-        String(cph.getSeconds()).padStart(2, "0");
+      clock.textContent = fmt.format(new Date());
     };
     setClock(); setInterval(setClock, 1000);
   }
