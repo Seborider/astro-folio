@@ -7,28 +7,33 @@
  */
 import Base from "../layouts/Base.astro";
 import Footer from "../components/Footer.astro";
-import { DEFAULT_LOCALE } from "../i18n";
+import { DEFAULT_LOCALE, pageTitle } from "../i18n";
+import { t } from "../i18n/ui";
+
+const tr = t(DEFAULT_LOCALE);
 ---
 
-<Base title="404 — Sebo Mayer" locale={DEFAULT_LOCALE}>
+<Base title={pageTitle("404")} locale={DEFAULT_LOCALE}>
   <section class="phero notfound" data-screen-label="404">
     <div class="phero__index meta">
-      <span data-scramble-now data-text="( Fehler 404 )">( Fehler 404 )</span>
+      <span data-scramble-now data-text={tr.notFoundScramble}
+        >{tr.notFoundScramble}</span
+      >
       <span class="rule"></span>
-      <span>Nicht gefunden</span>
+      <span>{tr.notFoundLabel}</span>
     </div>
     <h1 class="phero__title">
       <span class="line"><span data-rise>404</span></span>
     </h1>
     <div class="phero__sub">
       <p class="phero__lede" data-rise-soft>
-        Diese Seite existiert nicht — oder ist umgezogen.
+        {tr.notFoundLede}
       </p>
-      <span class="meta" data-rise-soft>This page could not be found.</span>
+      <span class="meta" data-rise-soft>{tr.notFoundSubMeta}</span>
     </div>
     <nav class="notfound__links" data-rise-soft>
-      <a href="/" data-cursor="home">Startseite ↗</a>
-      <a href="/work" data-cursor="view">Arbeiten ↗</a>
+      <a href="/" data-cursor="home">{tr.notFoundHome}</a>
+      <a href="/work" data-cursor="view">{tr.notFoundWork}</a>
     </nav>
   </section>
 

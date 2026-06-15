@@ -12,6 +12,13 @@ export const LOCALES = ["de", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = "de";
 
+/** Brand name — identical in every locale, so a shared constant, not a dict entry. */
+export const BRAND = "Sebo Mayer";
+/** Hero <h1>, one rising line per word. */
+export const BRAND_LINES = ["Sebo", "Mayer"] as const;
+/** Compose a document title as "<name> — <brand>". */
+export const pageTitle = (name: string): string => `${name} — ${BRAND}`;
+
 export type Localized<T> = { de: T; en?: T };
 
 /** Resolve a localized value with DE fallback — never empty. */

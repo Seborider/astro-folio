@@ -9,7 +9,7 @@
  * below — DE prose is currently an EN duplicate pending real translation.
  */
 import { sanityConfigured, sanityFetch, imageUrl } from "./sanity";
-import { DEFAULT_LOCALE, type Locale } from "../i18n";
+import { BRAND, DEFAULT_LOCALE, pageTitle, type Locale } from "../i18n";
 
 export interface SocialLink {
   label: string;
@@ -74,7 +74,7 @@ export interface HomePage {
 }
 
 const SITE_DEFAULTS_EN: SiteSettings = {
-  headerMark: "Sebo Mayer ©",
+  headerMark: `${BRAND} ©`,
   email: "hello@studio.demo",
   contactLabel: "( Reach out )",
   contactCta: "Say hello ↗",
@@ -107,7 +107,7 @@ const SITE_DEFAULTS: Record<Locale, SiteSettings> = {
 };
 
 const ABOUT_DEFAULTS_EN: AboutPage = {
-  metaTitle: "About — Sebo Mayer",
+  metaTitle: pageTitle("About"),
   title: "About",
   lede: "Design & art director working between brand, motion and the printed page.",
   subMeta: "( Copenhagen — est. 2014 )",
@@ -118,7 +118,7 @@ const ABOUT_DEFAULTS_EN: AboutPage = {
     "to <em>meaning</em>.",
   ],
   bio: [
-    "Sebo Mayer is a Copenhagen-based design and art director with a decade of practice spanning identity systems, motion, and editorial. The work is led by typography and pacing — treating a brand less as a logo and more as a tempo that recurs across every surface.",
+    `${BRAND} is a Copenhagen-based design and art director with a decade of practice spanning identity systems, motion, and editorial. The work is led by typography and pacing — treating a brand less as a logo and more as a tempo that recurs across every surface.`,
     '<span class="dim">Previously</span> design lead at a Scandinavian studio and an independent for cultural institutions, fashion houses and technology brands. Current focus: long-form brand worlds and the moving image.',
     '<span class="dim">Approach</span> — slow looking, sharp type, generous white space, and the conviction that restraint is its own kind of noise.',
   ],
@@ -167,7 +167,7 @@ const ABOUT_DEFAULTS: Record<Locale, AboutPage> = {
   en: ABOUT_DEFAULTS_EN,
   de: {
     ...ABOUT_DEFAULTS_EN,
-    metaTitle: "Über — Sebo Mayer",
+    metaTitle: pageTitle("Über"),
     title: "Über",
     subMeta: "( Kopenhagen — seit 2014 )",
     capabilitiesHeading: "Fähigkeiten",

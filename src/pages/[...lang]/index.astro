@@ -4,7 +4,7 @@ import Footer from "../../components/Footer.astro";
 import Media from "../../components/Media.astro";
 import { getProjects } from "../../lib/projects";
 import { getHomePage } from "../../lib/site";
-import { localePath, localeStaticPaths } from "../../i18n";
+import { BRAND_LINES, localePath, localeStaticPaths } from "../../i18n";
 import { t } from "../../i18n/ui";
 
 export function getStaticPaths() {
@@ -47,19 +47,24 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
     <div class="hero__bg"></div>
     <div class="hero__inner">
       <h1 class="hero__title">
-        <span class="line"><span data-rise>Sebo</span></span>
-        <span class="line"><span data-rise>Mayer</span></span>
+        {
+          BRAND_LINES.map((word) => (
+            <span class="line">
+              <span data-rise>{word}</span>
+            </span>
+          ))
+        }
       </h1>
-      <div class="hero__role" data-rise-soft>Design &amp; Art Director</div>
+      <div class="hero__role" data-rise-soft>{tr.heroRole}</div>
 
       <div class="hero__foot">
         <p class="hero__meta">
-          <span class="scramble" data-text="DESIGN">DESIGN</span>
-          <span class="paren">( Art Director )</span>
-          <span class="scramble" data-text="DIRECTION">DIRECTION</span>
+          <span class="scramble" data-text={tr.heroMetaA}>{tr.heroMetaA}</span>
+          <span class="paren">{tr.heroMetaRole}</span>
+          <span class="scramble" data-text={tr.heroMetaB}>{tr.heroMetaB}</span>
           <span class="paren">{tr.heroCity}</span>
-          <span class="scramble" data-text="PORTFOLIO">PORTFOLIO</span>
-          <span class="paren">( 2026 )</span>
+          <span class="scramble" data-text={tr.heroMetaC}>{tr.heroMetaC}</span>
+          <span class="paren">{tr.heroMetaYear}</span>
         </p>
         <div class="scroll-cue meta">
           <span class="dot"></span>

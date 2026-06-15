@@ -7,7 +7,7 @@
  * "Copied ✓") intentionally stays English in both locales — the motion code
  * is off-limits per CLAUDE.md.
  */
-import type { Locale } from "./index";
+import { BRAND, pageTitle, type Locale } from "./index";
 
 export interface UIDict {
   // header / footer chrome
@@ -25,6 +25,14 @@ export interface UIDict {
   homeTitle: string;
   homeDescription: string;
   loadingLabel: string;
+  heroRole: string;
+  // hero meta line — scramble words (A/B/C) interleaved with paren labels.
+  // The scramble data-text attributes must match these strings.
+  heroMetaA: string;
+  heroMetaRole: string;
+  heroMetaB: string;
+  heroMetaC: string;
+  heroMetaYear: string;
   heroCity: string;
   scrollCue: string;
   statementLabel: string;
@@ -36,6 +44,9 @@ export interface UIDict {
   showreelLabel: string;
   close: string;
   showreelPlaceholder: string;
+
+  // shared page-hero — secondary index label ("Index 01/02/03")
+  indexLabel: string;
 
   // work
   workTitle: string;
@@ -76,6 +87,25 @@ export interface UIDict {
   thLink: string;
   viewLink: string;
 
+  // 404 — single static page, DE-primary (notFoundSubMeta stays English by design)
+  notFoundScramble: string;
+  notFoundLabel: string;
+  notFoundLede: string;
+  notFoundSubMeta: string;
+  notFoundHome: string;
+  notFoundWork: string;
+
+  // Tweaks panel (React island)
+  tweaks: {
+    title: string;
+    close: string;
+    accent: string;
+    highlight: string;
+    canvas: string;
+    background: string;
+    text: string;
+  };
+
   // localized section labels — surfaced by the floating section index
   // (core.js reads each section's data-screen-label).
   sections: {
@@ -109,10 +139,15 @@ export const ui: Record<Locale, UIDict> = {
     footHome: "Start",
     footBased: "Standort",
 
-    homeTitle: "Sebo Mayer — Design & Art Director",
-    homeDescription:
-      "Design- und Art-Direction zwischen Brand, Motion und Editorial — Portfolio von Sebo Mayer.",
+    homeTitle: `${BRAND} — Web & Mobile Developer`,
+    homeDescription: `Design- und Art-Direction zwischen Brand, Motion und Editorial — Portfolio von ${BRAND}.`,
     loadingLabel: "( Laden )",
+    heroRole: "Web & Mobile Developer",
+    heroMetaA: "WEB",
+    heroMetaRole: "( Developer )",
+    heroMetaB: "DEVELOPMENT",
+    heroMetaC: "PORTFOLIO",
+    heroMetaYear: "( 2026 )",
     heroCity: "( Kopenhagen )",
     scrollCue: "( Scrollen )",
     statementLabel: "Ansatz",
@@ -131,8 +166,10 @@ export const ui: Record<Locale, UIDict> = {
     close: "( Schließen )",
     showreelPlaceholder: "Showreel in voller Länge — Master-Cut hier ablegen",
 
+    indexLabel: "Index",
+
     workTitle: "Arbeiten",
-    workMetaTitle: "Arbeiten — Sebo Mayer",
+    workMetaTitle: pageTitle("Arbeiten"),
     workDescription:
       "Ausgewählte Projekte aus Brand, Motion, Editorial und Digital — 2021 bis heute.",
     workScramble: "( Arbeiten )",
@@ -157,7 +194,7 @@ export const ui: Record<Locale, UIDict> = {
     selectedLabel: "( Auswahl )",
 
     archiveTitle: "Archiv",
-    archiveMetaTitle: "Archiv — Sebo Mayer",
+    archiveMetaTitle: pageTitle("Archiv"),
     archiveDescription:
       "Der vollständige Index — jedes Projekt, chronologisch, mit Typ und Rolle.",
     archiveScramble: "( Archiv )",
@@ -169,6 +206,23 @@ export const ui: Record<Locale, UIDict> = {
     thRole: "Rolle",
     thLink: "Link",
     viewLink: "Ansehen ↗",
+
+    notFoundScramble: "( Fehler 404 )",
+    notFoundLabel: "Nicht gefunden",
+    notFoundLede: "Diese Seite existiert nicht — oder ist umgezogen.",
+    notFoundSubMeta: "This page could not be found.",
+    notFoundHome: "Startseite ↗",
+    notFoundWork: "Arbeiten ↗",
+
+    tweaks: {
+      title: "Tweaks",
+      close: "Schließen",
+      accent: "Akzent",
+      highlight: "Highlight-Farbe",
+      canvas: "Fläche",
+      background: "Hintergrund",
+      text: "Text",
+    },
 
     sections: {
       hero: "Intro",
@@ -199,10 +253,15 @@ export const ui: Record<Locale, UIDict> = {
     footHome: "Home",
     footBased: "Based",
 
-    homeTitle: "Sebo Mayer — Design & Art Director",
-    homeDescription:
-      "Design and art direction across brand, motion and editorial — the portfolio of Sebo Mayer.",
+    homeTitle: `${BRAND} — Web & Mobile Developer`,
+    homeDescription: `Design and art direction across brand, motion and editorial — the portfolio of ${BRAND}.`,
     loadingLabel: "( Loading )",
+    heroRole: "Web & Mobile Developer",
+    heroMetaA: "WEB",
+    heroMetaRole: "( Developer )",
+    heroMetaB: "DEVELOPMENT",
+    heroMetaC: "PORTFOLIO",
+    heroMetaYear: "( 2026 )",
     heroCity: "( Copenhagen )",
     scrollCue: "( Scroll )",
     statementLabel: "Approach",
@@ -221,8 +280,10 @@ export const ui: Record<Locale, UIDict> = {
     close: "( Close )",
     showreelPlaceholder: "Full showreel — drop master cut here",
 
+    indexLabel: "Index",
+
     workTitle: "Work",
-    workMetaTitle: "Work — Sebo Mayer",
+    workMetaTitle: pageTitle("Work"),
     workDescription:
       "Selected projects across brand, motion, editorial and digital — 2021 to now.",
     workScramble: "( Work )",
@@ -247,7 +308,7 @@ export const ui: Record<Locale, UIDict> = {
     selectedLabel: "( Selected )",
 
     archiveTitle: "Archive",
-    archiveMetaTitle: "Archive — Sebo Mayer",
+    archiveMetaTitle: pageTitle("Archive"),
     archiveDescription:
       "The full index — every project, chronological, type and role.",
     archiveScramble: "( Archive )",
@@ -259,6 +320,23 @@ export const ui: Record<Locale, UIDict> = {
     thRole: "Role",
     thLink: "Link",
     viewLink: "View ↗",
+
+    notFoundScramble: "( Error 404 )",
+    notFoundLabel: "Not found",
+    notFoundLede: "This page doesn’t exist — or has moved.",
+    notFoundSubMeta: "This page could not be found.",
+    notFoundHome: "Home ↗",
+    notFoundWork: "Work ↗",
+
+    tweaks: {
+      title: "Tweaks",
+      close: "Close",
+      accent: "Accent",
+      highlight: "Highlight color",
+      canvas: "Canvas",
+      background: "Background",
+      text: "Text",
+    },
 
     sections: {
       hero: "Intro",

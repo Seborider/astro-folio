@@ -13,7 +13,7 @@
 import "../styles/folio.css";
 import Header from "../components/Header.astro";
 import Tweaks from "../components/Tweaks";
-import { DEFAULT_LOCALE, altLocalePath, type Locale } from "../i18n";
+import { BRAND, DEFAULT_LOCALE, altLocalePath, type Locale } from "../i18n";
 
 interface Props {
   title?: string;
@@ -22,7 +22,7 @@ interface Props {
   locale?: Locale;
 }
 const {
-  title = "Sebo Mayer",
+  title = BRAND,
   description,
   home = false,
   locale = DEFAULT_LOCALE,
@@ -119,7 +119,7 @@ const enPath = locale === "en" ? path : altLocalePath("de", path);
       </div>
     </div>
 
-    <Tweaks client:idle />
+    <Tweaks client:idle locale={locale} />
 
     <!-- libraries -->
     <script

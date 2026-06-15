@@ -3,7 +3,7 @@ import Base from "../../../layouts/Base.astro";
 import Footer from "../../../components/Footer.astro";
 import Media from "../../../components/Media.astro";
 import { getProjects, neighbours } from "../../../lib/projects";
-import { DEFAULT_LOCALE, LOCALES, localePath } from "../../../i18n";
+import { DEFAULT_LOCALE, LOCALES, localePath, pageTitle } from "../../../i18n";
 import { t } from "../../../i18n/ui";
 
 export async function getStaticPaths() {
@@ -46,7 +46,7 @@ const metaRows: [string, string][] = [
 ];
 ---
 
-<Base title={`${p.name} — Sebo Mayer`} description={p.intro} locale={locale}>
+<Base title={pageTitle(p.name)} description={p.intro} locale={locale}>
   <!-- HERO -->
   <section class="pd-hero" data-screen-label={tr.sections.projectHero}>
     <div class="phero__index meta">

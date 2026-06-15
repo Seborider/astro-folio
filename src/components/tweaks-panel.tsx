@@ -131,10 +131,15 @@ function useTweaks<T extends Record<string, unknown>>(
 // the toggle opens it, the ✕ (or the toggle) closes it.
 interface TweaksPanelProps {
   title?: string;
+  closeLabel?: string;
   children?: React.ReactNode;
 }
 
-function TweaksPanel({ title = "Tweaks", children }: TweaksPanelProps) {
+function TweaksPanel({
+  title = "Tweaks",
+  closeLabel = "Close tweaks",
+  children,
+}: TweaksPanelProps) {
   const [open, setOpen] = React.useState(false);
   const dragRef = React.useRef<HTMLDivElement>(null);
   const offsetRef = React.useRef({ x: 16, y: 16 });
@@ -219,7 +224,7 @@ function TweaksPanel({ title = "Tweaks", children }: TweaksPanelProps) {
           <b>{title}</b>
           <button
             className="twk-x"
-            aria-label="Close tweaks"
+            aria-label={closeLabel}
             onMouseDown={(e) => e.stopPropagation()}
             onClick={() => setOpen(false)}
           >

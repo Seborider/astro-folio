@@ -10,6 +10,8 @@ import {
   TweakSection,
   TweakColor,
 } from "./tweaks-panel";
+import type { Locale } from "../i18n";
+import { t } from "../i18n/ui";
 
 const TWEAK_DEFAULTS = {
   accent: "oklch(0.72 0.13 56)",
@@ -59,10 +61,11 @@ const INKS = [
   "#14110c", // near-black (pair with a light background)
 ];
 
-function FolioTweaks() {
+function FolioTweaks({ locale }: { locale: Locale }) {
+  const tk = t(locale).tweaks;
   // SSR renders with the dark defaults; the mount effect re-syncs to the
   // active theme without writing any inline styles.
-  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
 
   // On mount and on every theme toggle: drop the inline overrides and
   // mirror the new baseline tokens so the chips show the real values.
@@ -85,24 +88,24 @@ function FolioTweaks() {
   };
 
   return (
-    <TweaksPanel>
-      <TweakSection label="Accent" />
+    <TweaksPanel title={tk.title} closeLabel={tk.close}>
+      <TweakSection label={tk.accent} />
       <TweakColor
-        label="Highlight color"
-        value={t.accent}
+        label={tk.highlight}
+        value={tw.accent}
         options={ACCENTS}
         onChange={change("accent")}
       />
-      <TweakSection label="Canvas" />
+      <TweakSection label={tk.canvas} />
       <TweakColor
-        label="Background"
-        value={t.bg}
+        label={tk.background}
+        value={tw.bg}
         options={BGS}
         onChange={change("bg")}
       />
       <TweakColor
-        label="Text"
-        value={t.ink}
+        label={tk.text}
+        value={tw.ink}
         options={INKS}
         onChange={change("ink")}
       />
