@@ -33,7 +33,9 @@
       if (window.__revealHero) window.__revealHero();
     } else if (seen) {
       loader.style.display = "none";
-      if (window.__revealHero) window.__revealHero();
+      // arrived via a View Transition → rise after the wipe finishes; a plain
+      // revisit (refresh, not viaVT) still rises immediately. Scheduler decides.
+      if (window.__revealHeroEntrance) window.__revealHeroEntrance();
     } else {
       let n = 0;
       const tick = () => {

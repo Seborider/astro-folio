@@ -47,6 +47,10 @@ html {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   background: var(--bg);
+  scrollbar-width: none; /* Firefox — hide native bar (custom one in JS) */
+}
+html::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Edge — no width to toggle between routes */
 }
 
 body {
@@ -113,6 +117,76 @@ main,
   .page-wipe {
     display: none;
     animation: none;
+  }
+}
+
+/* native cross-document page transitions — the browser holds the old page
+   across the document swap and animates to the new one, closing the gap the
+   in-document .page-wipe can't span. Where supported, Base.astro tags <html.vt>
+   before first paint so the JS wipe steps aside (chrome.js) and the panel below
+   is hidden. */
+@view-transition {
+  navigation: auto;
+}
+html.vt .page-wipe {
+  display: none;
+}
+::view-transition-old(root) {
+  animation: vtHold 0.5s both; /* hold the old page opaque underneath so nothing
+                                shows through mid-transition (no black flash) */
+}
+::view-transition-new(root) {
+  animation: vtRiseIn 0.5s var(--ease) both;
+}
+@keyframes vtHold {
+  from,
+  to {
+    opacity: 1;
+  }
+}
+@keyframes vtRiseIn {
+  from {
+    transform: translateY(100%);
+  } /* new page rises in from the bottom, over the held old page */
+  to {
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* custom scroll indicator — the native bar is hidden (above) so its width
+   never toggles between routes; this thin thumb tracks scroll progress and
+   core.js fades it in (.is-ready) once the page is revealed (revealHero). */
+.scrollbar {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: 10px;
+  z-index: 9100; /* below .page-wipe (9300) so it's covered during transitions */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+.scrollbar.is-ready {
+  opacity: 1;
+}
+.scrollbar__thumb {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  width: 2px;
+  height: 40px; /* sized by core.js from the viewport/content ratio */
+  border-radius: 2px;
+  background: var(--ink-dim);
+  will-change: transform, height;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scrollbar {
+    transition: none;
   }
 }
 
@@ -255,6 +329,11 @@ a {
 }
 .loader.is-done {
   pointer-events: none;
+}
+/* revisits within a session skip the loader entirely (set pre-paint in
+   Base.astro) so the page-wipe reveal shows through instead of a "0" flash */
+html.loader-seen .loader {
+  display: none;
 }
 
 /* =====================================================

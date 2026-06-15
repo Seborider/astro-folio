@@ -14,6 +14,13 @@
   const wipe = document.querySelector(".page-wipe");
   if (!wipe) return;
 
+  // Browsers with cross-document View Transitions handle the page transition
+  // natively (@view-transition in folio.css) — let them own navigation and
+  // skip this JS wipe so the two don't run at once. Base.astro detects support
+  // and tags <html.vt> before first paint; we just read that. Older browsers
+  // fall back to the wipe below.
+  if (document.documentElement.classList.contains("vt")) return;
+
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const COVER_MS = 650;
   let navigating = false;
@@ -39,6 +46,7 @@
     wipe.style.animation = "none";
     void wipe.offsetWidth;            // restart animation
     wipe.classList.add("is-covering");
+    wipe.style.animation = "";        // drop the inline reset so .is-covering's wipeCover runs
     setTimeout(() => { location.href = href; }, COVER_MS);
   });
 

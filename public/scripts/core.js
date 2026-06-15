@@ -11,6 +11,17 @@
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (typeof gsap !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
+  // Did we arrive via a cross-document View Transition? If so, that wipe is the
+  // page's entrance, so content already on screen is shown in its final state
+  // instead of being animated in again (which looked like the page loading
+  // twice). Cold loads / refreshes (no inbound navigation) animate as before.
+  const nav = window.navigation;
+  const viaVT =
+    document.documentElement.classList.contains("vt") &&
+    !!(nav && nav.activation && nav.activation.from) &&
+    nav.activation.navigationType !== "reload";
+  window.__viaVT = viaVT; // home.js reads this for its loader path
+
   /* ---------------- scramble ---------------- */
   const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*/<>+=0123456789";
   function scramble(el, opts) {
@@ -118,6 +129,38 @@
     });
   }
 
+  /* ---------------- scroll indicator ---------------- */
+  // Native scrollbar is hidden in CSS (so its width can't toggle between
+  // routes); this thin thumb mirrors scroll progress. revealHero fades it in.
+  const scrollbar = document.getElementById("scrollbar");
+  const sbThumb = scrollbar && scrollbar.querySelector(".scrollbar__thumb");
+  let sbTrackH = 0, sbThumbH = 24, sbScrolls = false;
+  // Geometry only changes on resize / content reflow — measure here (off the
+  // scroll hot path) and write the resize-invariant thumb height + visibility.
+  function measureScrollbar(limit) {
+    if (!sbThumb) return;
+    limit = Math.max(0, limit);
+    sbTrackH = scrollbar.clientHeight;
+    sbThumbH = Math.max(24, sbTrackH * (window.innerHeight / (window.innerHeight + limit)));
+    sbScrolls = limit > 0;
+    sbThumb.style.opacity = sbScrolls ? "" : "0"; // hide on pages that don't scroll
+    sbThumb.style.height = sbThumbH + "px";
+  }
+  // Scroll hot path: no layout reads, just slide the thumb.
+  function updateScrollbar(scroll, limit) {
+    if (!sbThumb || !sbScrolls) return;
+    const progress = Math.min(1, Math.max(0, scroll / limit));
+    sbThumb.style.transform = "translateY(" + progress * (sbTrackH - sbThumbH) + "px)";
+  }
+  function syncScrollbar() {
+    const l = window.__lenis;
+    const scroll = l ? l.scroll : window.scrollY;
+    const limit = l ? l.limit : document.documentElement.scrollHeight - window.innerHeight;
+    measureScrollbar(limit);
+    updateScrollbar(scroll, limit);
+  }
+  window.addEventListener("resize", syncScrollbar);
+
   /* ---------------- section index ---------------- */
   // Surfaces the active section's localized data-screen-label in the fixed
   // corner marker. Pure IntersectionObserver — works without Lenis and under
@@ -149,7 +192,7 @@
   let lenis = null;
   if (!reduce && typeof Lenis !== "undefined") {
     lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
-    lenis.on("scroll", ScrollTrigger.update);
+    lenis.on("scroll", () => { ScrollTrigger.update(); updateScrollbar(lenis.scroll, lenis.limit); });
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
     window.__lenis = lenis;
@@ -160,6 +203,10 @@
       });
     });
   }
+  if (!window.__lenis) {
+    // reduced motion / no Lenis: track the native scroll directly
+    window.addEventListener("scroll", syncScrollbar, { passive: true });
+  }
 
   /* ---------------- page-hero rise ---------------- */
   // Set the hidden state immediately (no flash), then reveal.
@@ -167,8 +214,14 @@
     gsap.set("[data-rise]", { yPercent: 110 });
     gsap.set("[data-rise-soft]", { autoAlpha: 0, y: 20 });
   }
-  function revealHero() {
-    if (reduce) {
+  function revealHero(instant) {
+    // Fade the scroll indicator in with the page (after the wipe/loader has
+    // lifted) — every reveal path calls revealHero, so this is the one hook.
+    if (scrollbar) {
+      syncScrollbar();
+      requestAnimationFrame(() => scrollbar.classList.add("is-ready"));
+    }
+    if (reduce || instant) {
       gsap.set("[data-rise]", { yPercent: 0 });
       gsap.set("[data-rise-soft]", { autoAlpha: 1, y: 0 });
       document.querySelectorAll(".scramble, [data-scramble-now]").forEach((el) => (el.textContent = el.dataset.text || el.textContent));
@@ -185,6 +238,29 @@
   }
   window.__revealHero = revealHero;
 
+  // Shared entrance scheduler: every route arrival routes through here so the
+  // hero rise plays once, at the right time. On a View-Transition arrival, wait
+  // for the wipe (vtRiseIn) to finish so the rise reads as the page's own
+  // entrance instead of doubling. Reduced motion is handled inside revealHero.
+  function revealHeroEntrance() {
+    if (!viaVT) {
+      requestAnimationFrame(() => revealHero());
+      return;
+    }
+    // The <head> captures `pagereveal` (it fires before these end-of-body
+    // scripts run) and stashes the inbound transition on window.__vt. Sequence
+    // the rise after the wipe (vtRiseIn) finishes; if there's no transition
+    // (reveal skipped), fall back to the next frame. The else-branch listener
+    // covers the reverse ordering, should core ever run before the reveal.
+    const afterWipe = () => {
+      if (window.__vt) window.__vt.finished.finally(() => revealHero());
+      else requestAnimationFrame(() => revealHero());
+    };
+    if (window.__vtSeen) afterWipe();
+    else window.addEventListener("pagereveal", afterWipe, { once: true });
+  }
+  window.__revealHeroEntrance = revealHeroEntrance;
+
   /* ---------------- scroll reveals ---------------- */
   function initReveals() {
     if (reduce) {
@@ -192,9 +268,14 @@
       gsap.utils.toArray("[data-reveal]").forEach((s) => gsap.set(s, { autoAlpha: 1, y: 0 }));
       return;
     }
+    // On a VT arrival, anything already on screen is part of the wipe — show it
+    // settled and skip its trigger so it isn't re-animated. Below-fold elements
+    // still get their normal scroll reveal.
+    const inView = (el) => el.getBoundingClientRect().top < window.innerHeight * 0.95;
     gsap.utils.toArray(".reveal-lines").forEach((blk) => {
       const spans = blk.querySelectorAll(".line > span");
       if (!spans.length) return; // empty/hidden block (e.g. project with no quote)
+      if (viaVT && inView(blk)) { gsap.set(spans, { yPercent: 0 }); return; }
       gsap.set(spans, { yPercent: 110 });
       ScrollTrigger.create({
         trigger: blk, start: "top 82%",
@@ -202,6 +283,7 @@
       });
     });
     gsap.utils.toArray("[data-reveal]").forEach((el) => {
+      if (viaVT && inView(el)) { gsap.set(el, { autoAlpha: 1, y: 0 }); return; }
       gsap.from(el, {
         scrollTrigger: { trigger: el, start: "top 88%" },
         autoAlpha: 0, y: 30, duration: 0.9, ease: "expo.out",
@@ -210,6 +292,7 @@
     });
     gsap.utils.toArray("[data-scramble]").forEach((el) => {
       el.dataset.text = el.textContent;
+      if (viaVT && inView(el)) return; // already shows its final text
       ScrollTrigger.create({
         trigger: el, start: "top 86%", once: true,
         onEnter: () => scramble(el, { duration: 600 }),
@@ -249,9 +332,11 @@
   // The home page has a #loader; home.js reveals the hero after the count-up.
   // Every other page reveals immediately.
   if (!document.getElementById("loader")) {
-    setTimeout(revealHero, 350);
+    // Via VT: rise after the wipe (vtRiseIn) finishes. Cold load: rise on the
+    // next frame so content rises in as the wipe clears. The scheduler decides.
+    window.__revealHeroEntrance();
   }
   initReveals();
   initSectionIndex();
-  if (document.fonts) document.fonts.ready.then(() => ScrollTrigger.refresh());
+  if (document.fonts) document.fonts.ready.then(() => { ScrollTrigger.refresh(); syncScrollbar(); });
 })();
