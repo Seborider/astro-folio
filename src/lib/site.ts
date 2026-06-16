@@ -102,7 +102,7 @@ const SITE_DEFAULTS: Record<Locale, SiteSettings> = {
     availability: "Verfügbar für Projekte",
     location: "Kopenhagen",
     copyright: "© 2026",
-    footerNote: "Rekonstruktionsstudie",
+    footerNote: "",
   },
 };
 
@@ -326,7 +326,11 @@ async function loadHomePage(locale: Locale): Promise<HomePage> {
   if (!sanityConfigured) return HOME_DEFAULTS;
   const doc = await sanityFetch<{
     reelTiles?: Array<{ label?: string; image?: string; video?: string }>;
-    testimonials?: Array<{ quote?: string; attribution?: string; role?: string }>;
+    testimonials?: Array<{
+      quote?: string;
+      attribution?: string;
+      role?: string;
+    }>;
     showreelVideo?: string;
   } | null>(homeQuery(locale));
   const raw = doc?.reelTiles ?? [];

@@ -174,6 +174,10 @@ html.vt .page-wipe {
 .scrollbar.is-ready {
   opacity: 1;
 }
+/* the nav panel sits below the scrollbar — hide it while the menu is open */
+.menu-open .scrollbar {
+  opacity: 0;
+}
 .scrollbar__thumb {
   position: absolute;
   top: 0;
@@ -395,6 +399,103 @@ html.loader-seen .loader {
   color: inherit;
   font-size: 14px;
   line-height: 1;
+}
+
+/* Mobile burger + nav panel — hidden on desktop, shown ≤720px (see media
+   query). The burger lives in the blended header; the panel is a sibling. */
+.nav-toggle {
+  display: none;
+}
+.nav-panel {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  /* Collapse the desktop nav into the burger. */
+  .header__nav {
+    display: none;
+  }
+  .nav-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: none;
+    color: inherit;
+    position: relative;
+    z-index: 1; /* keep clickable above the panel within the header */
+  }
+  .nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: currentColor;
+    transform-origin: center;
+    transition: transform 0.4s var(--ease);
+  }
+  .nav-toggle[aria-expanded="true"] span:first-child {
+    transform: translateY(4px) rotate(45deg);
+  }
+  .nav-toggle[aria-expanded="true"] span:last-child {
+    transform: translateY(-4px) rotate(-45deg);
+  }
+
+  .nav-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(28px, 6vh, 56px);
+    position: fixed;
+    inset: 0;
+    z-index: 7900; /* below the header (8000) so the burger stays on top */
+    padding: var(--pad);
+    background: var(--bg);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.5s var(--ease),
+      visibility 0s linear 0.5s;
+  }
+  .nav-panel.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.5s var(--ease);
+  }
+  .nav-panel__nav {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 3.5vh, 32px);
+  }
+  .nav-panel__nav a {
+    font-family: var(--serif);
+    font-size: clamp(40px, 12vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .nav-panel__controls {
+    display: flex;
+    align-items: baseline;
+    gap: 32px;
+  }
+  .nav-panel__controls .theme-toggle,
+  .nav-panel__controls .lang-switch {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .nav-panel__controls .theme-toggle {
+    font-size: 16px;
+  }
 }
 
 /* =====================================================

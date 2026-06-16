@@ -107,6 +107,6 @@ const tr = t(locale);
   <div class="footer__bottom">
     <span>{s.copyright}</span>
     <span>{s.colophon}</span>
-    <span>{s.footerNote}</span>
+    {s.footerNote && <span>{s.footerNote}</span>}
   </div>
 </footer>

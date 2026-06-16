@@ -43,4 +43,83 @@ const switchHref = altLocalePath(locale, Astro.url.pathname);
       aria-label={tr.themeToggleLabel}>◐</button
     >
   </nav>
+  <button
+    class="nav-toggle"
+    data-nav-toggle
+    aria-controls="navPanel"
+    aria-expanded="false"
+    aria-label={tr.menuLabel}
+  >
+    <span></span><span></span>
+  </button>
 </header>
+
+<!-- Mobile nav. Sibling of <header> on purpose: the header's
+     mix-blend-mode: difference would invert this solid panel, so it lives
+     outside that stacking context. Reuses the same nav links, theme toggle
+     and locale switch (order: links → theme → locale). -->
+<div class="nav-panel" id="navPanel">
+  <nav class="nav-panel__nav">
+    <a href={localePath(locale, "/work")} data-cursor="view">{tr.navWork}</a>
+    <a href={localePath(locale, "/about")} data-cursor="view">{tr.navAbout}</a>
+    <a href={localePath(locale, "/archive")} data-cursor="view">{tr.navArchive}</a
+    >
+  </nav>
+  <div class="nav-panel__controls">
+    <button
+      class="theme-toggle"
+      data-theme-toggle
+      aria-label={tr.themeToggleLabel}>◐</button
+    >
+    <a
+      class="lang-switch"
+      href={switchHref}
+      data-cursor="view"
+      aria-label={tr.langSwitchLabel}
+    >
+      {locale === "de" ? "EN" : "DE"}
+    </a>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const btn = document.querySelector("[data-nav-toggle]");
+    const panel = document.getElementById("navPanel");
+    if (!btn || !panel) return;
+    function setOpen(open) {
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      panel.classList.toggle("is-open", open);
+      // hide the custom scrollbar (it sits above the panel) while open
+      document.documentElement.classList.toggle("menu-open", open);
+    }
+    // The locale switch navigates to the same page in the other language.
+    // Re-open the menu on the destination so the switch feels continuous
+    // (the page-wipe covers the swap), mirroring the in-place theme toggle.
+    try {
+      if (sessionStorage.getItem("navOpen")) {
+        sessionStorage.removeItem("navOpen");
+        setOpen(true);
+      }
+    } catch (e) {}
+    btn.addEventListener("click", function () {
+      setOpen(btn.getAttribute("aria-expanded") !== "true");
+    });
+    panel.addEventListener("click", function (e) {
+      const a = e.target.closest("a");
+      if (!a) return;
+      if (a.classList.contains("lang-switch")) {
+        // keep the menu open across the locale change (see above)
+        try {
+          sessionStorage.setItem("navOpen", "1");
+        } catch (e) {}
+        return;
+      }
+      // a nav link navigates to new content — close as we leave
+      setOpen(false);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setOpen(false);
+    });
+  })();
+</script>

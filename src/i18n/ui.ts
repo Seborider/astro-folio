@@ -16,6 +16,7 @@ export interface UIDict {
   navArchive: string;
   themeToggleLabel: string;
   langSwitchLabel: string;
+  menuLabel: string;
   footSocials: string;
   footIndex: string;
   footHome: string;
@@ -134,6 +135,7 @@ export const ui: Record<Locale, UIDict> = {
     navArchive: "Archiv",
     themeToggleLabel: "Farbschema umschalten",
     langSwitchLabel: "Switch to English",
+    menuLabel: "Menü",
     footSocials: "Socials",
     footIndex: "Index",
     footHome: "Start",
@@ -248,6 +250,7 @@ export const ui: Record<Locale, UIDict> = {
     navArchive: "Archive",
     themeToggleLabel: "Toggle color theme",
     langSwitchLabel: "Zu Deutsch wechseln",
+    menuLabel: "Menu",
     footSocials: "Socials",
     footIndex: "Index",
     footHome: "Home",
