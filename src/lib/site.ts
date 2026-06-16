@@ -87,9 +87,9 @@ const SITE_DEFAULTS_EN: SiteSettings = {
   availability: "Available for projects",
   location: "Copenhagen",
   timezoneLabel: "UTC+1",
-  copyright: "© 2026 — Neutral demo, all placeholders",
+  copyright: "© 2026",
   colophon: "Built with Astro · GSAP · Lenis · WebGL",
-  footerNote: "Recreation study",
+  footerNote: "",
 };
 
 const SITE_DEFAULTS: Record<Locale, SiteSettings> = {
@@ -248,7 +248,7 @@ const homeQuery = (l: Locale) => `*[_type == "homePage"][0]{
 }`;
 
 // Sanity returns null for unset fields — keep the default in that case.
-function withDefaults<T extends object>(
+export function withDefaults<T extends object>(
   defaults: T,
   doc: Record<string, unknown> | null,
 ): T {

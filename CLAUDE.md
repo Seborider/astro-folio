@@ -47,6 +47,7 @@ The Tweaks panel is a React island (`<Tweaks client:idle />`, see
 ## Verify after changes
 
 ```bash
+npm test           # Vitest — unit tests must pass
 npm run build      # must pass; content schema is validated here
 npm run preview
 ```
@@ -59,6 +60,47 @@ opens the panel and color changes apply live; no console errors.
 Note: a Sanity dataset created before the locale migration has flat string
 fields — run `cd studio && npm run migrate:locales` once (idempotent) or the
 GROQ `coalesce` projections return null and the build fails.
+
+## Testing
+
+**Vitest.** Config in `vitest.config.ts` wraps Astro's `getViteConfig` so the
+`astro:content` virtual module and `import.meta.env` resolve the same way they
+do in `astro build`. Run with `npm test` (`vitest run`). Tests are **colocated**
+as `*.test.ts` next to the module they cover (`src/**/*.test.ts`).
+
+**Tests are mandatory.** Every change that touches testable logic ships with
+tests in the same change — no exceptions. "Testable logic" = pure functions,
+loaders, schema mapping, i18n helpers (anything in `src/lib/`, `src/i18n/`,
+`src/content/config.ts`, and pure helpers in components). Cover the happy path,
+the `en`→`de` locale fallback where relevant, and edge cases (empty input,
+missing fields). Do NOT add tests for the imperative motion code in
+`public/scripts/*.js` (GSAP/Lenis/WebGL) or browser/DOM/visual behavior — that
+stays out of the unit suite.
+
+Current coverage (keep it green when editing these):
+
+- `src/i18n/index.ts` — locale helpers (`pick`, `localePath`, `altLocalePath`,
+  `localeFromParams`, `localeStaticPaths`, `pageTitle`).
+- `src/i18n/ui.ts` — `t()` plus a de/en key-parity guard.
+- `src/lib/sanity.ts` — `imageUrl` (ref→CDN url) and `sanityFetch` (mocked
+  global `fetch`; never hits the network).
+- `src/lib/projects.ts` — `neighbours` wrap-around, and `getProjects` for BOTH
+  backends with `./sanity` + `astro:content` mocked.
+- `src/lib/site.ts` — `withDefaults` per-field merge (the loaders themselves do
+  live Sanity I/O and are not unit-tested).
+- `src/content/config.ts` — the project Zod schema (`safeParse`, real
+  `astro:content`).
+- `src/components/tweaks-panel.tsx` — `__twkIsLight` luminance check.
+
+Mocking patterns that work here: `vi.stubEnv` + `vi.resetModules()` + dynamic
+`import()` for module-level env consts (`PROJECT_ID`); `vi.mock("./sanity")`
+with `sanityConfigured` as a **getter** to flip backends per test;
+`vi.mock("astro:content")` for `getCollection`; `vi.stubGlobal("fetch", ...)`
+for network code. The Zod-schema test uses the REAL `astro:content` (no mock).
+
+Two source helpers are exported solely for testing: `withDefaults`
+(`src/lib/site.ts`) and `__twkIsLight` (`src/components/tweaks-panel.tsx`).
+Keep them exported.
 
 ## Good first tasks (in priority order)
 
@@ -138,4 +180,7 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-New features and bugfixes ship with tests when they touch testable logic (helpers, the proxy, access control, hooks).
+New features and bugfixes **must** ship with tests whenever they touch testable
+logic (pure helpers, loaders, schema mapping, i18n) — in the same change, and
+`npm test` must pass before it's done. See the **Testing** section above for
+scope, current coverage, and the mocking patterns.

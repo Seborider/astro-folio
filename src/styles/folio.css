@@ -991,7 +991,7 @@ html.loader-seen .loader {
 }
 .footer__bottom {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 20px var(--pad) 28px;
   border-top: 1px solid var(--line);
   color: var(--ink-faint);

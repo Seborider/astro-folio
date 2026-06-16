@@ -277,7 +277,7 @@ function TweakRow({ label, value, children, inline = false }: TweakRowProps) {
 // Relative-luminance contrast pick — checkmarks drawn over a swatch need to
 // read on both #111 and #fafafa without per-option configuration. Hex input
 // only (#rgb / #rrggbb); named or rgb()/hsl() colors fall through to "light".
-function __twkIsLight(hex: string) {
+export function __twkIsLight(hex: string) {
   const h = String(hex).replace("#", "");
   const x = h.length === 3 ? h.replace(/./g, (c) => c + c) : h.padEnd(6, "0");
   const n = parseInt(x.slice(0, 6), 16);
