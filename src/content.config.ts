@@ -1,10 +1,12 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection } from "astro:content";
+import { glob } from "astro/loaders";
+import { z } from "astro/zod";
 
 /**
- * Projects are structured DATA (no long-form body), so this is a
- * `type: "data"` collection backed by one JSON file per project in
- * src/content/projects/. The filename (e.g. `halcyon.json`) is the
- * project's slug/id and becomes the URL: /work/halcyon.
+ * Projects are structured DATA (no long-form body). Each project is one JSON
+ * file in src/content/projects/ loaded via the Content Layer `glob()` loader;
+ * the filename (e.g. `halcyon.json`) is the project's id/slug and becomes the
+ * URL: /work/halcyon.
  *
  * A headless CMS (Sanity, Keystatic, etc.) would replace these JSON
  * files — keep this schema as the contract the CMS must satisfy.
@@ -17,10 +19,10 @@ const localized = <T extends z.ZodTypeAny>(value: T) =>
   z.object({ de: value, en: value.optional() });
 
 const projects = defineCollection({
-  type: "data",
+  loader: glob({ pattern: "**/*.json", base: "./src/content/projects" }),
   schema: z.object({
-    // Explicit ordering drives prev/next and list order (data collections
-    // are otherwise unordered). Lower = earlier / more recent.
+    // Explicit ordering drives prev/next and list order (loader order is
+    // non-deterministic). Lower = earlier / more recent.
     order: z.number(),
     name: localized(z.string()),
     cat: localized(z.string()), // e.g. "Brand · Motion"

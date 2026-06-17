@@ -162,9 +162,9 @@ export const ui: Record<Locale, UIDict> = {
     statementAttr:
       "Eine Praxis zwischen Brand, Motion und Editorial — gebaut auf langsames Sehen, scharfe Typografie und die Überzeugung, dass Zurückhaltung ihre eigene Art von Lärm ist.",
     reelHeading: "Ausgewählte Motion",
-    playReel: "Showreel abspielen — 02:14",
+    playReel: "Showreel abspielen ",
     workIndexLabel: "Ausgewählte Arbeiten",
-    showreelLabel: "( Showreel — 02:14 )",
+    showreelLabel: "( Showreel )",
     close: "( Schließen )",
     showreelPlaceholder: "Showreel in voller Länge — Master-Cut hier ablegen",
 
@@ -277,9 +277,9 @@ export const ui: Record<Locale, UIDict> = {
     statementAttr:
       "A practice across brand, motion and editorial — built on slow looking, sharp typography, and the belief that restraint is its own kind of noise.",
     reelHeading: "Selected motion",
-    playReel: "Play showreel — 02:14",
+    playReel: "Play showreel ",
     workIndexLabel: "Selected work",
-    showreelLabel: "( Showreel — 02:14 )",
+    showreelLabel: "( Showreel )",
     close: "( Close )",
     showreelPlaceholder: "Full showreel — drop master cut here",
 

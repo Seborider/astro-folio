@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { collections } from "./config";
+import { collections } from "./content.config";
 
 // defineCollection stores the Zod schema on `.schema`. It's a plain object
 // schema here (not the image()-helper function form), so use it directly.
