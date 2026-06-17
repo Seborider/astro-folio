@@ -22,6 +22,11 @@ describe("t", () => {
     expect(t("de").navWork).toBe("Arbeiten");
     expect(t("en").navWork).toBe("Work");
   });
+
+  it("localizes the Impressum footer label", () => {
+    expect(t("de").navImpressum).toBe("Impressum");
+    expect(t("en").navImpressum).toBe("Legal notice");
+  });
 });
 
 describe("locale parity", () => {
