@@ -15,6 +15,7 @@ export interface UIDict {
   navAbout: string;
   navArchive: string;
   navImpressum: string;
+  navDatenschutz: string;
   themeToggleLabel: string;
   langSwitchLabel: string;
   menuLabel: string;
@@ -135,6 +136,7 @@ export const ui: Record<Locale, UIDict> = {
     navAbout: "Über",
     navArchive: "Archiv",
     navImpressum: "Impressum",
+    navDatenschutz: "Datenschutz",
     themeToggleLabel: "Farbschema umschalten",
     langSwitchLabel: "Switch to English",
     menuLabel: "Menü",
@@ -251,6 +253,7 @@ export const ui: Record<Locale, UIDict> = {
     navAbout: "About",
     navArchive: "Archive",
     navImpressum: "Legal notice",
+    navDatenschutz: "Privacy",
     themeToggleLabel: "Toggle color theme",
     langSwitchLabel: "Zu Deutsch wechseln",
     menuLabel: "Menu",

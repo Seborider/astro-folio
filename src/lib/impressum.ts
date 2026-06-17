@@ -22,7 +22,7 @@ const IMPRESSUM_DEFAULTS: Record<Locale, ImpressumPage> = {
   de: {
     metaTitle: pageTitle("Impressum"),
     title: "Impressum",
-    lede: "Angaben gemäß § 5 TMG.",
+    lede: "Angaben gemäß § 5 DDG.",
     body: [
       'Sebo Mayer<br>Musterstraße 1<br>12345 Musterstadt<br>Deutschland',
       '<span class="dim">Kontakt</span><br>E-Mail: hello@studio.demo',
@@ -33,7 +33,7 @@ const IMPRESSUM_DEFAULTS: Record<Locale, ImpressumPage> = {
   en: {
     metaTitle: pageTitle("Legal notice"),
     title: "Legal notice",
-    lede: "Information pursuant to § 5 TMG.",
+    lede: "Information pursuant to § 5 DDG.",
     body: [
       'Sebo Mayer<br>Musterstraße 1<br>12345 Musterstadt<br>Germany',
       '<span class="dim">Contact</span><br>Email: hello@studio.demo',
