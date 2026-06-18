@@ -28,10 +28,12 @@
     if (!m) return [0, 0, 0];
     return [m[0] / 255, m[1] / 255, m[2] / 255];
   }
-  let bgCol, inkCol;
+  let bgCol, inkCol, fog;
   function sampleTheme() {
     bgCol = resolve("--bg", "#080808");
     inkCol = resolve("--ink", "#e9e6df");
+    // fog is faint against light paper — darken it a touch in light mode only
+    fog = document.documentElement.dataset.theme === "light" ? 0.42 : 0.3;
   }
   sampleTheme();
 
@@ -39,7 +41,7 @@
   const VERT = "attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}";
   const FRAG = [
     "precision highp float;",
-    "uniform vec2 uRes;uniform float uTime;uniform vec3 uBg;uniform vec3 uInk;uniform float uGrain;",
+    "uniform vec2 uRes;uniform float uTime;uniform vec3 uBg;uniform vec3 uInk;uniform float uGrain;uniform float uFog;",
     "float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}",
     "float noise(vec2 p){vec2 i=floor(p);vec2 f=fract(p);",
     " float a=hash(i),b=hash(i+vec2(1.0,0.0)),c=hash(i+vec2(0.0,1.0)),d=hash(i+vec2(1.0,1.0));",
@@ -52,7 +54,7 @@
     " vec2 q=vec2(fbm(p+t),fbm(p+vec2(5.2,1.3)-t));",
     " float f=fbm(p+q*1.6+t*0.6);",
     " f=smoothstep(0.15,1.0,f);",
-    " vec3 col=mix(uBg,uInk,f*0.2);",
+    " vec3 col=mix(uBg,uInk,f*uFog);",
     " float d=distance(uv,vec2(0.5));",
     " col*=1.0-d*0.55;",
     " float g=hash(gl_FragCoord.xy+fract(uTime)*vec2(13.0,7.0));",
@@ -88,6 +90,7 @@
   const uBg = gl.getUniformLocation(prog, "uBg");
   const uInk = gl.getUniformLocation(prog, "uInk");
   const uGrain = gl.getUniformLocation(prog, "uGrain");
+  const uFog = gl.getUniformLocation(prog, "uFog");
   gl.uniform1f(uGrain, 0.045);
 
   let W = 0, H = 0;
@@ -116,6 +119,7 @@
     gl.uniform1f(uTime, t);
     gl.uniform3f(uBg, bgCol[0], bgCol[1], bgCol[2]);
     gl.uniform3f(uInk, inkCol[0], inkCol[1], inkCol[2]);
+    gl.uniform1f(uFog, fog);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     if (!reduce) raf = requestAnimationFrame(render);
   }

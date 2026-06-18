@@ -53,12 +53,26 @@
 :root[data-theme="light"] {
   --bg: #ece8df; /* warm paper */
   --ink: #14110c; /* near-black */
-  --accent: oklch(0.90 0.02 90); /* near-white (monochrome / off) */
+  --accent: oklch(0.9 0.02 90); /* near-white (monochrome / off) */
   /* white + difference auto-inverts over any backdrop */
   --blend-ink: #fff;
   /* screen-blend grain vanishes on a light bg; multiply darkens instead */
   --grain-blend: multiply;
+  /* faded text mixes toward the paper bg too fast on light — pull the dim/faint
+     tokens darker so footer, section numbers and labels stay legible */
+  --ink-dim: color-mix(in srgb, var(--ink) 90%, var(--bg));
+  --ink-faint: color-mix(in srgb, var(--ink) 80%, var(--bg));
   color-scheme: light;
+}
+
+/* light mode: drop the difference-blend chrome trick on the header and the
+   faded footer note so both read as solid body text (dark mode unchanged) */
+:root[data-theme="light"] .header {
+  mix-blend-mode: normal;
+  color: var(--ink);
+}
+:root[data-theme="light"] .footer__bottom {
+  color: var(--ink);
 }
 
 * {
