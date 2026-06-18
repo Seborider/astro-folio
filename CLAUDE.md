@@ -27,7 +27,7 @@ hand-built HTML motion prototype; the animation code is intentionally plain
   (`studio/schemaTypes/project.ts`, locale objects in `locale.ts`) must stay
   in sync. Update BOTH when adding a field, and map it (with `coalesce` if
   translatable) in the GROQ query in `src/lib/projects.ts`.
-- Styling is one file, `src/styles/folio.css`, token-driven (`--bg`, `--ink`,
+- Styling is one file, `src/styles/styles.css`, token-driven (`--bg`, `--ink`,
   `--accent`; the rest derive via `color-mix`). Reuse tokens; don't hardcode hex.
 - Reveal animations are declarative: `data-reveal`, `.reveal-lines` (with
   `.line > span`), `data-scramble`. `core.js` wires them on every page.

@@ -18,7 +18,7 @@ import "@fontsource/instrument-serif/400-italic.css";
 import "@fontsource/space-mono/400.css";
 import "@fontsource/space-mono/400-italic.css";
 import "@fontsource/space-mono/700.css";
-import "../styles/folio.css";
+import "../styles/styles.css";
 import Header from "../components/Header.astro";
 import { BRAND, DEFAULT_LOCALE, altLocalePath, type Locale } from "../i18n";
 
@@ -103,7 +103,7 @@ const enPath = locale === "en" ? path : altLocalePath("de", path);
         if (sessionStorage.getItem("folio_seen"))
           document.documentElement.classList.add("loader-seen");
         // Browsers with View Transitions own the page transition (see
-        // @view-transition in folio.css); flag it so the JS wipe steps aside.
+        // @view-transition in styles.css); flag it so the JS wipe steps aside.
         if (window.CSS && CSS.supports("view-transition-name", "none"))
           document.documentElement.classList.add("vt");
       } catch (e) {}

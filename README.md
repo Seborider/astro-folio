@@ -49,7 +49,7 @@ src/
     archive.astro            # full chronological table
     work/[slug].astro        # project detail (server-rendered from the loader)
   styles/
-    folio.css                # the whole design system (tokens, components, layouts)
+    styles.css               # the whole design system (tokens, components, layouts)
 public/
   scripts/
     core.js                  # EVERY page: cursor, Lenis, reveals, scramble, clock
@@ -191,13 +191,13 @@ script is kept because it reproduces the prototype exactly.
 
 ### Theming / Tweaks
 
-`folio.css` is driven by `--bg`, `--ink`, and `--accent`; every other token is
+`styles.css` is driven by `--bg`, `--ink`, and `--accent`; every other token is
 derived via `color-mix`. The Tweaks panel writes those three variables and the
 WebGL background samples them live. It's a React island
 (`src/components/Tweaks.tsx`, mounted as `<Tweaks client:idle />` in `Base.astro`)
 with its own toggle button in the bottom-right corner. Changes are **live-only**:
 they apply for the session and reset on reload — there's no persistence layer.
-The defaults match the `:root` values in `folio.css`, so first paint is correct
+The defaults match the `:root` values in `styles.css`, so first paint is correct
 before the island hydrates.
 
 ---
