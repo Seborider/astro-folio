@@ -20,7 +20,6 @@ import "@fontsource/space-mono/400-italic.css";
 import "@fontsource/space-mono/700.css";
 import "../styles/folio.css";
 import Header from "../components/Header.astro";
-import Tweaks from "../components/Tweaks";
 import { BRAND, DEFAULT_LOCALE, altLocalePath, type Locale } from "../i18n";
 
 interface Props {
@@ -150,8 +149,6 @@ const enPath = locale === "en" ? path : altLocalePath("de", path);
         <span>preview</span>
       </div>
     </div>
-
-    <Tweaks client:idle locale={locale} />
 
     <!-- libraries -->
     <script

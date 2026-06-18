@@ -3,15 +3,39 @@
    Dark editorial system · Instrument Serif + Space Mono
    ============================================================ */
 
+/* Palette options — swap any base token below by hand.
+   Each line keeps its original label.
+   Accents (matched lightness/chroma, hue varied):
+     oklch(0.72 0.13 56)         amber
+     oklch(0.72 0.13 18)         coral
+     oklch(0.72 0.13 150)        sage
+     oklch(0.72 0.13 232)        steel blue
+     oklch(0.72 0.13 300)        violet
+     oklch(0.90 0.02 90)         near-white (monochrome / off)
+     oklch(0.3785 0.2418 266.32)
+   Backgrounds (subtly-toned darks + one paper light):
+     #080808                     near-black
+     #0b0d11                     cool ink
+     #13100b                     warm espresso
+     #171717                     charcoal
+     #1a1320                     deep aubergine
+     #ece8df                     warm paper (pair with a dark text)
+   Text (warm/cool off-whites + one near-black for light backgrounds):
+     #e9e6df                     warm off-white
+     #f5f2ec                     bright paper
+     #cbc6ba                     muted stone
+     #e6e9ef                     cool white
+     #d8cfc0                     sand
+     #14110c                     near-black (pair with a light background) */
 :root {
-  --bg: #080808;
+  --bg: #1a1320; /* deep aubergine */
   --ink: #e9e6df; /* warm off-white */
-  /* derived from --bg / --ink so tweaking either cascades */
+  /* derived from --bg / --ink so changing either cascades */
   --bg-soft: color-mix(in srgb, var(--ink) 6%, var(--bg));
   --ink-dim: color-mix(in srgb, var(--ink) 55%, var(--bg));
   --ink-faint: color-mix(in srgb, var(--ink) 30%, var(--bg));
   --line: color-mix(in srgb, var(--ink) 14%, transparent);
-  --accent: oklch(0.72 0.13 56); /* muted amber, used sparingly */
+  --accent: oklch(0.72 0.13 300); /* violet */
   /* difference-blended chrome (header, cursor, tile numbers) */
   --blend-ink: var(--ink);
   --grain-blend: screen;
@@ -27,9 +51,9 @@
 /* light theme — set by the inline snippet in Base.astro before first paint.
    Only the base tokens change; every derived color-mix recomputes. */
 :root[data-theme="light"] {
-  --bg: #ece8df; /* warm paper (same as Tweaks palette) */
-  --ink: #14110c; /* near-black (same as Tweaks palette) */
-  --accent: oklch(0.55 0.13 56); /* darker amber for contrast on paper */
+  --bg: #ece8df; /* warm paper */
+  --ink: #14110c; /* near-black */
+  --accent: oklch(0.90 0.02 90); /* near-white (monochrome / off) */
   /* white + difference auto-inverts over any backdrop */
   --blend-ink: #fff;
   /* screen-blend grain vanishes on a light bg; multiply darkens instead */

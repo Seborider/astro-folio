@@ -98,17 +98,6 @@ export interface UIDict {
   notFoundHome: string;
   notFoundWork: string;
 
-  // Tweaks panel (React island)
-  tweaks: {
-    title: string;
-    close: string;
-    accent: string;
-    highlight: string;
-    canvas: string;
-    background: string;
-    text: string;
-  };
-
   // localized section labels — surfaced by the floating section index
   // (core.js reads each section's data-screen-label).
   sections: {
@@ -220,16 +209,6 @@ export const ui: Record<Locale, UIDict> = {
     notFoundHome: "Startseite ↗",
     notFoundWork: "Arbeiten ↗",
 
-    tweaks: {
-      title: "Tweaks",
-      close: "Schließen",
-      accent: "Akzent",
-      highlight: "Highlight-Farbe",
-      canvas: "Fläche",
-      background: "Hintergrund",
-      text: "Text",
-    },
-
     sections: {
       hero: "Intro",
       statement: "Ansatz",
@@ -336,16 +315,6 @@ export const ui: Record<Locale, UIDict> = {
     notFoundSubMeta: "This page could not be found.",
     notFoundHome: "Home ↗",
     notFoundWork: "Work ↗",
-
-    tweaks: {
-      title: "Tweaks",
-      close: "Close",
-      accent: "Accent",
-      highlight: "Highlight color",
-      canvas: "Canvas",
-      background: "Background",
-      text: "Text",
-    },
 
     sections: {
       hero: "Intro",

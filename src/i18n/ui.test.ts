@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { t, ui } from "./ui";
 import { LOCALES } from "./index";
 
-// Collect dotted key paths so nested dicts (tweaks, sections) are compared too.
+// Collect dotted key paths so nested dicts (sections) are compared too.
 function keyPaths(obj: Record<string, unknown>, prefix = ""): string[] {
   return Object.entries(obj).flatMap(([k, v]) => {
     const path = prefix ? `${prefix}.${k}` : k;

@@ -3,7 +3,7 @@
    fbm domain-warp flow + film grain + vignette.
    One fixed full-viewport canvas behind all content.
    Theme-aware: samples computed --bg / --ink each ~250ms so it
-   follows the Tweaks panel. Vanilla WebGL1, no deps.
+   follows the active theme. Vanilla WebGL1, no deps.
    Auto-mounts to <canvas id="glbg"> or any canvas[data-glbg].
    ============================================================ */
 (function () {
@@ -104,7 +104,7 @@
   resize();
   window.addEventListener("resize", resize);
 
-  // re-sample theme colors periodically (cheap, follows Tweaks)
+  // re-sample theme colors periodically (cheap, follows the theme)
   setInterval(sampleTheme, 250);
 
   // instant re-sample on theme toggle (chrome.js full-navigations re-init the rest)
