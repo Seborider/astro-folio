@@ -4,7 +4,7 @@ import Footer from "../../components/Footer.astro";
 import Media from "../../components/Media.astro";
 import { getProjects } from "../../lib/projects";
 import { getHomePage } from "../../lib/site";
-import { BRAND_LINES, localePath, localeStaticPaths } from "../../i18n";
+import { altOf, BRAND_LINES, localePath, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
 
 export function getStaticPaths() {
@@ -12,16 +12,21 @@ export function getStaticPaths() {
 }
 
 const { locale } = Astro.props;
+const alt = otherLocale(locale);
 const tr = t(locale);
+const trA = t(alt);
 const projects = await getProjects(locale);
+const projectsAlt = await getProjects(alt);
 const selected = projects.slice(0, 8);
-const carousel = projects.map((p) => ({
+const carousel = projects.map((p, i) => ({
   id: p.id,
   name: p.name,
+  nameAlt: projectsAlt[i]?.name,
   yr: p.yr,
   cover: p.cover,
 }));
 const home = await getHomePage(locale);
+const homeAlt = await getHomePage(alt);
 // Fixed 8-slot reel layout — editors fill tiles in order and only set
 // tiles render. Keep in sync with REEL_WIDTHS in src/lib/site.ts.
 const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
@@ -30,6 +35,7 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
 <Base
   title={tr.homeTitle}
   description={tr.homeDescription}
+  titleAlt={trA.homeTitle}
   home={true}
   locale={locale}
 >
@@ -37,13 +43,17 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
   <div class="loader" id="loader">
     <div class="loader__count" id="loaderCount">0</div>
     <div class="loader__label meta">
-      <div>{tr.loadingLabel}</div>
+      <div data-i18n-alt={altOf(tr.loadingLabel, trA.loadingLabel)}>{tr.loadingLabel}</div>
       <div class="paren" id="loaderState">Initialising</div>
     </div>
   </div>
 
   <!-- HERO -->
-  <section class="hero" data-screen-label={tr.sections.hero}>
+  <section
+    class="hero"
+    data-screen-label={tr.sections.hero}
+    data-screen-label-alt={altOf(tr.sections.hero, trA.sections.hero)}
+  >
     <div class="hero__bg"></div>
     <div class="hero__inner">
       <h1 class="hero__title">
@@ -55,48 +65,58 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
           ))
         }
       </h1>
-      <div class="hero__role" data-rise-soft>{tr.heroRole}</div>
+      <div class="hero__role" data-rise-soft data-i18n-alt={altOf(tr.heroRole, trA.heroRole)}>{tr.heroRole}</div>
 
       <div class="hero__foot">
         <p class="hero__meta">
-          <span class="scramble" data-text={tr.heroMetaA}>{tr.heroMetaA}</span>
-          <span class="paren">{tr.heroMetaRole}</span>
-          <span class="scramble" data-text={tr.heroMetaB}>{tr.heroMetaB}</span>
-          <span class="paren">{tr.heroCity}</span>
-          <span class="scramble" data-text={tr.heroMetaC}>{tr.heroMetaC}</span>
-          <span class="paren">{tr.heroMetaYear}</span>
+          <span class="scramble" data-text={tr.heroMetaA} data-i18n-alt={altOf(tr.heroMetaA, trA.heroMetaA)}>{tr.heroMetaA}</span>
+          <span class="paren" data-i18n-alt={altOf(tr.heroMetaRole, trA.heroMetaRole)}>{tr.heroMetaRole}</span>
+          <span class="scramble" data-text={tr.heroMetaB} data-i18n-alt={altOf(tr.heroMetaB, trA.heroMetaB)}>{tr.heroMetaB}</span>
+          <span class="paren" data-i18n-alt={altOf(tr.heroCity, trA.heroCity)}>{tr.heroCity}</span>
+          <span class="scramble" data-text={tr.heroMetaC} data-i18n-alt={altOf(tr.heroMetaC, trA.heroMetaC)}>{tr.heroMetaC}</span>
+          <span class="paren" data-i18n-alt={altOf(tr.heroMetaYear, trA.heroMetaYear)}>{tr.heroMetaYear}</span>
         </p>
         <div class="scroll-cue meta">
           <span class="dot"></span>
-          {tr.scrollCue}
+          <span data-i18n-alt={altOf(tr.scrollCue, trA.scrollCue)}>{tr.scrollCue}</span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- STATEMENT -->
-  <section class="statement" id="about" data-screen-label={tr.sections.statement}>
+  <section
+    class="statement"
+    id="about"
+    data-screen-label={tr.sections.statement}
+    data-screen-label-alt={altOf(tr.sections.statement, trA.sections.statement)}
+  >
     <div class="statement__index meta">
       <span>( 01 )</span><span class="rule"></span><span
+        data-i18n-alt={altOf(tr.statementLabel, trA.statementLabel)}
         >{tr.statementLabel}</span
       >
     </div>
     <blockquote class="statement__quote reveal-lines">
       {
-        tr.statementLines.map((line) => (
+        tr.statementLines.map((line, i) => (
           <span class="line">
-            <span set:html={line} />
+            <span set:html={line} data-i18n-html data-i18n-alt={altOf(line, trA.statementLines[i] ?? line)} />
           </span>
         ))
       }
     </blockquote>
-    <p class="statement__attr meta">{tr.statementAttr}</p>
+    <p class="statement__attr meta" data-i18n-alt={altOf(tr.statementAttr, trA.statementAttr)}>{tr.statementAttr}</p>
   </section>
 
   <!-- REEL GRID -->
-  <section class="reel" data-screen-label={tr.sections.reel}>
+  <section
+    class="reel"
+    data-screen-label={tr.sections.reel}
+    data-screen-label-alt={altOf(tr.sections.reel, trA.sections.reel)}
+  >
     <div class="reel__head">
-      <h2>{tr.reelHeading}</h2>
+      <h2 data-i18n-alt={altOf(tr.reelHeading, trA.reelHeading)}>{tr.reelHeading}</h2>
       <span class="meta">( 2021 — 2026 )</span>
     </div>
     <div class="reel__grid">
@@ -115,15 +135,21 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
     </div>
     <div class="reel__cta">
       <button id="playReel" data-cursor="play" data-magnetic
-        ><span class="tri"></span> {tr.playReel}</button
+        ><span class="tri"></span> <span data-i18n-alt={altOf(tr.playReel, trA.playReel)}>{tr.playReel}</span></button
       >
     </div>
   </section>
 
   <!-- WORK LIST -->
-  <section class="work" id="work" data-screen-label={tr.sections.work}>
+  <section
+    class="work"
+    id="work"
+    data-screen-label={tr.sections.work}
+    data-screen-label-alt={altOf(tr.sections.work, trA.sections.work)}
+  >
     <div class="statement__index meta" style="margin-bottom:40px">
       <span>( 02 )</span><span class="rule"></span><span
+        data-i18n-alt={altOf(tr.workIndexLabel, trA.workIndexLabel)}
         >{tr.workIndexLabel}</span
       >
     </div>
@@ -135,14 +161,15 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
             href={localePath(locale, `/work/${p.id}`)}
             data-cursor="open"
             data-name={p.name}
+            data-name-alt={altOf(p.name, projectsAlt[i]?.name ?? p.name)}
             data-cover={p.cover}
             data-reveal
           >
             <span class="idx">{String(i + 1).padStart(2, "0")}</span>
-            <span class="name" data-scramble>
+            <span class="name" data-scramble data-i18n-alt={altOf(p.name, projectsAlt[i]?.name ?? p.name)}>
               {p.name}
             </span>
-            <span class="cat">{p.cat}</span>
+            <span class="cat" data-i18n-alt={altOf(p.cat, projectsAlt[i]?.cat ?? p.cat)}>{p.cat}</span>
             <span class="yr">{p.yr}</span>
           </a>
         ))
@@ -153,18 +180,22 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
   <!-- VOICES (client testimonials — hidden until real quotes exist) -->
   {
     home.testimonials.length > 0 && (
-      <section class="voices" data-screen-label={tr.sections.voices}>
+      <section
+        class="voices"
+        data-screen-label={tr.sections.voices}
+        data-screen-label-alt={altOf(tr.sections.voices, trA.sections.voices)}
+      >
         <div class="statement__index meta" style="margin-bottom:40px">
           <span>( 03 )</span>
           <span class="rule" />
-          <span>{tr.sections.voices}</span>
+          <span data-i18n-alt={altOf(tr.sections.voices, trA.sections.voices)}>{tr.sections.voices}</span>
         </div>
-        {home.testimonials.map((tm) => (
+        {home.testimonials.map((tm, i) => (
           <figure class="voices__item" data-reveal>
-            <blockquote class="voices__quote">{tm.quote}</blockquote>
+            <blockquote class="voices__quote" data-i18n-alt={altOf(tm.quote, homeAlt.testimonials[i]?.quote ?? tm.quote)}>{tm.quote}</blockquote>
             <figcaption class="voices__attr meta">
               {tm.attribution}
-              {tm.role && <span class="paren"> — {tm.role}</span>}
+              {tm.role && <span class="paren"> — <span data-i18n-alt={altOf(tm.role, homeAlt.testimonials[i]?.role ?? tm.role)}>{tm.role}</span></span>}
             </figcaption>
           </figure>
         ))}
@@ -177,8 +208,8 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
   <!-- SHOWREEL OVERLAY -->
   <div class="showreel" id="showreel">
     <div class="showreel__bar">
-      <span class="meta">{tr.showreelLabel}</span>
-      <button class="showreel__close" id="closeReel" data-cursor="close"
+      <span class="meta" data-i18n-alt={altOf(tr.showreelLabel, trA.showreelLabel)}>{tr.showreelLabel}</span>
+      <button class="showreel__close" id="closeReel" data-cursor="close" data-i18n-alt={altOf(tr.close, trA.close)}
         >{tr.close}</button
       >
     </div>
@@ -194,10 +225,11 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
             playsinline
             preload="metadata"
             aria-label={tr.showreelLabel}
+            data-aria-label-alt={altOf(tr.showreelLabel, trA.showreelLabel)}
           />
         ) : (
           <div class="placeholder ph-motion">
-            <span>{tr.showreelPlaceholder}</span>
+            <span data-i18n-alt={altOf(tr.showreelPlaceholder, trA.showreelPlaceholder)}>{tr.showreelPlaceholder}</span>
           </div>
         )
       }

@@ -2,7 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
 import { getProjects } from "../../lib/projects";
-import { localePath, localeStaticPaths } from "../../i18n";
+import { altOf, localePath, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
 
 export function getStaticPaths() {
@@ -10,8 +10,11 @@ export function getStaticPaths() {
 }
 
 const { locale } = Astro.props;
+const alt = otherLocale(locale);
 const tr = t(locale);
+const trA = t(alt);
 const projects = await getProjects(locale);
+const projectsAlt = await getProjects(alt);
 const first = projects[0]?.yr ?? "";
 const last = projects[projects.length - 1]?.yr ?? "";
 ---
@@ -19,52 +22,68 @@ const last = projects[projects.length - 1]?.yr ?? "";
 <Base
   title={tr.archiveMetaTitle}
   description={tr.archiveDescription}
+  titleAlt={trA.archiveMetaTitle}
   locale={locale}
 >
   <!-- PAGE HERO -->
-  <section class="phero" data-screen-label={tr.sections.archiveHero}>
+  <section
+    class="phero"
+    data-screen-label={tr.sections.archiveHero}
+    data-screen-label-alt={altOf(tr.sections.archiveHero, trA.sections.archiveHero)}
+  >
     <div class="phero__index meta">
-      <span data-scramble-now data-text={tr.archiveScramble}
+      <span data-scramble-now data-text={tr.archiveScramble} data-i18n-alt={altOf(tr.archiveScramble, trA.archiveScramble)}
         >{tr.archiveScramble}</span
-      ><span class="rule"></span><span>{tr.indexLabel} 03</span>
+      ><span class="rule"></span><span
+        data-i18n-alt={altOf(`${tr.indexLabel} 03`, `${trA.indexLabel} 03`)}
+        >{tr.indexLabel} 03</span
+      >
     </div>
     <h1 class="phero__title">
-      <span class="line"><span data-rise>{tr.archiveTitle}</span></span>
+      <span class="line"><span data-rise data-i18n-alt={altOf(tr.archiveTitle, trA.archiveTitle)}>{tr.archiveTitle}</span></span>
     </h1>
     <div class="phero__sub">
-      <p class="phero__lede" data-rise-soft>{tr.archiveLede}</p>
+      <p class="phero__lede" data-rise-soft data-i18n-alt={altOf(tr.archiveLede, trA.archiveLede)}>{tr.archiveLede}</p>
       <span class="meta" data-rise-soft>( {last} — {first} )</span>
     </div>
   </section>
 
   <!-- TABLE -->
-  <section class="arch" data-screen-label={tr.sections.archiveTable}>
+  <section
+    class="arch"
+    data-screen-label={tr.sections.archiveTable}
+    data-screen-label-alt={altOf(tr.sections.archiveTable, trA.sections.archiveTable)}
+  >
     <div class="arch__table">
       <div class="arch__row head">
-        <span>{tr.thYear}</span><span>{tr.thProject}</span><span
-          >{tr.thType}</span
-        ><span>{tr.thRole}</span><span style="text-align:right"
-          >{tr.thLink}</span
+        <span data-i18n-alt={altOf(tr.thYear, trA.thYear)}>{tr.thYear}</span><span data-i18n-alt={altOf(tr.thProject, trA.thProject)}>{tr.thProject}</span><span
+          data-i18n-alt={altOf(tr.thType, trA.thType)}>{tr.thType}</span
+        ><span data-i18n-alt={altOf(tr.thRole, trA.thRole)}>{tr.thRole}</span><span style="text-align:right"
+          data-i18n-alt={altOf(tr.thLink, trA.thLink)}>{tr.thLink}</span
         >
       </div>
       {
-        projects.map((p) => (
+        projects.map((p, i) => {
+          const pA = projectsAlt[i];
+          return (
           <a
             class="arch__row"
             data-cursor="open"
             data-name={p.name}
+            data-name-alt={altOf(p.name, pA?.name ?? p.name)}
             data-cover={p.cover}
             href={localePath(locale, `/work/${p.id}`)}
           >
             <span class="yr">{p.yr}</span>
-            <span class="ttl" data-scramble>
+            <span class="ttl" data-scramble data-i18n-alt={altOf(p.name, pA?.name ?? p.name)}>
               {p.name}
             </span>
-            <span class="ty">{p.cat}</span>
-            <span class="ro">{p.role}</span>
-            <span class="lk">{tr.viewLink}</span>
+            <span class="ty" data-i18n-alt={altOf(p.cat, pA?.cat ?? p.cat)}>{p.cat}</span>
+            <span class="ro" data-i18n-alt={altOf(p.role, pA?.role ?? p.role)}>{p.role}</span>
+            <span class="lk" data-i18n-alt={altOf(tr.viewLink, trA.viewLink)}>{tr.viewLink}</span>
           </a>
-        ))
+          );
+        })
       }
     </div>
   </section>

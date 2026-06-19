@@ -8,12 +8,13 @@
  */
 import Media from "./Media.astro";
 import { getSiteSettings } from "../lib/site";
-import { localePath, type Locale } from "../i18n";
+import { altOf, localePath, otherLocale, type Locale } from "../i18n";
 import { t } from "../i18n/ui";
 
 interface CarouselItem {
   id: string;
   name: string;
+  nameAlt?: string;
   yr: string;
   cover?: string | null;
 }
@@ -22,20 +23,26 @@ interface Props {
   carousel?: CarouselItem[];
 }
 const { locale, carousel } = Astro.props;
+const alt = otherLocale(locale);
 const s = await getSiteSettings(locale);
+const sA = await getSiteSettings(alt);
 const tr = t(locale);
+const trA = t(alt);
 ---
 
 <footer
   class="footer"
   id={carousel ? "archive" : undefined}
   data-screen-label={tr.sections.contact}
+  data-screen-label-alt={altOf(tr.sections.contact, trA.sections.contact)}
 >
   {
     carousel && (
       <>
         <div class="footer__head">
-          <h2>{s.archiveHeading}</h2>
+          <h2 data-i18n-alt={altOf(s.archiveHeading, sA.archiveHeading)}>
+            {s.archiveHeading}
+          </h2>
           <span class="meta" id="carCount">
             ( 1 / {String(carousel.length).padStart(2, "0")} )
           </span>
@@ -51,7 +58,9 @@ const tr = t(locale);
                 <Media src={p.cover} label={p.name} />
               </div>
               <div class="carousel__cap">
-                <span>{p.name}</span>
+                <span data-i18n-alt={altOf(p.name, p.nameAlt ?? p.name)}>
+                  {p.name}
+                </span>
                 <span>{p.yr}</span>
               </div>
             </a>
@@ -63,56 +72,57 @@ const tr = t(locale);
 
   <div class="footer__grid">
     <div class="footer__contact">
-      <div class="meta" style="margin-bottom:18px">{s.contactLabel}</div>
+      <div class="meta" style="margin-bottom:18px" data-i18n-alt={altOf(s.contactLabel, sA.contactLabel)}>{s.contactLabel}</div>
       <a
         class="big"
         id="emailBtn"
         href="#"
         data-email={s.email}
         data-cursor="copy"
-        data-magnetic>{s.contactCta}</a
+        data-magnetic
+        data-i18n-alt={altOf(s.contactCta, sA.contactCta)}>{s.contactCta}</a
       >
     </div>
     <div class="footer__col">
-      <h4>{tr.footSocials}</h4>
+      <h4 data-i18n-alt={altOf(tr.footSocials, trA.footSocials)}>{tr.footSocials}</h4>
       {
-        s.socials.map((soc) => (
-          <a href={soc.url} data-cursor="view">
+        s.socials.map((soc, i) => (
+          <a href={soc.url} data-cursor="view" data-i18n-alt={altOf(soc.label, sA.socials[i]?.label ?? soc.label)}>
             {soc.label}
           </a>
         ))
       }
     </div>
     <div class="footer__col">
-      <h4>{tr.footIndex}</h4>
-      <a href={localePath(locale, "/")} data-cursor="home">{tr.footHome}</a>
-      <a href={localePath(locale, "/work")} data-cursor="view">{tr.navWork}</a>
-      <a href={localePath(locale, "/about")} data-cursor="view">{tr.navAbout}</a
+      <h4 data-i18n-alt={altOf(tr.footIndex, trA.footIndex)}>{tr.footIndex}</h4>
+      <a href={localePath(locale, "/")} data-cursor="home" data-i18n-alt={altOf(tr.footHome, trA.footHome)}>{tr.footHome}</a>
+      <a href={localePath(locale, "/work")} data-cursor="view" data-i18n-alt={altOf(tr.navWork, trA.navWork)}>{tr.navWork}</a>
+      <a href={localePath(locale, "/about")} data-cursor="view" data-i18n-alt={altOf(tr.navAbout, trA.navAbout)}>{tr.navAbout}</a
       >
-      <a href={localePath(locale, "/archive")} data-cursor="view"
+      <a href={localePath(locale, "/archive")} data-cursor="view" data-i18n-alt={altOf(tr.navArchive, trA.navArchive)}
         >{tr.navArchive}</a
       >
-      <a href={localePath(locale, "/impressum")} data-cursor="view"
+      <a href={localePath(locale, "/impressum")} data-cursor="view" data-i18n-alt={altOf(tr.navImpressum, trA.navImpressum)}
         >{tr.navImpressum}</a
       >
-      <a href={localePath(locale, "/datenschutz")} data-cursor="view"
+      <a href={localePath(locale, "/datenschutz")} data-cursor="view" data-i18n-alt={altOf(tr.navDatenschutz, trA.navDatenschutz)}
         >{tr.navDatenschutz}</a
       >
     </div>
     <div class="footer__col">
-      <h4>{tr.footBased}</h4>
-      <span class="footer__avail"><span class="avail-dot"></span>{
+      <h4 data-i18n-alt={altOf(tr.footBased, trA.footBased)}>{tr.footBased}</h4>
+      <span class="footer__avail"><span class="avail-dot"></span><span data-i18n-alt={altOf(s.availability, sA.availability)}>{
           s.availability
-        }</span>
-      <span>{s.location}</span>
-      <span>{s.timezoneLabel}</span>
+        }</span></span>
+      <span data-i18n-alt={altOf(s.location, sA.location)}>{s.location}</span>
+      <span data-i18n-alt={altOf(s.timezoneLabel, sA.timezoneLabel)}>{s.timezoneLabel}</span>
       <span id="clock">—</span>
     </div>
   </div>
 
   <div class="footer__bottom">
-    <span>{s.copyright}</span>
-    <span>{s.colophon}</span>
-    {s.footerNote && <span>{s.footerNote}</span>}
+    <span data-i18n-alt={altOf(s.copyright, sA.copyright)}>{s.copyright}</span>
+    <span data-i18n-alt={altOf(s.colophon, sA.colophon)}>{s.colophon}</span>
+    {s.footerNote && <span data-i18n-alt={altOf(s.footerNote, sA.footerNote)}>{s.footerNote}</span>}
   </div>
 </footer>

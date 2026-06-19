@@ -5,10 +5,12 @@
  * a <main> slot, and loads the motion scripts in the correct order.
  *
  * Props:
- *   title       — document title
- *   description — per-page meta description (localized by the caller)
- *   home        — when true, also loads home.js (loader + showreel + carousel)
- *   locale      — "de" (default) or "en"; drives <html lang> and hreflang
+ *   title          — document title
+ *   description    — per-page meta description (localized by the caller)
+ *   titleAlt       — the document title in the OTHER locale, for the in-place
+ *                    locale swap of the tab title (see public/scripts/i18n.js)
+ *   home           — when true, also loads home.js (loader + showreel + carousel)
+ *   locale         — "de" (default) or "en"; drives <html lang> and hreflang
  */
 // Self-hosted fonts (no Google CDN — DSGVO: no visitor IP sent to Google,
 // cf. LG München I, 20.01.2022, Az. 3 O 17493/20). Weights mirror the old
@@ -20,17 +22,19 @@ import "@fontsource/space-mono/400-italic.css";
 import "@fontsource/space-mono/700.css";
 import "../styles/styles.css";
 import Header from "../components/Header.astro";
-import { BRAND, DEFAULT_LOCALE, altLocalePath, type Locale } from "../i18n";
+import { altOf, BRAND, DEFAULT_LOCALE, altLocalePath, type Locale } from "../i18n";
 
 interface Props {
   title?: string;
   description?: string;
+  titleAlt?: string;
   home?: boolean;
   locale?: Locale;
 }
 const {
   title = BRAND,
   description,
+  titleAlt,
   home = false,
   locale = DEFAULT_LOCALE,
 } = Astro.props;
@@ -51,7 +55,7 @@ const enPath = locale === "en" ? path : altLocalePath("de", path);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <title>{title}</title>
+    <title data-i18n-alt={altOf(title, titleAlt ?? title)}>{title}</title>
     {description && <meta name="description" content={description} />}
     <meta property="og:title" content={title} />
     {description && <meta property="og:description" content={description} />}
@@ -63,6 +67,23 @@ const enPath = locale === "en" ? path : altLocalePath("de", path);
       hreflang="x-default"
       href={new URL(dePath, Astro.site)}
     />
+    <!-- locale: runs before first paint. The URL's built locale is the
+         default; a stored preference is applied in-place by i18n.js after the
+         body parses. Flag a pending swap so CSS can hide the chrome until then
+         (no half-translated flash on the header). -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("locale");
+          var build = document.documentElement.lang;
+          var valid = stored === "de" || stored === "en";
+          document.documentElement.dataset.locale = valid ? stored : build;
+          // Only arm the chrome-hide for a real locale i18n.js will resolve.
+          if (valid && stored !== build)
+            document.documentElement.classList.add("i18n-pending");
+        } catch (e) {}
+      })();
+    </script>
     <!-- theme: runs before first paint (no FOUC). Absent attribute = dark. -->
     <script is:inline>
       (function () {
@@ -165,6 +186,9 @@ const enPath = locale === "en" ? path : altLocalePath("de", path);
     <!-- app (order matters) -->
     <script is:inline src="/scripts/webgl-bg.js"></script>
     <script is:inline src="/scripts/chrome.js"></script>
+    <!-- i18n before core: apply a stored locale (swap text + data-text) so the
+         reveal/scramble animations in core.js play on the correct strings. -->
+    <script is:inline src="/scripts/i18n.js"></script>
     <script is:inline src="/scripts/core.js"></script>
     {home && <script is:inline src="/scripts/home.js" />}
   </body>

@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import {
   pick,
+  altOf,
+  otherLocale,
   localePath,
   altLocalePath,
   localeFromParams,
@@ -23,6 +25,28 @@ describe("pick", () => {
   it("works with non-string values (arrays)", () => {
     expect(pick({ de: ["a"], en: ["b"] }, "en")).toEqual(["b"]);
     expect(pick({ de: ["a"] }, "en")).toEqual(["a"]);
+  });
+});
+
+describe("altOf", () => {
+  it("returns the alt value when it differs from the primary", () => {
+    expect(altOf("Arbeiten", "Work")).toBe("Work");
+  });
+
+  it("returns undefined when both locales are identical", () => {
+    expect(altOf("Aperture", "Aperture")).toBeUndefined();
+  });
+
+  it("compares arrays/objects by value, not reference", () => {
+    expect(altOf(["a", "b"], ["a", "b"])).toBeUndefined();
+    expect(altOf(["a"], ["b"])).toEqual(["b"]);
+  });
+});
+
+describe("otherLocale", () => {
+  it("returns the opposite locale", () => {
+    expect(otherLocale("de")).toBe("en");
+    expect(otherLocale("en")).toBe("de");
   });
 });
 

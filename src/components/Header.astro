@@ -3,44 +3,66 @@
  * Header.astro — fixed top bar, identical on every page.
  * Links use Astro's extensionless routes; chrome.js intercepts them
  * for the wipe transition. The mark text comes from siteSettings.
- * The language switcher links to the SAME page in the other locale
- * (slugs are shared, so stripping/adding the /en prefix is enough).
+ * The language switcher is an in-place toggle (a <button>, so chrome.js's
+ * a[href] wipe leaves it alone): public/scripts/i18n.js swaps the page text
+ * client-side. Every localized node carries its alternate in data-i18n-alt
+ * (text) or data-*-alt (attributes) for that swap.
  */
 import { getSiteSettings } from "../lib/site";
-import { altLocalePath, localePath, type Locale } from "../i18n";
+import { altOf, localePath, otherLocale, type Locale } from "../i18n";
 import { t } from "../i18n/ui";
 
 interface Props {
   locale: Locale;
 }
 const { locale } = Astro.props;
+const alt = otherLocale(locale);
 const s = await getSiteSettings(locale);
+const sA = await getSiteSettings(alt);
 const tr = t(locale);
-const switchHref = altLocalePath(locale, Astro.url.pathname);
+const trA = t(alt);
+// Switcher label: shows the OTHER locale's code; its alt is this locale's code.
+const langLabel = locale === "de" ? "EN" : "DE";
+const langLabelAlt = locale === "de" ? "DE" : "EN";
 ---
 
 <header class="header">
-  <a class="header__mark" href={localePath(locale, "/")} data-cursor="home"
-    >{s.headerMark}</a
+  <a
+    class="header__mark"
+    href={localePath(locale, "/")}
+    data-cursor="home"
+    data-i18n-alt={altOf(s.headerMark, sA.headerMark)}>{s.headerMark}</a
   >
   <nav class="header__nav">
-    <a href={localePath(locale, "/work")} data-cursor="view">{tr.navWork}</a>
-    <a href={localePath(locale, "/about")} data-cursor="view">{tr.navAbout}</a>
-    <a href={localePath(locale, "/archive")} data-cursor="view"
-      >{tr.navArchive}</a
+    <a
+      href={localePath(locale, "/work")}
+      data-cursor="view"
+      data-i18n-alt={altOf(tr.navWork, trA.navWork)}>{tr.navWork}</a
     >
     <a
+      href={localePath(locale, "/about")}
+      data-cursor="view"
+      data-i18n-alt={altOf(tr.navAbout, trA.navAbout)}>{tr.navAbout}</a
+    >
+    <a
+      href={localePath(locale, "/archive")}
+      data-cursor="view"
+      data-i18n-alt={altOf(tr.navArchive, trA.navArchive)}>{tr.navArchive}</a
+    >
+    <button
       class="lang-switch"
-      href={switchHref}
+      data-locale-toggle
       data-cursor="view"
       aria-label={tr.langSwitchLabel}
+      data-aria-label-alt={altOf(tr.langSwitchLabel, trA.langSwitchLabel)}
+      data-i18n-alt={langLabelAlt}>{langLabel}</button
     >
-      {locale === "de" ? "EN" : "DE"}
-    </a>
     <button
       class="theme-toggle"
       data-theme-toggle
-      aria-label={tr.themeToggleLabel}>◐</button
+      aria-label={tr.themeToggleLabel}
+      data-aria-label-alt={altOf(tr.themeToggleLabel, trA.themeToggleLabel)}
+      >◐</button
     >
   </nav>
   <button
@@ -49,6 +71,7 @@ const switchHref = altLocalePath(locale, Astro.url.pathname);
     aria-controls="navPanel"
     aria-expanded="false"
     aria-label={tr.menuLabel}
+    data-aria-label-alt={altOf(tr.menuLabel, trA.menuLabel)}
   >
     <span></span><span></span>
   </button>
@@ -60,25 +83,38 @@ const switchHref = altLocalePath(locale, Astro.url.pathname);
      and locale switch (order: links → theme → locale). -->
 <div class="nav-panel" id="navPanel">
   <nav class="nav-panel__nav">
-    <a href={localePath(locale, "/work")} data-cursor="view">{tr.navWork}</a>
-    <a href={localePath(locale, "/about")} data-cursor="view">{tr.navAbout}</a>
-    <a href={localePath(locale, "/archive")} data-cursor="view">{tr.navArchive}</a
+    <a
+      href={localePath(locale, "/work")}
+      data-cursor="view"
+      data-i18n-alt={altOf(tr.navWork, trA.navWork)}>{tr.navWork}</a
+    >
+    <a
+      href={localePath(locale, "/about")}
+      data-cursor="view"
+      data-i18n-alt={altOf(tr.navAbout, trA.navAbout)}>{tr.navAbout}</a
+    >
+    <a
+      href={localePath(locale, "/archive")}
+      data-cursor="view"
+      data-i18n-alt={altOf(tr.navArchive, trA.navArchive)}>{tr.navArchive}</a
     >
   </nav>
   <div class="nav-panel__controls">
     <button
       class="theme-toggle"
       data-theme-toggle
-      aria-label={tr.themeToggleLabel}>◐</button
+      aria-label={tr.themeToggleLabel}
+      data-aria-label-alt={altOf(tr.themeToggleLabel, trA.themeToggleLabel)}
+      >◐</button
     >
-    <a
+    <button
       class="lang-switch"
-      href={switchHref}
+      data-locale-toggle
       data-cursor="view"
       aria-label={tr.langSwitchLabel}
+      data-aria-label-alt={altOf(tr.langSwitchLabel, trA.langSwitchLabel)}
+      data-i18n-alt={langLabelAlt}>{langLabel}</button
     >
-      {locale === "de" ? "EN" : "DE"}
-    </a>
   </div>
 </div>
 
@@ -93,29 +129,14 @@ const switchHref = altLocalePath(locale, Astro.url.pathname);
       // hide the custom scrollbar (it sits above the panel) while open
       document.documentElement.classList.toggle("menu-open", open);
     }
-    // The locale switch navigates to the same page in the other language.
-    // Re-open the menu on the destination so the switch feels continuous
-    // (the page-wipe covers the swap), mirroring the in-place theme toggle.
-    try {
-      if (sessionStorage.getItem("navOpen")) {
-        sessionStorage.removeItem("navOpen");
-        setOpen(true);
-      }
-    } catch (e) {}
     btn.addEventListener("click", function () {
       setOpen(btn.getAttribute("aria-expanded") !== "true");
     });
     panel.addEventListener("click", function (e) {
-      const a = e.target.closest("a");
-      if (!a) return;
-      if (a.classList.contains("lang-switch")) {
-        // keep the menu open across the locale change (see above)
-        try {
-          sessionStorage.setItem("navOpen", "1");
-        } catch (e) {}
-        return;
-      }
-      // a nav link navigates to new content — close as we leave
+      // Only nav links navigate away — close as we leave. The locale toggle
+      // is a <button> (swaps text in place), so it never matches here and the
+      // panel stays open across the switch, mirroring the theme toggle.
+      if (!e.target.closest("a")) return;
       setOpen(false);
     });
     document.addEventListener("keydown", function (e) {

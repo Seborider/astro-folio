@@ -328,6 +328,37 @@
     setClock(); setInterval(setClock, 1000);
   }
 
+  /* ---------------- locale swap ---------------- */
+  // i18n.js swaps the page text in place (no reload) and fires `localechange`.
+  // The section index reads data-screen-label live on the next intersection,
+  // but its currently-shown label and any already-revealed scrambles are stale
+  // — refresh the visible label and replay in-view scrambles for the flourish.
+  function refreshSectionLabel() {
+    const el = document.getElementById("sectionIndex");
+    if (!el) return;
+    const mid = window.innerHeight / 2;
+    let label = null;
+    document.querySelectorAll("[data-screen-label]").forEach((s) => {
+      const r = s.getBoundingClientRect();
+      if (r.top <= mid && r.bottom >= mid) label = s.getAttribute("data-screen-label");
+    });
+    if (label) el.textContent = "( " + label + " )";
+  }
+  window.addEventListener("localechange", () => {
+    const inView = (el) => {
+      const r = el.getBoundingClientRect();
+      return r.top < window.innerHeight && r.bottom > 0;
+    };
+    document
+      .querySelectorAll(".scramble, [data-scramble], [data-scramble-now]")
+      .forEach((el) => {
+        el.dataset.text = el.textContent; // re-freeze the (swapped) target
+        if (!reduce && inView(el)) scramble(el, { duration: 600 });
+      });
+    refreshSectionLabel();
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  });
+
   /* ---------------- boot ---------------- */
   // The home page has a #loader; home.js reveals the hero after the count-up.
   // Every other page reveals immediately.

@@ -405,7 +405,10 @@ html.loader-seen .loader {
   display: flex;
   gap: 28px;
 }
-.header__nav a {
+/* The locale switch is a <button> (in-place swap, no navigation) but reads as a
+   nav link — it shares the nav-link typography/underline and the button reset. */
+.header__nav a,
+.header__nav .lang-switch {
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.08em;
@@ -413,7 +416,8 @@ html.loader-seen .loader {
   position: relative;
   padding-bottom: 2px;
 }
-.header__nav a::after {
+.header__nav a::after,
+.header__nav .lang-switch::after {
   content: "";
   position: absolute;
   left: 0;
@@ -425,18 +429,31 @@ html.loader-seen .loader {
   transform-origin: right;
   transition: transform 0.5s var(--ease);
 }
-.header__nav a:hover::after {
+.header__nav a:hover::after,
+.header__nav .lang-switch:hover::after {
   transform: scaleX(1);
   transform-origin: left;
 }
-.theme-toggle {
+.theme-toggle,
+.lang-switch {
   background: none;
   border: 0;
   padding: 0;
   cursor: none;
   color: inherit;
+}
+.theme-toggle {
   font-size: 14px;
   line-height: 1;
+}
+/* A returning visitor whose stored locale differs from the URL's built locale
+   gets an in-place swap from i18n.js after the body parses. Hide the chrome
+   until then so the header/footer don't flash the wrong language first. The
+   class is set pre-paint in Base.astro and removed by i18n.js once swapped. */
+.i18n-pending .header,
+.i18n-pending .nav-panel,
+.i18n-pending .footer {
+  visibility: hidden;
 }
 
 /* Mobile burger + nav panel — hidden on desktop, shown ≤720px (see media

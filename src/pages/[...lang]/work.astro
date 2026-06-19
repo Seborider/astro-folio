@@ -3,7 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
 import Media from "../../components/Media.astro";
 import { getProjects } from "../../lib/projects";
-import { localePath, localeStaticPaths } from "../../i18n";
+import { altOf, localePath, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
 
 export function getStaticPaths() {
@@ -11,8 +11,11 @@ export function getStaticPaths() {
 }
 
 const { locale } = Astro.props;
+const alt = otherLocale(locale);
 const tr = t(locale);
+const trA = t(alt);
 const projects = await getProjects(locale);
+const projectsAlt = await getProjects(alt);
 
 // Derive filter tokens from the human category string — EN and DE keywords,
 // since `cat` is translated. Tokens stay locale-independent. (For a CMS,
@@ -35,45 +38,63 @@ function filtersFor(cat: string): string[] {
 }
 ---
 
-<Base title={tr.workMetaTitle} description={tr.workDescription} locale={locale}>
+<Base
+  title={tr.workMetaTitle}
+  description={tr.workDescription}
+  titleAlt={trA.workMetaTitle}
+  locale={locale}
+>
   <!-- PAGE HERO -->
-  <section class="phero" data-screen-label={tr.sections.workHero}>
+  <section
+    class="phero"
+    data-screen-label={tr.sections.workHero}
+    data-screen-label-alt={altOf(tr.sections.workHero, trA.sections.workHero)}
+  >
     <div class="phero__index meta">
-      <span data-scramble-now data-text={tr.workScramble}
+      <span data-scramble-now data-text={tr.workScramble} data-i18n-alt={altOf(tr.workScramble, trA.workScramble)}
         >{tr.workScramble}</span
-      ><span class="rule"></span><span>{tr.indexLabel} 02</span>
+      ><span class="rule"></span><span
+        data-i18n-alt={altOf(`${tr.indexLabel} 02`, `${trA.indexLabel} 02`)}
+        >{tr.indexLabel} 02</span
+      >
     </div>
     <h1 class="phero__title">
-      <span class="line"><span data-rise>{tr.workTitle}</span></span>
+      <span class="line"><span data-rise data-i18n-alt={altOf(tr.workTitle, trA.workTitle)}>{tr.workTitle}</span></span>
     </h1>
     <div class="phero__sub">
-      <p class="phero__lede" data-rise-soft>{tr.workLede}</p>
+      <p class="phero__lede" data-rise-soft data-i18n-alt={altOf(tr.workLede, trA.workLede)}>{tr.workLede}</p>
       <span class="meta" data-rise-soft
         >( {String(projects.length).padStart(2, "0")}
-        {tr.projectsCountLabel} )</span
+        <span data-i18n-alt={altOf(tr.projectsCountLabel, trA.projectsCountLabel)}>{tr.projectsCountLabel}</span> )</span
       >
     </div>
   </section>
 
   <!-- FILTER -->
   <div class="work-filter" id="workFilter">
-    <button class="is-active" data-filter="all" data-cursor="open"
+    <button class="is-active" data-filter="all" data-cursor="open" data-i18n-alt={altOf(tr.filterAll, trA.filterAll)}
       >{tr.filterAll}</button
     >
-    <button data-filter="brand" data-cursor="open">{tr.filterBrand}</button>
-    <button data-filter="motion" data-cursor="open">{tr.filterMotion}</button>
-    <button data-filter="editorial" data-cursor="open"
+    <button data-filter="brand" data-cursor="open" data-i18n-alt={altOf(tr.filterBrand, trA.filterBrand)}>{tr.filterBrand}</button>
+    <button data-filter="motion" data-cursor="open" data-i18n-alt={altOf(tr.filterMotion, trA.filterMotion)}>{tr.filterMotion}</button>
+    <button data-filter="editorial" data-cursor="open" data-i18n-alt={altOf(tr.filterEditorial, trA.filterEditorial)}
       >{tr.filterEditorial}</button
     >
-    <button data-filter="digital" data-cursor="open">{tr.filterDigital}</button>
+    <button data-filter="digital" data-cursor="open" data-i18n-alt={altOf(tr.filterDigital, trA.filterDigital)}>{tr.filterDigital}</button>
   </div>
 
   <!-- PROJECT GRID -->
-  <section class="proj-grid" id="projGrid" data-screen-label={tr.sections.projectGrid}>
+  <section
+    class="proj-grid"
+    id="projGrid"
+    data-screen-label={tr.sections.projectGrid}
+    data-screen-label-alt={altOf(tr.sections.projectGrid, trA.sections.projectGrid)}
+  >
     {
       projects.map((p, i) => {
         const wide = i % 5 === 0;
         const tags = filtersFor(p.cat).join(" ");
+        const pA = projectsAlt[i];
         return (
           <a
             class={`proj${wide ? " is-wide" : ""}`}
@@ -91,10 +112,10 @@ function filtersFor(cat: string): string[] {
             </div>
             <div class="proj__meta">
               <div>
-                <div class="proj__name" data-scramble>
+                <div class="proj__name" data-scramble data-i18n-alt={altOf(p.name, pA?.name ?? p.name)}>
                   {p.name}
                 </div>
-                <div class="proj__cat">{p.cat}</div>
+                <div class="proj__cat" data-i18n-alt={altOf(p.cat, pA?.cat ?? p.cat)}>{p.cat}</div>
               </div>
               <div class="proj__yr">{p.yr}</div>
             </div>

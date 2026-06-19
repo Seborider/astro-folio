@@ -3,54 +3,78 @@ import Base from "../../../layouts/Base.astro";
 import Footer from "../../../components/Footer.astro";
 import Media from "../../../components/Media.astro";
 import { getProjects, neighbours } from "../../../lib/projects";
-import { DEFAULT_LOCALE, LOCALES, localePath, pageTitle } from "../../../i18n";
+import { altOf, DEFAULT_LOCALE, LOCALES, localePath, otherLocale, pageTitle } from "../../../i18n";
 import { t } from "../../../i18n/ui";
 
 export async function getStaticPaths() {
   // Locale cross-product: each project page exists at /work/<slug> (de)
-  // and /en/work/<slug>. Slugs are shared; only the text differs.
+  // and /en/work/<slug>. Slugs are shared; only the text differs. The alt-
+  // locale entry/neighbours ride along so the page can be swapped in place.
   const paths = [];
   for (const locale of LOCALES) {
+    const alt = otherLocale(locale);
     const projects = await getProjects(locale);
+    const projectsAlt = await getProjects(alt);
     const n = projects.length;
     paths.push(
-      ...projects.map((entry, i) => ({
-        params: {
-          lang: locale === DEFAULT_LOCALE ? undefined : locale,
-          slug: entry.id,
-        },
-        props: {
-          locale,
-          entry,
-          index: i,
-          total: n,
-          ...neighbours(projects, i),
-        },
-      })),
+      ...projects.map((entry, i) => {
+        const nb = neighbours(projects, i);
+        const nbAlt = neighbours(projectsAlt, i);
+        return {
+          params: {
+            lang: locale === DEFAULT_LOCALE ? undefined : locale,
+            slug: entry.id,
+          },
+          props: {
+            locale,
+            entry,
+            index: i,
+            total: n,
+            ...nb,
+            entryAlt: projectsAlt[i],
+            prevAlt: nbAlt.prev,
+            nextAlt: nbAlt.next,
+          },
+        };
+      }),
     );
   }
   return paths;
 }
 
-const { locale, entry, index, total, prev, next } = Astro.props;
+const { locale, entry, index, total, prev, next, entryAlt, prevAlt, nextAlt } =
+  Astro.props;
+const alt = otherLocale(locale);
 const tr = t(locale);
+const trA = t(alt);
 const p = entry;
+const pA = entryAlt;
 const coverLabel = p.gallery[0]
   ? `${p.name} — ${p.gallery[0].label.replace(/ — .*/, "")}`
   : p.name;
-const metaRows: [string, string][] = [
-  [tr.metaClient, p.client],
-  [tr.metaYear, p.yr],
-  [tr.metaRole, p.role],
-  [tr.metaServices, p.services.join(", ")],
+// [label, value, labelAlt, valueAlt] — yr isn't localized, only its label is.
+const metaRows: [string, string, string, string][] = [
+  [tr.metaClient, p.client, trA.metaClient, pA.client],
+  [tr.metaYear, p.yr, trA.metaYear, pA.yr],
+  [tr.metaRole, p.role, trA.metaRole, pA.role],
+  [tr.metaServices, p.services.join(", "), trA.metaServices, pA.services.join(", ")],
 ];
 ---
 
-<Base title={pageTitle(p.name)} description={p.intro} locale={locale}>
+<Base
+  title={pageTitle(p.name)}
+  description={p.intro}
+  titleAlt={pageTitle(pA.name)}
+  locale={locale}
+>
   <!-- HERO -->
-  <section class="pd-hero" data-screen-label={tr.sections.projectHero}>
+  <section
+    class="pd-hero"
+    data-screen-label={tr.sections.projectHero}
+    data-screen-label-alt={altOf(tr.sections.projectHero, trA.sections.projectHero)}
+  >
     <div class="phero__index meta">
-      <span>( {p.cat} )</span><span class="rule"></span>
+      <span>( <span data-i18n-alt={altOf(p.cat, pA.cat)}>{p.cat}</span> )</span><span class="rule"></span>
       <span
         >{String(index + 1).padStart(2, "0")} / {
           String(total).padStart(2, "0")
@@ -58,11 +82,11 @@ const metaRows: [string, string][] = [
       >
     </div>
     <h1 class="pd-title">
-      <span class="line"><span data-rise>{p.name}</span></span>
+      <span class="line"><span data-rise data-i18n-alt={altOf(p.name, pA.name)}>{p.name}</span></span>
     </h1>
     <div class="pd-sub">
-      <p class="pd-lede" data-rise-soft>{p.intro}</p>
-      <span class="pd-tags meta" data-rise-soft>{p.cat} — {p.yr}</span>
+      <p class="pd-lede" data-rise-soft data-i18n-alt={altOf(p.intro, pA.intro)}>{p.intro}</p>
+      <span class="pd-tags meta" data-rise-soft><span data-i18n-alt={altOf(p.cat, pA.cat)}>{p.cat}</span> — {p.yr}</span>
     </div>
   </section>
 
@@ -72,32 +96,40 @@ const metaRows: [string, string][] = [
   </section>
 
   <!-- INFO -->
-  <section class="pd-info" data-screen-label={tr.sections.projectInfo}>
+  <section
+    class="pd-info"
+    data-screen-label={tr.sections.projectInfo}
+    data-screen-label-alt={altOf(tr.sections.projectInfo, trA.sections.projectInfo)}
+  >
     <div class="pd-info__meta">
       {
-        metaRows.map(([k, v]) => (
+        metaRows.map(([k, v, kA, vA]) => (
           <div class="pd-meta-row">
             <>
-              <span class="k">{k}</span>
-              <span class="v">{v}</span>
+              <span class="k" data-i18n-alt={altOf(k, kA)}>{k}</span>
+              <span class="v" data-i18n-alt={altOf(v, vA)}>{v}</span>
             </>
           </div>
         ))
       }
     </div>
     <div class="pd-info__body">
-      {p.overview.map((t) => <p>{t}</p>)}
+      {p.overview.map((para, i) => <p data-i18n-alt={altOf(para, pA.overview[i] ?? para)}>{para}</p>)}
     </div>
   </section>
 
   <!-- GALLERY -->
-  <section class="pd-gallery" data-screen-label={tr.sections.projectGallery}>
+  <section
+    class="pd-gallery"
+    data-screen-label={tr.sections.projectGallery}
+    data-screen-label-alt={altOf(tr.sections.projectGallery, trA.sections.projectGallery)}
+  >
     {
       p.gallery.map((g, i) => (
         <figure class={`pd-shot ${g.span}`} data-reveal>
           <Media src={g.image} label={g.label} />
           <figcaption class="meta">
-            {String(i + 1).padStart(2, "0")} — {g.label}
+            {String(i + 1).padStart(2, "0")} — <span data-i18n-alt={altOf(g.label, pA.gallery[i]?.label ?? g.label)}>{g.label}</span>
           </figcaption>
         </figure>
       ))
@@ -108,9 +140,9 @@ const metaRows: [string, string][] = [
   {
     p.quote && p.quote.length > 0 && (
       <blockquote class="pd-quote reveal-lines">
-        {p.quote.map((line) => (
+        {p.quote.map((line, i) => (
           <span class="line">
-            <span set:html={line} />
+            <span set:html={line} data-i18n-html data-i18n-alt={altOf(line, pA.quote?.[i] ?? line)} />
           </span>
         ))}
       </blockquote>
@@ -124,14 +156,14 @@ const metaRows: [string, string][] = [
       href={localePath(locale, `/work/${prev.id}`)}
       data-cursor="open"
     >
-      <span class="meta">{tr.prevLabel}</span><span class="t">{prev.name}</span>
+      <span class="meta" data-i18n-alt={altOf(tr.prevLabel, trA.prevLabel)}>{tr.prevLabel}</span><span class="t" data-i18n-alt={altOf(prev.name, prevAlt.name)}>{prev.name}</span>
     </a>
     <a
       class="pd-nav-link next"
       href={localePath(locale, `/work/${next.id}`)}
       data-cursor="open"
     >
-      <span class="meta">{tr.nextLabel}</span><span class="t">{next.name}</span>
+      <span class="meta" data-i18n-alt={altOf(tr.nextLabel, trA.nextLabel)}>{tr.nextLabel}</span><span class="t" data-i18n-alt={altOf(next.name, nextAlt.name)}>{next.name}</span>
     </a>
   </nav>
 

@@ -21,9 +21,26 @@ export const pageTitle = (name: string): string => `${name} — ${BRAND}`;
 
 export type Localized<T> = { de: T; en?: T };
 
+/** The other of the two locales. */
+export const otherLocale = (l: Locale): Locale => (l === "de" ? "en" : "de");
+
 /** Resolve a localized value with DE fallback — never empty. */
 export function pick<T>(v: Localized<T>, locale: Locale): T {
   return v[locale] ?? v.de;
+}
+
+/**
+ * The alternate-locale value to stamp on an element for the in-place locale
+ * swap (public/scripts/i18n.js). Returns `alt` only when it differs from the
+ * rendered `primary` — identical strings (common: project names, years) get
+ * `undefined` so templates omit the `data-i18n-alt` attribute entirely.
+ */
+export function altOf<T>(primary: T, alt: T): T | undefined {
+  const same =
+    primary === alt ||
+    (typeof primary === "object" &&
+      JSON.stringify(primary) === JSON.stringify(alt));
+  return same ? undefined : alt;
 }
 
 /** Prefix an internal path for a locale. Always starts with "/" (chrome.js wipe). */
