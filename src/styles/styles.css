@@ -74,6 +74,14 @@
 :root[data-theme="light"] .footer__bottom {
   color: var(--ink);
 }
+/* light mode: keep the cursor background-reactive (difference), but pure #fff
+   inverts to a bright grey over the dark WebGL areas. Mix ink into the source so
+   the inversion lands darker everywhere — raise the ink % for a darker dot.
+   Dark theme keeps the plain difference blend (unchanged). */
+:root[data-theme="light"] .cursor {
+  background: color-mix(in srgb, #fff 70%, var(--ink));
+  mix-blend-mode: difference;
+}
 
 * {
   margin: 0;
