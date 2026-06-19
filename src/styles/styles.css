@@ -611,6 +611,12 @@ html.loader-seen .loader {
 .hero__title .line {
   display: block;
   overflow: hidden;
+  /* Roomy line box so descenders (the "y" in Mayer) clear the reveal mask.
+     line-height scales the span too, so the yPercent:110 reveal still hides it. */
+  line-height: 1.11;
+}
+.hero__title .line:not(:last-child) {
+  margin-bottom: -0.23em; /* restore the title's tight 0.82 leading between lines */
 }
 .hero__title .line > span {
   display: inline-block;
@@ -700,6 +706,10 @@ html.loader-seen .loader {
   display: block;
   overflow: hidden;
   white-space: nowrap;
+  line-height: 1.11; /* descenders clear the reveal mask (see .hero__title .line) */
+}
+.statement__quote .line:not(:last-child) {
+  margin-bottom: -0.14em; /* restore the 0.96 leading between lines */
 }
 .statement__quote .line > span {
   display: inline-block;
@@ -1137,6 +1147,7 @@ html.loader-seen .loader {
 .phero__title .line {
   display: block;
   overflow: hidden;
+  line-height: 1.11; /* descenders clear the reveal mask (see .hero__title .line) */
 }
 .phero__title .line > span {
   display: inline-block;
@@ -1176,6 +1187,10 @@ html.loader-seen .loader {
   display: block;
   overflow: hidden;
   padding-right: 0.08em;
+  line-height: 1.11; /* descenders clear the reveal mask (see .hero__title .line) */
+}
+.about-intro__quote .line:not(:last-child) {
+  margin-bottom: -0.06em; /* restore the 1.04 leading between lines */
 }
 .about-intro__quote .line > span {
   display: inline-block;
@@ -1468,6 +1483,7 @@ html.loader-seen .loader {
   display: block;
   overflow: hidden;
   padding-right: 0.06em;
+  line-height: 1.11; /* descenders clear the reveal mask (see .hero__title .line) */
 }
 .pd-title .line > span {
   display: inline-block;
@@ -1589,6 +1605,10 @@ html.loader-seen .loader {
 .pd-quote .line {
   display: block;
   overflow: hidden;
+  line-height: 1.11; /* descenders clear the reveal mask (see .hero__title .line) */
+}
+.pd-quote .line:not(:last-child) {
+  margin-bottom: -0.12em; /* restore the 0.98 leading between lines */
 }
 .pd-quote .line > span {
   display: inline-block;

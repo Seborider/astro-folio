@@ -121,7 +121,7 @@ export interface UIDict {
 
 export const ui: Record<Locale, UIDict> = {
   de: {
-    navWork: "Arbeiten",
+    navWork: "Projekte",
     navAbout: "Über",
     navArchive: "Archiv",
     navImpressum: "Impressum",
@@ -156,18 +156,18 @@ export const ui: Record<Locale, UIDict> = {
       "Eine Praxis zwischen Brand, Motion und Editorial — gebaut auf langsames Sehen, scharfe Typografie und die Überzeugung, dass Zurückhaltung ihre eigene Art von Lärm ist.",
     reelHeading: "Ausgewählte Motion",
     playReel: "Showreel abspielen ",
-    workIndexLabel: "Ausgewählte Arbeiten",
+    workIndexLabel: "Ausgewählte Projekte",
     showreelLabel: "( Showreel )",
     close: "( Schließen )",
     showreelPlaceholder: "Showreel in voller Länge — Master-Cut hier ablegen",
 
     indexLabel: "Index",
 
-    workTitle: "Arbeiten",
-    workMetaTitle: pageTitle("Arbeiten"),
+    workTitle: "Projekte",
+    workMetaTitle: pageTitle("Projekte"),
     workDescription:
       "Ausgewählte Projekte aus Brand, Motion, Editorial und Digital — 2021 bis heute.",
-    workScramble: "( Arbeiten )",
+    workScramble: "( Projekte )",
     workLede:
       "Ausgewählte Projekte aus Brand, Motion, Editorial und Digital — 2021 bis heute.",
     projectsCountLabel: "Projekte",
@@ -207,16 +207,16 @@ export const ui: Record<Locale, UIDict> = {
     notFoundLede: "Diese Seite existiert nicht — oder ist umgezogen.",
     notFoundSubMeta: "This page could not be found.",
     notFoundHome: "Startseite ↗",
-    notFoundWork: "Arbeiten ↗",
+    notFoundWork: "Projekte ↗",
 
     sections: {
       hero: "Intro",
       statement: "Ansatz",
       reel: "Motion",
       voices: "Stimmen",
-      work: "Arbeiten",
+      work: "Projekte",
       contact: "Kontakt",
-      workHero: "Arbeiten",
+      workHero: "Projekte",
       projectGrid: "Projekte",
       aboutHero: "Über",
       aboutProcess: "Arbeitsweise",

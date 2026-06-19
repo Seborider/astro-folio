@@ -19,7 +19,7 @@ describe("t", () => {
   });
 
   it("resolves localized nav labels", () => {
-    expect(t("de").navWork).toBe("Arbeiten");
+    expect(t("de").navWork).toBe("Projekte");
     expect(t("en").navWork).toBe("Work");
   });
 
