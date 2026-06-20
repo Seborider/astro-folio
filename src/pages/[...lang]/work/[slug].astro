@@ -151,20 +151,24 @@ const metaRows: [string, string, string, string][] = [
 
   <!-- PREV / NEXT -->
   <nav class="pd-next">
-    <a
-      class="pd-nav-link prev"
-      href={localePath(locale, `/work/${prev.id}`)}
-      data-cursor="open"
-    >
-      <span class="meta" data-i18n-alt={altOf(tr.prevLabel, trA.prevLabel)}>{tr.prevLabel}</span><span class="t" data-i18n-alt={altOf(prev.name, prevAlt.name)}>{prev.name}</span>
-    </a>
-    <a
-      class="pd-nav-link next"
-      href={localePath(locale, `/work/${next.id}`)}
-      data-cursor="open"
-    >
-      <span class="meta" data-i18n-alt={altOf(tr.nextLabel, trA.nextLabel)}>{tr.nextLabel}</span><span class="t" data-i18n-alt={altOf(next.name, nextAlt.name)}>{next.name}</span>
-    </a>
+    {prev && (
+      <a
+        class="pd-nav-link prev"
+        href={localePath(locale, `/work/${prev.id}`)}
+        data-cursor="open"
+      >
+        <span class="meta" data-i18n-alt={altOf(tr.prevLabel, trA.prevLabel)}>{tr.prevLabel}</span><span class="t" data-i18n-alt={altOf(prev.name, prevAlt?.name ?? prev.name)}>{prev.name}</span>
+      </a>
+    )}
+    {next && (
+      <a
+        class="pd-nav-link next"
+        href={localePath(locale, `/work/${next.id}`)}
+        data-cursor="open"
+      >
+        <span class="meta" data-i18n-alt={altOf(tr.nextLabel, trA.nextLabel)}>{tr.nextLabel}</span><span class="t" data-i18n-alt={altOf(next.name, nextAlt?.name ?? next.name)}>{next.name}</span>
+      </a>
+    )}
   </nav>
 
   <Footer locale={locale} />

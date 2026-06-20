@@ -1635,6 +1635,7 @@ html.loader-seen .loader {
   cursor: none;
 }
 .pd-nav-link.next {
+  grid-column: 2;
   text-align: right;
   align-items: flex-end;
 }
@@ -1687,6 +1688,7 @@ html.loader-seen .loader {
     grid-template-columns: 1fr;
   }
   .pd-nav-link.next {
+    grid-column: auto;
     text-align: left;
     align-items: flex-start;
   }

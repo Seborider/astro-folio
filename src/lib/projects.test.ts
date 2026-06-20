@@ -46,23 +46,28 @@ describe("neighbours", () => {
     expect(next.id).toBe("c");
   });
 
-  it("wraps prev around from the first item to the last", () => {
+  it("has no prev on the first item", () => {
     const { prev, next } = neighbours(list, 0);
-    expect(prev.id).toBe("c");
+    expect(prev).toBeUndefined();
     expect(next.id).toBe("b");
   });
 
-  it("wraps next around from the last item to the first", () => {
+  it("has no next on the last item", () => {
     const { prev, next } = neighbours(list, 2);
     expect(prev.id).toBe("b");
-    expect(next.id).toBe("a");
+    expect(next).toBeUndefined();
   });
 
-  it("returns the same single item for both neighbours in a 1-item list", () => {
-    const one = [p("solo")];
-    const { prev, next } = neighbours(one, 0);
-    expect(prev.id).toBe("solo");
-    expect(next.id).toBe("solo");
+  it("has neither neighbour in a 1-item list", () => {
+    const { prev, next } = neighbours([p("solo")], 0);
+    expect(prev).toBeUndefined();
+    expect(next).toBeUndefined();
+  });
+
+  it("has neither neighbour for an empty list", () => {
+    const { prev, next } = neighbours([], 0);
+    expect(prev).toBeUndefined();
+    expect(next).toBeUndefined();
   });
 });
 

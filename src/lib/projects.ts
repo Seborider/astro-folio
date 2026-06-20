@@ -110,6 +110,5 @@ async function loadProjects(locale: Locale): Promise<Project[]> {
 }
 
 export function neighbours(list: Project[], index: number) {
-  const n = list.length;
-  return { prev: list[(index - 1 + n) % n], next: list[(index + 1) % n] };
+  return { prev: list[index - 1], next: list[index + 1] };
 }
