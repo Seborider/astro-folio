@@ -1571,7 +1571,8 @@ html.loader-seen .loader {
 .pd-gallery {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: clamp(16px, 2vw, 32px);
+  align-items: start;
+  gap: 12px clamp(16px, 2vw, 32px);
   padding: 0 var(--pad) clamp(60px, 10vh, 120px);
 }
 .pd-shot.full {
@@ -1588,6 +1589,7 @@ html.loader-seen .loader {
 .pd-shot .placeholder,
 .pd-shot .media-img {
   width: 100%;
+  height: auto; /* override Media.astro's height:100% so aspect-ratio sets height and the caption sits inside the figure */
 }
 .pd-shot figcaption {
   margin-top: 12px;

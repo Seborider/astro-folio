@@ -154,7 +154,7 @@ export const ui: Record<Locale, UIDict> = {
     ],
     statementAttr:
       "Eine Praxis zwischen Brand, Motion und Editorial — gebaut auf langsames Sehen, scharfe Typografie und die Überzeugung, dass Zurückhaltung ihre eigene Art von Lärm ist.",
-    reelHeading: "Ausgewählte Motion",
+    reelHeading: "Ausgewählte Projekte",
     playReel: "Showreel abspielen ",
     workIndexLabel: "Ausgewählte Projekte",
     showreelLabel: "( Showreel )",
