@@ -148,5 +148,27 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
     }
   </section>
 
+  <!-- TECHNOLOGIES -->
+  {
+    about.technologies.length > 0 && (
+      <section class="idx-list" style="margin-top:clamp(60px,10vh,120px)">
+        <div class="idx-list__head">
+          <h2 data-i18n-alt={altOf(tr.technologiesHeading, trA.technologiesHeading)}>
+            {tr.technologiesHeading}
+          </h2>
+        </div>
+        <ul class="tech" tabindex="0" aria-label={tr.technologiesHeading}>
+          {about.technologies.map((tech) => (
+            <li class="tech__item">
+              {/* inline <svg> (not Media.astro) so fill="currentColor" inherits the text color */}
+              <span class="tech__logo" set:html={tech.svg} aria-hidden="true" />
+              <span class="tech__name meta">{tech.name}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
   <Footer locale={locale} />
 </Base>

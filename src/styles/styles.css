@@ -1288,6 +1288,41 @@ html.loader-seen .loader {
   max-width: 36ch;
 }
 
+/* Technologies carousel — native scroll-snap, no JS. Logos are inline <svg>
+   set via set:html so fill:currentColor follows --ink. */
+.tech {
+  display: flex;
+  gap: clamp(28px, 5vw, 64px);
+  list-style: none;
+  margin: clamp(20px, 4vh, 44px) 0 0;
+  padding: 8px 0 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  color: var(--ink);
+}
+.tech:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 6px;
+}
+.tech__item {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.tech__logo svg {
+  display: block;
+  width: clamp(40px, 6vw, 64px);
+  height: auto;
+  fill: currentColor;
+}
+.tech__name {
+  color: var(--ink-dim);
+}
+
 /* =====================================================
    WORK (project grid)
    ===================================================== */

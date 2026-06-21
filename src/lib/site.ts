@@ -36,6 +36,11 @@ export interface AboutRow {
   detail: string;
 }
 
+export interface Technology {
+  name: string; // not translatable
+  svg: string; // raw inline SVG markup; rendered with set:html so fill="currentColor" inherits
+}
+
 export interface AboutPage {
   metaTitle: string;
   title: string;
@@ -52,6 +57,7 @@ export interface AboutPage {
   process: AboutRow[];
   recognitionHeading: string;
   recognition: AboutRow[];
+  technologies: Technology[];
 }
 
 export interface ReelTile {
@@ -160,6 +166,8 @@ const ABOUT_DEFAULTS_EN: AboutPage = {
     { title: "Type Directors Club", detail: "Certificate of Excellence" },
     { title: "Lectures", detail: "CPH Design Week, Typojanchi, OFFF" },
   ],
+  // Empty by design — the carousel stays hidden until logos are added in the Studio.
+  technologies: [],
 };
 
 // DE prose is the EN copy for now (translation pending); short labels are German.
@@ -230,7 +238,8 @@ const aboutQuery = (l: Locale) => `*[_type == "aboutPage"][0]{
   "processHeading": coalesce(processHeading.${l}, processHeading.de),
   "process": process[]{ "title": coalesce(title.${l}, title.de), "detail": coalesce(detail.${l}, detail.de) },
   "recognitionHeading": coalesce(recognitionHeading.${l}, recognitionHeading.de),
-  "recognition": recognition[]{ "title": coalesce(title.${l}, title.de), "detail": coalesce(detail.${l}, detail.de) }
+  "recognition": recognition[]{ "title": coalesce(title.${l}, title.de), "detail": coalesce(detail.${l}, detail.de) },
+  "technologies": technologies[]{ name, svg }
 }`;
 
 const homeQuery = (l: Locale) => `*[_type == "homePage"][0]{

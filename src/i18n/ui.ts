@@ -77,6 +77,7 @@ export interface UIDict {
   aboutScramble: string;
   bioLabel: string;
   selectedLabel: string;
+  technologiesHeading: string;
 
   // archive
   archiveTitle: string;
@@ -189,6 +190,7 @@ export const ui: Record<Locale, UIDict> = {
     aboutScramble: "( Über )",
     bioLabel: "( Bio )",
     selectedLabel: "( Auswahl )",
+    technologiesHeading: "Technologien",
 
     archiveTitle: "Archiv",
     archiveMetaTitle: pageTitle("Archiv"),
@@ -297,6 +299,7 @@ export const ui: Record<Locale, UIDict> = {
     aboutScramble: "( About )",
     bioLabel: "( Bio )",
     selectedLabel: "( Selected )",
+    technologiesHeading: "Technologies",
 
     archiveTitle: "Archive",
     archiveMetaTitle: pageTitle("Archive"),

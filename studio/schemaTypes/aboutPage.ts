@@ -107,6 +107,35 @@ export default defineType({
       type: "localeString",
     }),
     row("recognition", "Recognition"),
+    defineField({
+      name: "technologies",
+      title: "Technologies",
+      description:
+        'Logos for the carousel at the bottom of the page. Paste the raw SVG markup and use fill="currentColor" so the logo follows the text color. Names are not translatable.',
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "technology",
+          fields: [
+            defineField({
+              name: "name",
+              title: "Name",
+              type: "string",
+              validation: (r) => r.required(),
+            }),
+            defineField({
+              name: "svg",
+              title: "Inline SVG markup",
+              type: "text",
+              rows: 4,
+              validation: (r) => r.required(),
+            }),
+          ],
+          preview: { select: { title: "name" } },
+        }),
+      ],
+    }),
   ],
   preview: { prepare: () => ({ title: "About Page" }) },
 });

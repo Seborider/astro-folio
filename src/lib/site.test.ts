@@ -34,4 +34,17 @@ describe("withDefaults", () => {
     withDefaults(d, { a: 2 });
     expect(d).toEqual({ a: 1 });
   });
+
+  it("keeps the empty technologies default when Sanity returns none", () => {
+    const defs = { technologies: [] as { name: string; svg: string }[] };
+    expect(withDefaults(defs, { technologies: null }).technologies).toEqual([]);
+  });
+
+  it("maps the technologies array from the doc as a flat {name,svg} shape", () => {
+    const defs = { technologies: [] as { name: string; svg: string }[] };
+    const techs = [{ name: "Astro", svg: '<svg fill="currentColor"></svg>' }];
+    expect(withDefaults(defs, { technologies: techs }).technologies).toEqual(
+      techs,
+    );
+  });
 });
