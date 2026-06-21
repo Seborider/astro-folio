@@ -30,7 +30,9 @@ const projects = defineCollection({
     role: localized(z.string()),
     client: localized(z.string()),
     services: localized(z.array(z.string())),
+    technologies: localized(z.array(z.string())).optional(), // tech/tools used
     intro: localized(z.string()), // one-line lede
+    ledeLink: z.string().url().optional(), // external link below the lede (host = text)
     overview: localized(z.array(z.string())), // paragraphs
     quote: localized(z.array(z.string())).optional(), // pull-quote lines (may contain <em>)
     cover: z.string().optional(), // image URL/path; placeholder when absent

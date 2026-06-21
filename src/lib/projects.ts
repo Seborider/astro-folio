@@ -28,11 +28,25 @@ export interface Project {
   role: string;
   client: string;
   services: string[];
+  technologies: string[]; // optional in source; [] when absent
   intro: string;
+  ledeLink?: { url: string; label: string }; // label locale-resolved, host-fallback applied
   overview: string[];
   quote?: string[];
   cover?: string | null;
   gallery: Shot[];
+}
+
+// Link text is the URL host; shared so both backends derive it identically.
+function resolveLedeLink(url?: string | null): Project["ledeLink"] {
+  if (!url) return undefined;
+  let host = url;
+  try {
+    host = new URL(url).host;
+  } catch {
+    // ponytail: malformed CMS url — fall back to the raw string, don't crash the build
+  }
+  return { url, label: host };
 }
 
 // Explicit projection matching the Project interface — when adding a field,
@@ -46,7 +60,9 @@ const projectQuery = (l: Locale) => `*[_type == "project"] | order(order asc){
   "role": coalesce(role.${l}, role.de),
   "client": coalesce(client.${l}, client.de),
   "services": coalesce(services.${l}, services.de),
+  "technologies": coalesce(technologies.${l}, technologies.de),
   "intro": coalesce(intro.${l}, intro.de),
+  ledeLink,
   "overview": coalesce(overview.${l}, overview.de),
   "quote": coalesce(quote.${l}, quote.de),
   "cover": cover.asset._ref,
@@ -72,6 +88,8 @@ async function loadProjects(locale: Locale): Promise<Project[]> {
     const raw = await sanityFetch<any[]>(projectQuery(locale));
     return raw.map((p) => ({
       ...p,
+      technologies: p.technologies ?? [], // GROQ coalesce yields null when absent
+      ledeLink: resolveLedeLink(p.ledeLink),
       cover: imageUrl(p.cover, { w: 2200 }),
       gallery: (p.gallery || []).map((g: any) => ({
         label: g.label,
@@ -95,7 +113,9 @@ async function loadProjects(locale: Locale): Promise<Project[]> {
         role: pick(d.role, locale),
         client: pick(d.client, locale),
         services: pick(d.services, locale),
+        technologies: d.technologies ? pick(d.technologies, locale) : [],
         intro: pick(d.intro, locale),
+        ledeLink: resolveLedeLink(d.ledeLink),
         overview: pick(d.overview, locale),
         quote: d.quote && pick(d.quote, locale),
         cover: d.cover,

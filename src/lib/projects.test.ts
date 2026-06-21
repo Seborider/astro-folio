@@ -133,6 +133,37 @@ describe("getProjects — local JSON fallback", () => {
     expect(project.quote).toEqual(["q-en"]);
   });
 
+  it("resolves technologies with the en→de fallback, [] when absent", async () => {
+    mocks.getCollection.mockResolvedValue([
+      entry("a", 1, {
+        technologies: { de: ["Astro-de"], en: ["Astro-en"] },
+      }),
+      entry("b", 2, { technologies: { de: ["GSAP"] } }), // no en → de
+      entry("c", 3), // field absent → []
+    ]);
+    const result = await getProjects("en");
+    expect(result[0].technologies).toEqual(["Astro-en"]);
+    expect(result[1].technologies).toEqual(["GSAP"]);
+    expect(result[2].technologies).toEqual([]);
+  });
+
+  it("leaves ledeLink undefined when the field is absent", async () => {
+    mocks.getCollection.mockResolvedValue([entry("a", 1)]);
+    const [project] = await getProjects("de");
+    expect(project.ledeLink).toBeUndefined();
+  });
+
+  it("derives the host as the ledeLink text", async () => {
+    mocks.getCollection.mockResolvedValue([
+      entry("a", 1, { ledeLink: "https://studio.example.com/x" }),
+    ]);
+    const [project] = await getProjects("de");
+    expect(project.ledeLink).toEqual({
+      url: "https://studio.example.com/x",
+      label: "studio.example.com",
+    });
+  });
+
   it("localizes gallery labels and passes images through verbatim", async () => {
     mocks.getCollection.mockResolvedValue([
       entry("a", 1, {
@@ -195,6 +226,36 @@ describe("getProjects — Sanity backend", () => {
     // full → 2200, half → 1200
     expect(project.gallery[0].image).toBe("url:g1:2200");
     expect(project.gallery[1].image).toBe("url:g2:1200");
+  });
+
+  it("derives the host as the ledeLink text", async () => {
+    mocks.sanityConfigured = true;
+    mocks.sanityFetch.mockResolvedValue([
+      row({ ledeLink: "https://example.com/x" }),
+    ]);
+    const [project] = await getProjects("en");
+    expect(project.ledeLink).toEqual({
+      url: "https://example.com/x",
+      label: "example.com",
+    });
+  });
+
+  it("passes technologies through, [] when missing", async () => {
+    mocks.sanityConfigured = true;
+    mocks.sanityFetch.mockResolvedValue([
+      row({ technologies: ["Astro", "GSAP"] }),
+      row({ technologies: null }), // coalesce yields null when absent
+    ]);
+    const result = await getProjects("en");
+    expect(result[0].technologies).toEqual(["Astro", "GSAP"]);
+    expect(result[1].technologies).toEqual([]);
+  });
+
+  it("leaves ledeLink undefined when the field is missing", async () => {
+    mocks.sanityConfigured = true;
+    mocks.sanityFetch.mockResolvedValue([row({ ledeLink: null })]);
+    const [project] = await getProjects("de");
+    expect(project.ledeLink).toBeUndefined();
   });
 
   it("yields a null cover and empty gallery when those fields are missing", async () => {

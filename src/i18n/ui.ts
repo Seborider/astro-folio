@@ -69,6 +69,7 @@ export interface UIDict {
   metaYear: string;
   metaRole: string;
   metaServices: string;
+  metaTech: string;
   prevLabel: string;
   nextLabel: string;
 
@@ -181,6 +182,7 @@ export const ui: Record<Locale, UIDict> = {
     metaYear: "Jahr",
     metaRole: "Rolle",
     metaServices: "Leistungen",
+    metaTech: "Technologien",
     prevLabel: "( Vorheriges )",
     nextLabel: "( Nächstes Projekt )",
 
@@ -288,6 +290,7 @@ export const ui: Record<Locale, UIDict> = {
     metaYear: "Year",
     metaRole: "Role",
     metaServices: "Services",
+    metaTech: "Technologies",
     prevLabel: "( Previous )",
     nextLabel: "( Next project )",
 

@@ -66,10 +66,23 @@ export default defineType({
       validation: (r) => r.required(),
     }),
     defineField({
+      name: "technologies",
+      title: "Technologies (optional)",
+      description: "Tech/tools used in the project. Hidden when empty.",
+      type: "localeStringArray",
+    }),
+    defineField({
       name: "intro",
       title: "Intro (one-line lede)",
       type: "localeText",
       validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "ledeLink",
+      title: "Lede link (optional)",
+      description:
+        "Optional external link shown below the lede; its host is the link text. Leave empty to hide it.",
+      type: "url",
     }),
     defineField({
       name: "overview",

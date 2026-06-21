@@ -1504,6 +1504,16 @@ html.loader-seen .loader {
   line-height: 1.15;
   max-width: 24ch;
 }
+.pd-lede-link {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.pd-lede-link:hover {
+  border-bottom-color: var(--accent);
+}
 .pd-tags {
   white-space: nowrap;
 }

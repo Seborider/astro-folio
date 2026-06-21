@@ -58,6 +58,9 @@ const metaRows: [string, string, string, string][] = [
   [tr.metaYear, p.yr, trA.metaYear, pA.yr],
   [tr.metaRole, p.role, trA.metaRole, pA.role],
   [tr.metaServices, p.services.join(", "), trA.metaServices, pA.services.join(", ")],
+  ...(p.technologies.length
+    ? [[tr.metaTech, p.technologies.join(", "), trA.metaTech, pA.technologies.join(", ")] as [string, string, string, string]]
+    : []),
 ];
 ---
 
@@ -85,7 +88,18 @@ const metaRows: [string, string, string, string][] = [
       <span class="line"><span data-rise data-i18n-alt={altOf(p.name, pA.name)}>{p.name}</span></span>
     </h1>
     <div class="pd-sub">
-      <p class="pd-lede" data-rise-soft data-i18n-alt={altOf(p.intro, pA.intro)}>{p.intro}</p>
+      <div class="pd-lede-col">
+        <p class="pd-lede" data-rise-soft data-i18n-alt={altOf(p.intro, pA.intro)}>{p.intro}</p>
+        {p.ledeLink && (
+          <a
+            class="pd-lede-link meta"
+            href={p.ledeLink.url}
+            target="_blank"
+            rel="noopener"
+            data-rise-soft
+          >{p.ledeLink.label}</a>
+        )}
+      </div>
       <span class="pd-tags meta" data-rise-soft><span data-i18n-alt={altOf(p.cat, pA.cat)}>{p.cat}</span> — {p.yr}</span>
     </div>
   </section>
