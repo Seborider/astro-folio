@@ -3,8 +3,9 @@ import Base from "../../../layouts/Base.astro";
 import Footer from "../../../components/Footer.astro";
 import Media from "../../../components/Media.astro";
 import { getProjects, neighbours } from "../../../lib/projects";
-import { altOf, DEFAULT_LOCALE, LOCALES, localePath, otherLocale, pageTitle } from "../../../i18n";
+import { altOf, BRAND, DEFAULT_LOCALE, LOCALES, localePath, otherLocale, pageTitle } from "../../../i18n";
 import { t } from "../../../i18n/ui";
+import { creativeWorkSchema } from "../../../lib/jsonld";
 
 export async function getStaticPaths() {
   // Locale cross-product: each project page exists at /work/<slug> (de)
@@ -62,13 +63,24 @@ const metaRows: [string, string, string, string][] = [
     ? [[tr.metaTech, p.technologies.join(", "), trA.metaTech, pA.technologies.join(", ")] as [string, string, string, string]]
     : []),
 ];
+const jsonLd = creativeWorkSchema({
+  name: p.name,
+  url: new URL(localePath(locale, `/work/${p.id}`), Astro.site).href,
+  description: p.intro,
+  image: p.cover,
+  dateCreated: p.yr,
+  inLanguage: locale,
+  author: { name: BRAND, url: new URL(localePath(locale, "/"), Astro.site).href },
+});
 ---
 
 <Base
   title={pageTitle(p.name)}
   description={p.intro}
   titleAlt={pageTitle(pA.name)}
+  image={p.cover}
   locale={locale}
+  jsonLd={jsonLd}
 >
   <!-- HERO -->
   <section

@@ -1,13 +1,24 @@
 import { defineConfig, passthroughImageService } from "astro/config";
 import react from "@astrojs/react";
+import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
   // The Tweaks panel is a React island; everything else is plain Astro.
-  integrations: [react()],
+  // sitemap emits sitemap-index.xml at build with hreflang alternates; DE is
+  // the unprefixed default, EN lives under /en/ (mirrors the i18n block below).
+  integrations: [
+    react(),
+    sitemap({
+      i18n: {
+        defaultLocale: "de",
+        locales: { de: "de-DE", en: "en-GB" },
+      },
+    }),
+  ],
   // Set this to the production URL before deploying (used for sitemap/canonical
   // and the hreflang alternates in Base.astro).
-  site: "https://example.com",
+  site: "https://sebo.zone",
   // DE is the default locale at "/", EN lives under "/en/". Routing is done
   // by src/pages/[...lang]/ + src/i18n helpers; this block documents intent
   // and enables Astro.currentLocale / future @astrojs/sitemap i18n support.

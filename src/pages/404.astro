@@ -13,7 +13,12 @@ import { t } from "../i18n/ui";
 const tr = t(DEFAULT_LOCALE);
 ---
 
-<Base title={pageTitle("404")} locale={DEFAULT_LOCALE}>
+<Base
+  title={pageTitle("404")}
+  description={tr.notFoundDescription}
+  locale={DEFAULT_LOCALE}
+  noindex={true}
+>
   <section class="phero notfound" data-screen-label="404">
     <div class="phero__index meta">
       <span data-scramble-now data-text={tr.notFoundScramble}

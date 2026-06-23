@@ -44,3 +44,24 @@ describe("locale parity", () => {
     }
   });
 });
+
+// SEO guard: <meta name="description"> snippets Google truncates near 160
+// chars. Keep each non-empty and within budget so the full line shows.
+describe("meta description budget", () => {
+  const metaKeys = [
+    "homeDescription",
+    "workDescription",
+    "archiveDescription",
+    "notFoundDescription",
+  ] as const;
+
+  for (const locale of LOCALES) {
+    for (const key of metaKeys) {
+      it(`${locale}.${key} is non-empty and ≤ 160 chars`, () => {
+        const text = ui[locale][key];
+        expect(text.trim().length).toBeGreaterThan(0);
+        expect(text.length).toBeLessThanOrEqual(160);
+      });
+    }
+  }
+});

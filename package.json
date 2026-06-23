@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^5.0.7",
+    "@astrojs/sitemap": "^3.7.3",
     "@fontsource/instrument-serif": "^5.2.8",
     "@fontsource/space-mono": "^5.2.9",
     "astro": "^6.4.7",

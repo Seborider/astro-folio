@@ -96,6 +96,7 @@ export interface UIDict {
   notFoundScramble: string;
   notFoundLabel: string;
   notFoundLede: string;
+  notFoundDescription: string;
   notFoundSubMeta: string;
   notFoundHome: string;
   notFoundWork: string;
@@ -137,7 +138,7 @@ export const ui: Record<Locale, UIDict> = {
     footBased: "Standort",
 
     homeTitle: `${BRAND} — Web & Mobile Developer`,
-    homeDescription: `Design- und Art-Direction zwischen Brand, Motion und Editorial — Portfolio von ${BRAND}.`,
+    homeDescription: `Web- & Mobile-Developer für schnelle, animierte Interfaces — Portfolio von ${BRAND}, mit ausgewählten Projekten und Code.`,
     loadingLabel: "( Laden )",
     heroRole: "Web & Mobile Developer",
     heroMetaA: "WEB",
@@ -209,6 +210,8 @@ export const ui: Record<Locale, UIDict> = {
     notFoundScramble: "( Fehler 404 )",
     notFoundLabel: "Nicht gefunden",
     notFoundLede: "Diese Seite existiert nicht — oder ist umgezogen.",
+    notFoundDescription:
+      "Diese Seite existiert nicht — oder ist umgezogen. Zurück zur Startseite oder zu den Projekten.",
     notFoundSubMeta: "This page could not be found.",
     notFoundHome: "Startseite ↗",
     notFoundWork: "Projekte ↗",
@@ -246,7 +249,7 @@ export const ui: Record<Locale, UIDict> = {
     footBased: "Based",
 
     homeTitle: `${BRAND} — Web & Mobile Developer`,
-    homeDescription: `Design and art direction across brand, motion and editorial — the portfolio of ${BRAND}.`,
+    homeDescription: `Web & mobile developer building fast, animated interfaces — the portfolio of ${BRAND}, with selected projects and code.`,
     loadingLabel: "( Loading )",
     heroRole: "Web & Mobile Developer",
     heroMetaA: "WEB",
@@ -318,6 +321,8 @@ export const ui: Record<Locale, UIDict> = {
     notFoundScramble: "( Error 404 )",
     notFoundLabel: "Not found",
     notFoundLede: "This page doesn’t exist — or has moved.",
+    notFoundDescription:
+      "This page doesn’t exist — or has moved. Head back to the home page or browse the work.",
     notFoundSubMeta: "This page could not be found.",
     notFoundHome: "Home ↗",
     notFoundWork: "Work ↗",

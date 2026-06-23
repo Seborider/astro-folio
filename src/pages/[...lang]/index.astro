@@ -3,9 +3,10 @@ import Base from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
 import Media from "../../components/Media.astro";
 import { getProjects } from "../../lib/projects";
-import { getHomePage } from "../../lib/site";
-import { altOf, BRAND_LINES, localePath, localeStaticPaths, otherLocale } from "../../i18n";
+import { getHomePage, getSiteSettings } from "../../lib/site";
+import { altOf, BRAND, BRAND_LINES, localePath, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
+import { personSchema, webSiteSchema } from "../../lib/jsonld";
 
 export function getStaticPaths() {
   return localeStaticPaths();
@@ -27,6 +28,17 @@ const carousel = projects.map((p, i) => ({
 }));
 const home = await getHomePage(locale);
 const homeAlt = await getHomePage(alt);
+const settings = await getSiteSettings(locale);
+const homeUrl = new URL(localePath(locale, "/"), Astro.site).href;
+const jsonLd = [
+  personSchema({
+    name: BRAND,
+    url: homeUrl,
+    jobTitle: tr.heroRole,
+    sameAs: settings.socials.map((s) => s.url),
+  }),
+  webSiteSchema({ name: BRAND, url: homeUrl, inLanguage: locale }),
+];
 // Fixed 8-slot reel layout — editors fill tiles in order and only set
 // tiles render. Keep in sync with REEL_WIDTHS in src/lib/site.ts.
 const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
@@ -38,6 +50,7 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
   titleAlt={trA.homeTitle}
   home={true}
   locale={locale}
+  jsonLd={jsonLd}
 >
   <!-- LOADER -->
   <div class="loader" id="loader">
