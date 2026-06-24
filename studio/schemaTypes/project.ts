@@ -105,6 +105,14 @@ export default defineType({
       options: { hotspot: true },
     }),
     defineField({
+      name: "video",
+      title: "Video (optional)",
+      description:
+        "One optional project video. When set, the detail page shows a play affordance that opens the showreel overlay.",
+      type: "file",
+      options: { accept: "video/mp4" },
+    }),
+    defineField({
       name: "gallery",
       title: "Gallery",
       type: "array",

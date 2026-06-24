@@ -34,6 +34,7 @@ export interface Project {
   overview: string[];
   quote?: string[];
   cover?: string | null;
+  video?: string | null; // optional video file url (not translatable); play affordance + overlay
   gallery: Shot[];
 }
 
@@ -66,6 +67,7 @@ const projectQuery = (l: Locale) => `*[_type == "project"] | order(order asc){
   "overview": coalesce(overview.${l}, overview.de),
   "quote": coalesce(quote.${l}, quote.de),
   "cover": cover.asset._ref,
+  "video": video.asset->url,
   "gallery": gallery[]{ "label": coalesce(label.${l}, label.de), span, "image": image.asset._ref }
 }`;
 
@@ -91,6 +93,7 @@ async function loadProjects(locale: Locale): Promise<Project[]> {
       technologies: p.technologies ?? [], // GROQ coalesce yields null when absent
       ledeLink: resolveLedeLink(p.ledeLink),
       cover: imageUrl(p.cover, { w: 2200 }),
+      video: p.video ?? null,
       gallery: (p.gallery || []).map((g: any) => ({
         label: g.label,
         span: g.span,
@@ -119,6 +122,7 @@ async function loadProjects(locale: Locale): Promise<Project[]> {
         overview: pick(d.overview, locale),
         quote: d.quote && pick(d.quote, locale),
         cover: d.cover,
+        video: d.video ?? null,
         gallery: d.gallery.map((g) => ({
           label: pick(g.label, locale),
           span: g.span,

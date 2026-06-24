@@ -36,6 +36,7 @@ const projects = defineCollection({
     overview: localized(z.array(z.string())), // paragraphs
     quote: localized(z.array(z.string())).optional(), // pull-quote lines (may contain <em>)
     cover: z.string().optional(), // image URL/path; placeholder when absent
+    video: z.string().optional(), // optional project video URL/path; play affordance + overlay when present
     gallery: z.array(
       z.object({
         label: localized(z.string()),

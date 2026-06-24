@@ -40,6 +40,16 @@ describe("project schema — happy path", () => {
     );
     expect(r.success).toBe(true);
   });
+
+  it("accepts a project with an optional video", () => {
+    expect(schema.safeParse(valid({ video: "/clip.mp4" })).success).toBe(true);
+  });
+
+  it("accepts a project with no video (the field is optional)", () => {
+    const r = schema.safeParse(valid());
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.video).toBeUndefined();
+  });
 });
 
 describe("project schema — required fields", () => {

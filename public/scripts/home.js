@@ -50,44 +50,9 @@
     }
   }
 
-  /* ---------------- showreel overlay ---------------- */
-  const showreel = document.getElementById("showreel");
-  const reelVideo = showreel ? showreel.querySelector(".showreel__video") : null;
-  // The full showreel source the "Play reel" CTA returns to (tiles swap it out).
-  const showreelSrc = reelVideo ? reelVideo.getAttribute("src") : null;
-  const lenis = () => window.__lenis;
-  const openReel = (src) => {
-    if (reelVideo) {
-      if (src && reelVideo.getAttribute("src") !== src) {
-        reelVideo.setAttribute("src", src); // resets + loads the new source at 0
-      } else {
-        reelVideo.currentTime = 0; // same source → rewind
-      }
-      reelVideo.play().catch(() => {});
-    }
-    showreel.classList.add("is-open");
-    document.documentElement.classList.add("reel-open");
-    if (lenis()) lenis().stop();
-  };
-  const closeReel = () => {
-    showreel.classList.remove("is-open");
-    document.documentElement.classList.remove("reel-open");
-    if (reelVideo) reelVideo.pause();
-    if (lenis()) lenis().start();
-  };
-  if (showreel) {
-    const play = document.getElementById("playReel");
-    const close = document.getElementById("closeReel");
-    if (play) play.addEventListener("click", () => openReel(showreelSrc));
-    if (close) close.addEventListener("click", closeReel);
-    // Only tiles that actually have a video open the overlay — playing their own.
-    document.querySelectorAll(".reel__tile[data-video]").forEach((t) =>
-      t.addEventListener("click", () => openReel(t.dataset.video)),
-    );
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && showreel.classList.contains("is-open")) closeReel();
-    });
-  }
+  // The showreel overlay wiring now lives in core.js (shared with the project
+  // detail page); it binds every element carrying data-video, including the
+  // reel tiles below.
 
   /* ---------------- carousel ---------------- */
   const carousel = document.getElementById("carousel");

@@ -43,6 +43,7 @@ export interface UIDict {
   statementAttr: string;
   reelHeading: string;
   playReel: string;
+  playVideo: string;
   workIndexLabel: string;
   showreelLabel: string;
   close: string;
@@ -159,6 +160,7 @@ export const ui: Record<Locale, UIDict> = {
       "Eine Praxis zwischen Brand, Motion und Editorial — gebaut auf langsames Sehen, scharfe Typografie und die Überzeugung, dass Zurückhaltung ihre eigene Art von Lärm ist.",
     reelHeading: "Ausgewählte Projekte",
     playReel: "Showreel abspielen ",
+    playVideo: "Video abspielen ",
     workIndexLabel: "Ausgewählte Projekte",
     showreelLabel: "( Showreel )",
     close: "( Schließen )",
@@ -270,6 +272,7 @@ export const ui: Record<Locale, UIDict> = {
       "A practice across brand, motion and editorial — built on slow looking, sharp typography, and the belief that restraint is its own kind of noise.",
     reelHeading: "Selected motion",
     playReel: "Play showreel ",
+    playVideo: "Play video ",
     workIndexLabel: "Selected work",
     showreelLabel: "( Showreel )",
     close: "( Close )",

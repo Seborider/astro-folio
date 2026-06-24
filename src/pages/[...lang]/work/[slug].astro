@@ -2,6 +2,7 @@
 import Base from "../../../layouts/Base.astro";
 import Footer from "../../../components/Footer.astro";
 import Media from "../../../components/Media.astro";
+import Showreel from "../../../components/Showreel.astro";
 import { getProjects, neighbours } from "../../../lib/projects";
 import { altOf, BRAND, DEFAULT_LOCALE, LOCALES, localePath, otherLocale, pageTitle } from "../../../i18n";
 import { t } from "../../../i18n/ui";
@@ -120,6 +121,13 @@ const jsonLd = creativeWorkSchema({
   <!-- COVER -->
   <section class="pd-cover">
     <div class="frame"><Media src={p.cover} label={coverLabel} /></div>
+    {p.video && (
+      <div class="reel__cta" data-rise-soft>
+        <button data-video={p.video} data-cursor="play" data-magnetic
+          ><span class="tri"></span> <span data-i18n-alt={altOf(tr.playVideo, trA.playVideo)}>{tr.playVideo}</span></button
+        >
+      </div>
+    )}
   </section>
 
   <!-- INFO -->
@@ -199,4 +207,7 @@ const jsonLd = creativeWorkSchema({
   </nav>
 
   <Footer locale={locale} />
+
+  {/* SHOWREEL OVERLAY — reused for the project video (rendered only when present) */}
+  {p.video && <Showreel locale={locale} hasVideo={true} />}
 </Base>

@@ -1,0 +1,56 @@
+---
+/**
+ * Showreel.astro — the full-screen video overlay, shared by the home page
+ * (showreel + reel tiles) and the project-detail page (one project video).
+ * The wiring lives in public/scripts/core.js (openReel/closeReel, bound on
+ * every page): any element with `data-video` opens this overlay playing its
+ * own source; #closeReel and Escape close it.
+ *
+ * Props:
+ *   locale   — current locale (labels resolve via t(); alt rides along)
+ *   src?     — default video src (home showreel); omit on detail, where the
+ *              play button supplies the source via data-video
+ *   hasVideo — render the <video> player vs. the labelled placeholder
+ */
+import { altOf, otherLocale, type Locale } from "../i18n";
+import { t } from "../i18n/ui";
+
+interface Props {
+  locale: Locale;
+  src?: string | null;
+  hasVideo: boolean;
+}
+const { locale, src = null, hasVideo } = Astro.props;
+const tr = t(locale);
+const trA = t(otherLocale(locale));
+---
+
+<div class="showreel" id="showreel">
+  <div class="showreel__bar">
+    <span class="meta" data-i18n-alt={altOf(tr.showreelLabel, trA.showreelLabel)}>{tr.showreelLabel}</span>
+    <button class="showreel__close" id="closeReel" data-cursor="close" data-i18n-alt={altOf(tr.close, trA.close)}
+      >{tr.close}</button
+    >
+  </div>
+  <div class="showreel__player">
+    {
+      hasVideo ? (
+        <video
+          class="showreel__video"
+          src={src ?? undefined}
+          controls
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          aria-label={tr.showreelLabel}
+          data-aria-label-alt={altOf(tr.showreelLabel, trA.showreelLabel)}
+        />
+      ) : (
+        <div class="placeholder ph-motion">
+          <span data-i18n-alt={altOf(tr.showreelPlaceholder, trA.showreelPlaceholder)}>{tr.showreelPlaceholder}</span>
+        </div>
+      )
+    }
+  </div>
+</div>

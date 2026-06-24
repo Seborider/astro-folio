@@ -153,6 +153,16 @@ describe("getProjects — local JSON fallback", () => {
     expect(project.ledeLink).toBeUndefined();
   });
 
+  it("maps video when present, null when absent (not localized)", async () => {
+    mocks.getCollection.mockResolvedValue([
+      entry("a", 1, { video: "/clip.mp4" }),
+      entry("b", 2), // no video → null
+    ]);
+    const result = await getProjects("en");
+    expect(result[0].video).toBe("/clip.mp4");
+    expect(result[1].video).toBeNull();
+  });
+
   it("derives the host as the ledeLink text", async () => {
     mocks.getCollection.mockResolvedValue([
       entry("a", 1, { ledeLink: "https://studio.example.com/x" }),
@@ -256,6 +266,17 @@ describe("getProjects — Sanity backend", () => {
     mocks.sanityFetch.mockResolvedValue([row({ ledeLink: null })]);
     const [project] = await getProjects("de");
     expect(project.ledeLink).toBeUndefined();
+  });
+
+  it("maps the resolved video url, null when absent", async () => {
+    mocks.sanityConfigured = true;
+    mocks.sanityFetch.mockResolvedValue([
+      row({ video: "https://cdn.sanity.io/files/x/y.mp4" }),
+      row({ video: null }), // video.asset->url yields null when absent
+    ]);
+    const result = await getProjects("en");
+    expect(result[0].video).toBe("https://cdn.sanity.io/files/x/y.mp4");
+    expect(result[1].video).toBeNull();
   });
 
   it("yields a null cover and empty gallery when those fields are missing", async () => {

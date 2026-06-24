@@ -328,6 +328,48 @@
     setClock(); setInterval(setClock, 1000);
   }
 
+  /* ---------------- showreel overlay (home + project detail) ---------------- */
+  // The #showreel overlay (Showreel.astro) is reused on every page that renders
+  // it. Any element with data-video opens it playing its own clip (home reel
+  // tiles, the project-detail play button); #playReel returns to the full reel.
+  const showreel = document.getElementById("showreel");
+  if (showreel) {
+    const reelVideo = showreel.querySelector(".showreel__video");
+    // The full showreel source the "Play reel" CTA returns to (clips swap it out).
+    const showreelSrc = reelVideo ? reelVideo.getAttribute("src") : null;
+    const lenis = () => window.__lenis;
+    const openReel = (src) => {
+      if (reelVideo) {
+        if (src && reelVideo.getAttribute("src") !== src) {
+          reelVideo.setAttribute("src", src); // resets + loads the new source at 0
+        } else {
+          reelVideo.currentTime = 0; // same source → rewind
+        }
+        reelVideo.play().catch(() => {});
+      }
+      showreel.classList.add("is-open");
+      document.documentElement.classList.add("reel-open");
+      if (lenis()) lenis().stop();
+    };
+    const closeReel = () => {
+      showreel.classList.remove("is-open");
+      document.documentElement.classList.remove("reel-open");
+      if (reelVideo) reelVideo.pause();
+      if (lenis()) lenis().start();
+    };
+    const play = document.getElementById("playReel");
+    const close = document.getElementById("closeReel");
+    if (play) play.addEventListener("click", () => openReel(showreelSrc));
+    if (close) close.addEventListener("click", closeReel);
+    // Only elements that actually carry a video open the overlay — playing their own.
+    document.querySelectorAll("[data-video]").forEach((el) =>
+      el.addEventListener("click", () => openReel(el.dataset.video)),
+    );
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && showreel.classList.contains("is-open")) closeReel();
+    });
+  }
+
   /* ---------------- locale swap ---------------- */
   // i18n.js swaps the page text in place (no reload) and fires `localechange`.
   // The section index reads data-screen-label live on the next intersection,
