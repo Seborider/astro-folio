@@ -185,7 +185,11 @@ const jsonLd = creativeWorkSchema({
   }
 
   <!-- PREV / NEXT -->
-  <nav class="pd-next">
+  <nav
+    class="pd-next"
+    aria-label={tr.navProjectLabel}
+    data-aria-label-alt={altOf(tr.navProjectLabel, trA.navProjectLabel)}
+  >
     {prev && (
       <a
         class="pd-nav-link prev"

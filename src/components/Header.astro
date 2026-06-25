@@ -33,7 +33,11 @@ const langLabelAlt = locale === "de" ? "DE" : "EN";
     data-cursor="home"
     data-i18n-alt={altOf(s.headerMark, sA.headerMark)}>{s.headerMark}</a
   >
-  <nav class="header__nav">
+  <nav
+    class="header__nav"
+    aria-label={tr.navPrimaryLabel}
+    data-aria-label-alt={altOf(tr.navPrimaryLabel, trA.navPrimaryLabel)}
+  >
     <a
       href={localePath(locale, "/work")}
       data-cursor="view"
@@ -82,7 +86,11 @@ const langLabelAlt = locale === "de" ? "DE" : "EN";
      outside that stacking context. Reuses the same nav links, theme toggle
      and locale switch (order: links → theme → locale). -->
 <div class="nav-panel" id="navPanel">
-  <nav class="nav-panel__nav">
+  <nav
+    class="nav-panel__nav"
+    aria-label={tr.menuLabel}
+    data-aria-label-alt={altOf(tr.menuLabel, trA.menuLabel)}
+  >
     <a
       href={localePath(locale, "/work")}
       data-cursor="view"

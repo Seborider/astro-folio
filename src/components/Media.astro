@@ -27,7 +27,7 @@ const { src, video, label, motion = true } = Astro.props;
       class={`media-img${motion ? " ph-motion" : ""}`}
       src={video}
       poster={src ?? undefined}
-      autoplay
+      data-autoplay
       muted
       loop
       playsinline

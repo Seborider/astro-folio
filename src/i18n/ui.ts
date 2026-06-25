@@ -19,6 +19,9 @@ export interface UIDict {
   themeToggleLabel: string;
   langSwitchLabel: string;
   menuLabel: string;
+  skipLink: string;
+  navPrimaryLabel: string;
+  navProjectLabel: string;
   footSocials: string;
   footIndex: string;
   footHome: string;
@@ -133,6 +136,9 @@ export const ui: Record<Locale, UIDict> = {
     themeToggleLabel: "Farbschema umschalten",
     langSwitchLabel: "Switch to English",
     menuLabel: "Menü",
+    skipLink: "Zum Inhalt springen",
+    navPrimaryLabel: "Hauptnavigation",
+    navProjectLabel: "Projektnavigation",
     footSocials: "Socials",
     footIndex: "Index",
     footHome: "Start",
@@ -245,6 +251,9 @@ export const ui: Record<Locale, UIDict> = {
     themeToggleLabel: "Toggle color theme",
     langSwitchLabel: "Zu Deutsch wechseln",
     menuLabel: "Menu",
+    skipLink: "Skip to content",
+    navPrimaryLabel: "Primary navigation",
+    navProjectLabel: "Project navigation",
     footSocials: "Socials",
     footIndex: "Index",
     footHome: "Home",
