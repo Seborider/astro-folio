@@ -52,9 +52,13 @@
 /* light theme — set by the inline snippet in Base.astro before first paint.
    Only the base tokens change; every derived color-mix recomputes. */
 :root[data-theme="light"] {
-  --bg: #ece8df; /* warm paper */
-  --ink: #14110c; /* near-black */
-  --accent: oklch(0.9 0.02 90); /* near-white (monochrome / off) */
+  --bg: #ffffff; /* white sky */
+  --ink: #1f3346; /* deep slate-blue text */
+  --accent: oklch(0.72 0.13 56); /* muted amber, used sparingly */
+  /* Bavarian sky — read by webgl-bg.js (color + strength + vignette) */
+  --fog: #4080bb; /* sky-blue haze in the shader */
+  --fog-amt: 0.6; /* how strongly the fog tints the sky */
+  --vig: 0.1; /* soft vignette so the sky stays airy */
   /* white + difference auto-inverts over any backdrop */
   --blend-ink: #fff;
   /* screen-blend grain vanishes on a light bg; multiply darkens instead */

@@ -116,7 +116,7 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
         } catch (e) {}
       })();
     </script>
-    <!-- theme: runs before first paint (no FOUC). Absent attribute = dark. -->
+    <!-- theme: runs before first paint (no FOUC). Default light; OS dark opts out. -->
     <script is:inline>
       (function () {
         function apply(theme) {
@@ -130,9 +130,9 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
         } catch (e) {}
         apply(
           stored ||
-            (matchMedia("(prefers-color-scheme: light)").matches
-              ? "light"
-              : "dark"),
+            (matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"),
         );
         // delegated so it works even though the button parses later
         document.addEventListener("click", function (e) {
