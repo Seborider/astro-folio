@@ -47,6 +47,11 @@
 
   --pad: clamp(20px, 4vw, 64px);
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* hero vignette stops (fades to --bg); light mode softens them so the vivid
+     sky reads through — see .hero__bg::after */
+  --hero-fade-in: 55%;
+  --hero-fade-out: 115%;
 }
 
 /* light theme — set by the inline snippet in Base.astro before first paint.
@@ -57,7 +62,7 @@
   --accent: oklch(0.72 0.13 56); /* muted amber, used sparingly */
   /* Bavarian sky — read by webgl-bg.js (color + strength + vignette) */
   --fog: #4080bb; /* sky-blue haze in the shader */
-  --fog-amt: 0.6; /* how strongly the fog tints the sky */
+  --fog-amt: 1; /* how strongly the fog tints the sky */
   --vig: 0.1; /* soft vignette so the sky stays airy */
   /* white + difference auto-inverts over any backdrop */
   --blend-ink: #fff;
@@ -68,6 +73,11 @@
   --ink-dim: color-mix(in srgb, var(--ink) 90%, var(--bg));
   --ink-faint: color-mix(in srgb, var(--ink) 80%, var(--bg));
   color-scheme: light;
+
+  /* soften the hero vignette: the fade resolves to white (--bg) here and would
+     wash out the vivid sky, so push it further out to just ease the edges */
+  --hero-fade-in: 80%;
+  --hero-fade-out: 130%;
 }
 
 /* light mode: drop the difference-blend chrome trick on the header and the
@@ -696,8 +706,8 @@ html.loader-seen .loader {
   inset: 0;
   background: radial-gradient(
     120% 80% at 50% 30%,
-    transparent 55%,
-    var(--bg) 115%
+    transparent var(--hero-fade-in),
+    var(--bg) var(--hero-fade-out)
   );
 }
 .hero__inner {

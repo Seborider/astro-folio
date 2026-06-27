@@ -62,7 +62,8 @@ const ROPE_LEN = 1.5;
 const ROPE_TOP_INSET = 0.06; // tuck the knot up into the balloon so it touches
 const ROPE_Z = -0.35; // behind the balloons (depth 0.42) so upper ropes pass
 // behind the lower row's letters
-const ROPE_RADIUS = 0.011; // thinner than the old rigid cord (0.02)
+const ROPE_RADIUS = 0.008; // thinner than the old rigid cord (0.02)
+const ROPE_COLOR = 0x7a8794; // soft slate, brighter than the old near-black cord
 const ROPE_HIT_RADIUS = 0.09; // fat invisible tube for the CUT raycast
 const COLLIDE_SCALE = 0.9; // shrink collision boxes a touch so resting letters clear
 // balloon push/spring tuning
@@ -226,7 +227,7 @@ export async function start(
     // rope simulates freely; geometry is rebuilt from pts every frame.
     const tube = new Mesh(
       new BufferGeometry(),
-      new MeshBasicMaterial({ color: 0x222222 }),
+      new MeshBasicMaterial({ color: ROPE_COLOR }),
     );
     const proxy = new Mesh(
       new BufferGeometry(),
@@ -808,12 +809,27 @@ function gradientEnvTexture(): CanvasTexture {
   c.height = 256;
   const ctx = c.getContext("2d")!;
   const g = ctx.createLinearGradient(0, 0, 0, 256);
-  // mostly bright (keeps the candy gloss), with a soft dark band low down so
-  // each letter still gets a top→bottom shade gradient and one clean highlight
-  g.addColorStop(0, "#ffffff");
-  g.addColorStop(0.4, "#f2f5fb");
-  g.addColorStop(0.7, "#c2c8d4");
-  g.addColorStop(1, "#7f8492");
+  // light theme (--fog set, the same signal webgl-bg.js reads): the letters sit
+  // on a pale --fog-blue sky. The glossy lower faces reflect the bottom of this
+  // gradient, so the dark band below would read as a dark shadow lit from behind
+  // (and is identical in dark mode, where it belongs). In light mode swap it for
+  // a pale sky-blue derived from --fog — no dark band, reflection matches the bg.
+  const fog = getComputedStyle(document.documentElement)
+    .getPropertyValue("--fog")
+    .trim();
+  if (fog) {
+    const pale = new Color(0xffffff).lerp(new Color(fog), 0.25);
+    g.addColorStop(0, "#ffffff");
+    g.addColorStop(0.55, "#ffffff");
+    g.addColorStop(1, `#${pale.getHexString()}`);
+  } else {
+    // dark theme: mostly bright (keeps the candy gloss), with a soft dark band
+    // low down so each letter still gets a top→bottom shade + one clean highlight
+    g.addColorStop(0, "#ffffff");
+    g.addColorStop(0.4, "#f2f5fb");
+    g.addColorStop(0.7, "#c2c8d4");
+    g.addColorStop(1, "#7f8492");
+  }
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, 8, 256);
   const tex = new CanvasTexture(c);
