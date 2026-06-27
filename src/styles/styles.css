@@ -347,6 +347,67 @@ a {
 }
 
 /* =====================================================
+   STARFIELD — dark mode only, CSS-only twinkle.
+   The .stars div sits right after the opaque #glbg canvas
+   (same z-index:0 → paints above it; before <main> → behind
+   content). Two tiled radial-gradient layers (::before/::after)
+   twinkle out of sync. Hidden in light mode.
+   ===================================================== */
+.stars {
+  display: none;
+}
+:root:not([data-theme="light"]) .stars {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  --star: color-mix(in srgb, var(--ink) 90%, transparent);
+}
+:root:not([data-theme="light"]) .stars::before,
+:root:not([data-theme="light"]) .stars::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+:root:not([data-theme="light"]) .stars::before {
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, var(--star), transparent),
+    radial-gradient(1px 1px at 70% 60%, var(--star), transparent),
+    radial-gradient(3px 3px at 40% 80%, var(--star), transparent),
+    radial-gradient(2px 2px at 85% 15%, var(--star), transparent),
+    radial-gradient(1px 1px at 55% 45%, var(--star), transparent);
+  background-size: 320px 320px;
+  opacity: 0.5;
+  animation: starTwinkle 6s ease-in-out infinite;
+}
+:root:not([data-theme="light"]) .stars::after {
+  background-image:
+    radial-gradient(3px 3px at 10% 70%, var(--star), transparent),
+    radial-gradient(2px 2px at 60% 20%, var(--star), transparent),
+    radial-gradient(1px 1px at 90% 50%, var(--star), transparent),
+    radial-gradient(3px 3px at 30% 10%, var(--star), transparent);
+  background-size: 400px 400px;
+  opacity: 0.35;
+  animation: starTwinkle 9s ease-in-out 2s infinite;
+}
+@keyframes starTwinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-theme="light"]) .stars::before,
+  :root:not([data-theme="light"]) .stars::after {
+    animation: none;
+  }
+}
+
+/* =====================================================
    CUSTOM CURSOR
    ===================================================== */
 .cursor {
