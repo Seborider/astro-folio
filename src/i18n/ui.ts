@@ -41,6 +41,7 @@ export interface UIDict {
   heroMetaYear: string;
   heroCity: string;
   scrollCue: string;
+  heroResetLabel: string;
   statementLabel: string;
   statementLines: string[]; // reveal-lines; may contain <em>
   statementAttr: string;
@@ -155,6 +156,7 @@ export const ui: Record<Locale, UIDict> = {
     heroMetaYear: "( 2026 )",
     heroCity: "( Kopenhagen )",
     scrollCue: "( Scrollen )",
+    heroResetLabel: "Buchstaben zurücksetzen",
     statementLabel: "Ansatz",
     statementLines: [
       "Alles",
@@ -270,6 +272,7 @@ export const ui: Record<Locale, UIDict> = {
     heroMetaYear: "( 2026 )",
     heroCity: "( Copenhagen )",
     scrollCue: "( Scroll )",
+    heroResetLabel: "Reset letters",
     statementLabel: "Approach",
     statementLines: [
       "Everything",
