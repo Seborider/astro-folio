@@ -134,6 +134,16 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
               ? "dark"
               : "light"),
         );
+        function commit(theme) {
+          apply(theme);
+          try {
+            localStorage.setItem("theme", theme);
+          } catch (e) {}
+          window.dispatchEvent(new Event("themechange"));
+        }
+        const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let blink = null;
+        let busy = false;
         // delegated so it works even though the button parses later
         document.addEventListener("click", function (e) {
           if (!e.target.closest("[data-theme-toggle]")) return;
@@ -141,11 +151,34 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
             document.documentElement.dataset.theme === "light"
               ? "dark"
               : "light";
-          apply(theme);
-          try {
-            localStorage.setItem("theme", theme);
-          } catch (e) {}
-          window.dispatchEvent(new Event("themechange"));
+          // reduced motion or mid-blink → swap instantly
+          if (reduce || busy) {
+            commit(theme);
+            return;
+          }
+          busy = true;
+          blink = blink || document.querySelector(".theme-blink");
+          blink.classList.remove("is-opening");
+          void blink.offsetWidth; // restart the animation
+          blink.classList.add("is-closing");
+          blink.addEventListener(
+            "animationend",
+            function () {
+              commit(theme); // swap while fully covered
+              blink.classList.remove("is-closing");
+              void blink.offsetWidth;
+              blink.classList.add("is-opening");
+              blink.addEventListener(
+                "animationend",
+                function () {
+                  blink.classList.remove("is-opening");
+                  busy = false;
+                },
+                { once: true },
+              );
+            },
+            { once: true },
+          );
         });
       })();
     </script>
@@ -199,6 +232,7 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
     <canvas id="glbg" aria-hidden="true"></canvas>
     <div class="stars" aria-hidden="true"></div>
     <div class="page-wipe" aria-hidden="true"></div>
+    <div class="theme-blink" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
     <div class="cursor" id="cursor" aria-hidden="true"></div>
     <div class="cursor-label" id="cursorLabel" aria-hidden="true"></div>

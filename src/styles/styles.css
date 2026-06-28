@@ -36,6 +36,9 @@
   --ink-dim: color-mix(in srgb, var(--ink) 72%, var(--bg));
   --ink-faint: color-mix(in srgb, var(--ink) 58%, var(--bg));
   --line: color-mix(in srgb, var(--ink) 14%, transparent);
+  /* the theme's dark tone, for the theme-blink overlay — dark in both themes
+     (here --bg; light mode overrides to --ink, see below) */
+  --blink-bg: var(--bg);
   --accent: oklch(0.72 0.13 300); /* violet */
   /* difference-blended chrome (header, cursor, tile numbers) */
   --blend-ink: var(--ink);
@@ -59,6 +62,7 @@
 :root[data-theme="light"] {
   --bg: #ffffff; /* white sky */
   --ink: #1f3346; /* deep slate-blue text */
+  --blink-bg: var(--ink); /* keep the theme-blink dark on the light theme */
   --accent: oklch(0.72 0.13 56); /* muted amber, used sparingly */
   /* Bavarian sky — read by webgl-bg.js (color + strength + vignette) */
   --fog: #4080bb; /* sky-blue haze in the shader */
@@ -179,6 +183,65 @@ main,
     display: none;
     animation: none;
   }
+}
+
+/* theme blink — a solid vignette closes in from all sides over the viewport,
+   the theme swaps while covered, then it opens back out. A soft radial mask
+   whose clear centre shrinks to nothing (close) then grows back (open); close
+   is faster than open. JS (Base.astro) toggles the classes and swaps the theme
+   at the covered midpoint. The --blink-r custom prop is registered so it
+   interpolates smoothly (it just snaps at the midpoint without @property). */
+@property --blink-r {
+  syntax: "<length-percentage>";
+  inherits: false;
+  initial-value: 150%;
+}
+.theme-blink {
+  position: fixed;
+  inset: 0;
+  z-index: 9999; /* above all chrome, like the loader */
+  background: var(--blink-bg);
+  pointer-events: none;
+  --blink-r: 150%; /* clear hole larger than the viewport → nothing covered */
+  -webkit-mask-image: radial-gradient(
+    circle at center,
+    transparent var(--blink-r),
+    #000 calc(var(--blink-r) + 60%)
+  );
+  mask-image: radial-gradient(
+    circle at center,
+    transparent var(--blink-r),
+    #000 calc(var(--blink-r) + 60%)
+  );
+}
+.theme-blink.is-closing {
+  animation: blinkClose 0.26s var(--ease) forwards;
+}
+.theme-blink.is-opening {
+  /* its own forward ease-out (not `reverse`, which would ease-in and snap open
+     at the end) so the reveal settles gently; a touch slower than the close */
+  animation: blinkOpen 0.42s var(--ease) forwards;
+}
+@keyframes blinkClose {
+  from {
+    --blink-r: 150%; /* clear hole beyond the viewport → nothing covered */
+  }
+  to {
+    --blink-r: -60%; /* opaque stop reaches the centre → fully covered */
+  }
+}
+@keyframes blinkOpen {
+  from {
+    --blink-r: -60%;
+  }
+  to {
+    --blink-r: 150%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-blink {
+    animation: none;
+  } /* JS already swaps instantly; this is the CSS backstop, like .page-wipe */
 }
 
 /* native cross-document page transitions — the browser holds the old page
