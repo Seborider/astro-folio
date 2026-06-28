@@ -7,6 +7,105 @@
  * x=0; lines stack downward and the block is centred on y=0.
  */
 
+/** The four selectors the bootstrap needs to wire one balloon heading. */
+export interface BalloonSelectors {
+  section: string;
+  canvas: string;
+  title: string;
+  reset: string;
+}
+
+// Home uses .hero; every other page uses the .phero page-heading. Both share
+// the same `.line > span` title structure, so only the roots differ.
+export const HERO_SELECTORS: BalloonSelectors = {
+  section: ".hero",
+  canvas: ".hero__canvas",
+  title: ".hero__title",
+  reset: ".hero__reset",
+};
+export const PHERO_SELECTORS: BalloonSelectors = {
+  section: ".phero",
+  canvas: ".phero__canvas",
+  title: ".phero__title",
+  reset: ".phero__reset",
+};
+// Project detail heading — its own section/title classes, but it reuses the
+// PheroCanvas component (so the canvas/reset hooks are the .phero__* ones).
+export const PD_SELECTORS: BalloonSelectors = {
+  section: ".pd-hero",
+  canvas: ".phero__canvas",
+  title: ".pd-title",
+  reset: ".phero__reset",
+};
+
+/**
+ * Pick the balloon heading present on this page: the home hero, else the page
+ * hero, else the project-detail heading. A page only ever has one, so order
+ * past the home hero doesn't matter. Pure (takes a presence predicate) so it
+ * stays unit-testable.
+ */
+export function pickSelectors(
+  has: (sel: string) => boolean,
+): BalloonSelectors | null {
+  for (const sel of [HERO_SELECTORS, PHERO_SELECTORS, PD_SELECTORS]) {
+    if (has(sel.section)) return sel;
+  }
+  return null;
+}
+
+/**
+ * Title lines for the scene, read from the server-rendered `.line` spans — the
+ * DOM stays the source of truth (localized by the content loader). DOM-light so
+ * it can be tested with plain objects.
+ */
+export function readLines(title: {
+  querySelectorAll(sel: string): ArrayLike<{ textContent: string | null }>;
+}): string[] {
+  return Array.from(title.querySelectorAll(".line"))
+    .map((l) => l.textContent?.trim() ?? "")
+    .filter(Boolean);
+}
+
+// Intro rise: balloons ease up into place on first reveal (and on reset),
+// standing in for the old CSS heading rise — per-letter stagger + expo.out,
+// mirroring core.js's [data-rise]. A pure render offset that decays to 0; the
+// scene's spring physics are untouched. Kept here (three-free) so it's testable.
+export const RISE_DIST = 2.4; // how far below home each balloon starts (root units)
+export const RISE_DUR = 2; // the rise-to-home duration, seconds
+export const RISE_STAGGER = 0.08; // delay between successive letters, seconds
+// After the rise: a slow, gentle settle — the balloon bobs up and down a couple
+// of times on its string before coming to rest.
+export const RISE_SETTLE_DUR = 2.6; // settle duration, seconds (long = slow)
+export const RISE_BOUNCES = 2; // up/down cycles during the settle
+export const RISE_BOB = 0.02; // peak settle amplitude, root units (small = subtle)
+
+/**
+ * Vertical intro offset for letter `i`. Two phases:
+ *  1. rise — eases up from -RISE_DIST to home (0) over RISE_DUR, no wobble.
+ *  2. settle — once fully risen, a slow gentle bob up and down (RISE_BOUNCES
+ *     cycles over RISE_SETTLE_DUR) before resting at 0.
+ * Staggered per letter. `t0` is the intro start (ms); 0 (not yet revealed) or
+ * before this letter's turn → -RISE_DIST.
+ *
+ * Both phases meet at home with zero velocity: the cubic rise decelerates to 0,
+ * and the settle's amplitude is a sin(π·τ) hump that fades in AND out (zero
+ * amplitude and zero slope at both ends), so the handoff is smooth, not a kick.
+ */
+export function riseOffset(i: number, now: number, t0: number): number {
+  if (!t0) return -RISE_DIST;
+  const e = (now - t0) / 1000 - i * RISE_STAGGER;
+  if (e <= 0) return -RISE_DIST;
+  if (e < RISE_DUR) {
+    const p = e / RISE_DUR;
+    return -RISE_DIST * (1 - p) ** 3; // cubic ease-out rise, monotonic
+  }
+  const ts = e - RISE_DUR;
+  if (ts >= RISE_SETTLE_DUR) return 0; // fully settled at home
+  const tau = ts / RISE_SETTLE_DUR;
+  const envelope = Math.sin(Math.PI * tau); // fades in and out, 0 at both ends
+  return RISE_BOB * envelope * Math.sin(RISE_BOUNCES * 2 * Math.PI * tau);
+}
+
 export interface GlyphPlacement {
   char: string;
   line: number;

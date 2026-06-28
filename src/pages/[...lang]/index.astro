@@ -53,21 +53,6 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
   locale={locale}
   jsonLd={jsonLd}
 >
-  <!-- Hide the serif <h1> from the first paint when the balloon hero will run,
-       so it never flickers before the canvas mounts. Mirrors the JS guards;
-       balloons.ts reveals it again if init is skipped or fails. -->
-  <script is:inline>
-    (function () {
-      var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-      var gl = false;
-      try {
-        gl = !!document.createElement("canvas").getContext("webgl2");
-      } catch (e) {}
-      if (!reduce && gl)
-        document.documentElement.classList.add("balloons-pending");
-    })();
-  </script>
-
   <!-- LOADER -->
   <div class="loader" id="loader">
     <div class="loader__count" id="loaderCount">0</div>
@@ -86,8 +71,8 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
     <div class="hero__bg"></div>
     <!-- 3D balloon-letter overlay; JS reads the <h1> below and mounts here.
          aria-hidden: the real <h1> stays the accessible/SEO source of truth. -->
-    <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
-    <button class="hero__reset" id="heroReset" type="button" aria-label={tr.heroResetLabel}
+    <canvas class="hero__canvas" aria-hidden="true"></canvas>
+    <button class="hero__reset" type="button" aria-label={tr.heroResetLabel}
       data-aria-label-alt={altOf(tr.heroResetLabel, trA.heroResetLabel)}>↺</button>
     <div class="hero__inner">
       <h1 class="hero__title">
@@ -245,11 +230,4 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
     src={home.showreelVideo}
     hasVideo={Boolean(home.showreelVideo || home.reelTiles.some((t) => t.video))}
   />
-
-  <!-- bundled (not is:inline): Astro tree-shakes three; the heavy scene chunk
-       is dynamic-imported only when the hero scrolls into view. -->
-  <script>
-    import { initBalloons } from "../../scripts/balloons";
-    initBalloons();
-  </script>
 </Base>

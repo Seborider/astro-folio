@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
 import Media from "../../components/Media.astro";
+import PheroCanvas from "../../components/PheroCanvas.astro";
 import { getAboutPage } from "../../lib/site";
 import { altOf, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
@@ -32,6 +33,7 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
     data-screen-label={tr.sections.aboutHero}
     data-screen-label-alt={altOf(tr.sections.aboutHero, trA.sections.aboutHero)}
   >
+    <PheroCanvas locale={locale} />
     <div class="phero__index meta">
       <span data-scramble-now data-text={tr.aboutScramble} data-i18n-alt={altOf(tr.aboutScramble, trA.aboutScramble)}
         >{tr.aboutScramble}</span

@@ -5,24 +5,27 @@
  * truth for SEO / screen readers and the CSS hero is the fallback.
  */
 import type { BalloonHandle } from "./balloons-scene";
+import { pickSelectors, readLines } from "./balloons-layout";
 
 export function initBalloons(): void {
-  const hero = document.querySelector<HTMLElement>(".hero");
-  const canvas = document.querySelector<HTMLCanvasElement>("#heroCanvas");
-  const title = document.querySelector<HTMLElement>(".hero__title");
-  const resetBtn = document.querySelector<HTMLButtonElement>("#heroReset");
   // An inline head script hides the <h1> from first paint via .balloons-pending
   // (no serif flicker); reveal it again whenever balloons won't actually run.
   const reveal = () => document.documentElement.classList.remove("balloons-pending");
+
+  // Same code path for the home .hero and the per-page .phero headings.
+  const sel = pickSelectors((s) => Boolean(document.querySelector(s)));
+  if (!sel) return reveal();
+  const hero = document.querySelector<HTMLElement>(sel.section);
+  const canvas = document.querySelector<HTMLCanvasElement>(sel.canvas);
+  const title = document.querySelector<HTMLElement>(sel.title);
+  const resetBtn = document.querySelector<HTMLButtonElement>(sel.reset);
   if (!hero || !canvas || !title) return reveal();
 
-  // Guards: reduced-motion or no WebGL → leave the plain CSS hero in place.
+  // Guards: reduced-motion or no WebGL → leave the plain CSS heading in place.
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return reveal();
   if (!hasWebGL()) return reveal();
 
-  const lines = Array.from(title.querySelectorAll<HTMLElement>(".line"))
-    .map((l) => l.textContent?.trim() ?? "")
-    .filter(Boolean);
+  const lines = readLines(title);
   if (!lines.length) return reveal();
 
   let handle: BalloonHandle | null = null;

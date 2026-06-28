@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
 import Media from "../../components/Media.astro";
+import PheroCanvas from "../../components/PheroCanvas.astro";
 import { getProjects } from "../../lib/projects";
 import { altOf, localePath, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
@@ -50,6 +51,7 @@ function filtersFor(cat: string): string[] {
     data-screen-label={tr.sections.workHero}
     data-screen-label-alt={altOf(tr.sections.workHero, trA.sections.workHero)}
   >
+    <PheroCanvas locale={locale} />
     <div class="phero__index meta">
       <span data-scramble-now data-text={tr.workScramble} data-i18n-alt={altOf(tr.workScramble, trA.workScramble)}
         >{tr.workScramble}</span

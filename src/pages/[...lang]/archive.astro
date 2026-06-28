@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
+import PheroCanvas from "../../components/PheroCanvas.astro";
 import { getProjects } from "../../lib/projects";
 import { altOf, localePath, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
@@ -31,6 +32,7 @@ const last = projects[projects.length - 1]?.yr ?? "";
     data-screen-label={tr.sections.archiveHero}
     data-screen-label-alt={altOf(tr.sections.archiveHero, trA.sections.archiveHero)}
   >
+    <PheroCanvas locale={locale} />
     <div class="phero__index meta">
       <span data-scramble-now data-text={tr.archiveScramble} data-i18n-alt={altOf(tr.archiveScramble, trA.archiveScramble)}
         >{tr.archiveScramble}</span

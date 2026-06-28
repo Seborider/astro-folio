@@ -106,9 +106,9 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
     <script is:inline>
       (function () {
         try {
-          var stored = localStorage.getItem("locale");
-          var build = document.documentElement.lang;
-          var valid = stored === "de" || stored === "en";
+          const stored = localStorage.getItem("locale");
+          const build = document.documentElement.lang;
+          const valid = stored === "de" || stored === "en";
           document.documentElement.dataset.locale = valid ? stored : build;
           // Only arm the chrome-hide for a real locale i18n.js will resolve.
           if (valid && stored !== build)
@@ -160,6 +160,21 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
         if (window.CSS && CSS.supports("view-transition-name", "none"))
           document.documentElement.classList.add("vt");
       } catch (e) {}
+    </script>
+    <!-- balloons: hide the serif heading (.hero__title / .phero__title) from the
+         first paint when the balloon hero will run, so it never flickers before
+         the canvas mounts. Mirrors the JS guards; balloons.ts reveals it again
+         whenever init is skipped or fails (reduced-motion, no WebGL, no canvas). -->
+    <script is:inline>
+      (function () {
+        const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let gl = false;
+        try {
+          gl = !!document.createElement("canvas").getContext("webgl2");
+        } catch (e) {}
+        if (!reduce && gl)
+          document.documentElement.classList.add("balloons-pending");
+      })();
     </script>
     <!-- View-Transition arrivals fire `pagereveal` before the end-of-body
          motion scripts run, so capture it here (in <head>) and stash the
@@ -238,5 +253,13 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
     <script is:inline src="/scripts/i18n.js"></script>
     <script is:inline src="/scripts/core.js"></script>
     {home && <script is:inline src="/scripts/home.js" />}
+
+    <!-- balloon hero — runs on the home .hero and every .phero page heading.
+         Bundled (not is:inline) so Astro tree-shakes three and dynamic-imports
+         the heavy scene chunk only when the heading scrolls into view. -->
+    <script>
+      import { initBalloons } from "../scripts/balloons";
+      initBalloons();
+    </script>
   </body>
 </html>

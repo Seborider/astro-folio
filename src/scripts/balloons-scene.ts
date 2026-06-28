@@ -39,7 +39,7 @@ import {
   FontLoader,
   type Font,
 } from "three/examples/jsm/loaders/FontLoader.js";
-import { layoutGlyphs, type GlyphPlacement } from "./balloons-layout";
+import { layoutGlyphs, riseOffset, type GlyphPlacement } from "./balloons-layout";
 
 const FONT_URL = "/fonts/paytone-one.typeface.json";
 // ponytail: fixed festive palette; wire to --accent later if the brand wants mono.
@@ -158,6 +158,9 @@ export async function start(
   // fixed bottom anchor (root-local y just below the visible bottom edge);
   // each rope's lower end is pinned here so it's tied to the page bottom.
   let bottomAnchorY = -3;
+  // home block size (root-local, scale 1) — the stable basis refit() scales to.
+  let blockW = 0;
+  let blockH = 0;
 
   function buildLetters() {
     // extra tracking + line gap so the rounded balloons don't merge into mush
@@ -166,6 +169,16 @@ export async function start(
       tracking: resolution * 0.2,
     });
     placements.forEach((p, i) => letters.push(makeLetter(p, i)));
+    // Measure the block once, here at home (rise offset not yet applied) and at
+    // scale 1, over the balloons only — so refit() has a fixed basis the rise
+    // intro and rope sway can't perturb (and that never compounds on re-fit).
+    root.scale.setScalar(1);
+    root.updateMatrixWorld(true);
+    const box = new Box3();
+    for (const l of letters) box.expandByObject(l.balloon);
+    const size = box.getSize(new Vector3());
+    blockW = size.x || 1;
+    blockH = size.y || 1;
     refit();
     rebuildPickables();
   }
@@ -336,17 +349,16 @@ export async function start(
     }
   }
 
-  // scale + centre the whole block to fill ~82% of the visible width
+  // scale + centre the block to fill ~82% of the visible width, from the cached
+  // home block size (set in buildLetters) so it's deterministic per aspect.
   function refit() {
-    const box = new Box3().setFromObject(root);
-    if (box.isEmpty()) return;
+    if (!blockW) return;
     root.scale.setScalar(1);
     root.position.set(0, 0, 0);
-    const size = box.getSize(new Vector3());
     const visH =
       2 * Math.tan(MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
     const visW = visH * camera.aspect;
-    const scale = Math.min((visW * 0.82) / size.x, (visH * 0.62) / size.y);
+    const scale = Math.min((visW * 0.82) / blockW, (visH * 0.62) / blockH);
     root.scale.setScalar(scale);
     // page bottom in root-local units, a touch below the edge so the knot hides
     bottomAnchorY = -(visH / 2) / scale - 0.3;
@@ -443,6 +455,7 @@ export async function start(
     bursts.length = 0;
     letters = [];
     buildLetters();
+    introStart = performance.now(); // replay the rise on reset
   }
 
   function pickAt(clientX: number, clientY: number): Mesh | null {
@@ -577,6 +590,10 @@ export async function start(
   let raf = 0;
   let active = false;
   let last = performance.now();
+  // wall-clock (ms) the rise intro started; 0 = not yet revealed.
+  // ponytail: wall-clock, so scrolling away mid-intro lets it advance while
+  // paused — fine for above-the-fold headings that never pause that early.
+  let introStart = 0;
   function frame(now: number) {
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
@@ -659,7 +676,8 @@ export async function start(
     }
 
     // pass 3: apply positions + step ropes; advance rising/gone letters
-    for (const l of letters) {
+    for (let i = 0; i < letters.length; i++) {
+      const l = letters[i];
       if (l.mode === "float") {
         if (l.oy > 0) {
           l.oy = 0;
@@ -668,7 +686,7 @@ export async function start(
         const bobX = Math.sin(t * 0.5 + l.phase * 1.3) * 0.02;
         const bobY = Math.sin(t * 0.8 + l.phase) * 0.03;
         l.group.position.x = l.baseX + l.ox + bobX;
-        l.group.position.y = l.baseY + l.oy + bobY;
+        l.group.position.y = l.baseY + l.oy + bobY + riseOffset(i, now, introStart);
         l.group.rotation.z = Math.sin(t * 0.6 + l.phase) * 0.04 - l.ovx * 0.12;
         stepRope(l, dt, t);
       } else if (l.mode === "rising") {
@@ -728,6 +746,7 @@ export async function start(
     active = on;
     if (on) {
       last = performance.now();
+      if (!introStart) introStart = last; // start the rise on first reveal
       raf = requestAnimationFrame(frame);
     } else {
       cancelAnimationFrame(raf);

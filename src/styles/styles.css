@@ -743,7 +743,8 @@ html.loader-seen .loader {
 }
 /* Balloon-letter canvas sits behind .hero__inner (so the subheading/strings
    layer correctly) but above .hero__bg. Pointer events only once it mounts. */
-.hero__canvas {
+.hero__canvas,
+.phero__canvas {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -751,17 +752,21 @@ html.loader-seen .loader {
   height: 100%;
   pointer-events: none;
 }
-.hero__canvas.is-active {
+.hero__canvas.is-active,
+.phero__canvas.is-active {
   pointer-events: auto;
 }
 /* When balloons will run, hide the real <h1> from the very first paint (no
    serif flicker before the canvas mounts). It stays in the DOM for a11y/SEO and
    is the visible fallback when balloons don't run (no class added). */
-.balloons-pending .hero__title {
+.balloons-pending .hero__title,
+.balloons-pending .phero__title,
+.balloons-pending .pd-title {
   opacity: 0;
   pointer-events: none;
 }
-.hero__reset {
+.hero__reset,
+.phero__reset {
   position: absolute;
   z-index: 4;
   top: clamp(80px, 12vh, 140px);
@@ -778,11 +783,13 @@ html.loader-seen .loader {
   line-height: 1;
   cursor: none;
 }
-.hero__reset.is-active {
+.hero__reset.is-active,
+.phero__reset.is-active {
   display: grid;
 }
 @media (hover: none) {
-  .hero__reset {
+  .hero__reset,
+  .phero__reset {
     cursor: auto;
   }
 }
@@ -1676,6 +1683,7 @@ html.loader-seen .loader {
    PROJECT DETAIL
    ===================================================== */
 .pd-hero {
+  position: relative; /* anchor the absolutely-positioned balloon canvas */
   padding: clamp(140px, 22vh, 260px) var(--pad) clamp(40px, 7vh, 80px);
 }
 .pd-hero .phero__index {
