@@ -49,6 +49,15 @@ export default defineType({
               description:
                 "Short muted mp4 (autoplays, loops). The image is used as poster.",
             }),
+            defineField({
+              name: "project",
+              title: "Links to project",
+              type: "reference",
+              to: [{ type: "project" }],
+              description:
+                "Optional — adds a caption below the tile linking to this " +
+                "project's detail page (/work/<slug>).",
+            }),
           ],
           preview: { select: { title: "label.de", media: "image" } },
         }),

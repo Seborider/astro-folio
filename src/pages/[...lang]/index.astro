@@ -3,7 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
 import Media from "../../components/Media.astro";
 import Showreel from "../../components/Showreel.astro";
-import { getProjects } from "../../lib/projects";
+import { getProjects, reelTileTarget } from "../../lib/projects";
 import { getHomePage, getSiteSettings } from "../../lib/site";
 import { altOf, BRAND, BRAND_LINES, localePath, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
@@ -140,16 +140,27 @@ const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
     </div>
     <div class="reel__grid">
       {
-        home.reelTiles.map((tile, i) => (
-          <div
-            class={`reel__tile ${reelSlots[i]}`}
-            data-reveal
-            data-video={tile.video}
-          >
-            <span class="tile-no">{String(i + 1).padStart(2, "0")}</span>
-            <Media src={tile.image} video={tile.video} label={tile.label} />
-          </div>
-        ))
+        home.reelTiles.map((tile, i) => {
+          const target = reelTileTarget(projects, projectsAlt, tile.project);
+          return (
+            <div class={`reel__tile ${reelSlots[i]}`} data-reveal>
+              <div class="reel__tile-media" data-video={tile.video}>
+                <span class="tile-no">{String(i + 1).padStart(2, "0")}</span>
+                <Media src={tile.image} video={tile.video} label={tile.label} />
+              </div>
+              {target && (
+                <a
+                  class="reel__tile-cap meta"
+                  href={localePath(locale, `/work/${target.id}`)}
+                  data-cursor="open"
+                  data-i18n-alt={altOf(target.name, target.nameAlt)}
+                >
+                  {target.name}
+                </a>
+              )}
+            </div>
+          );
+        })
       }
     </div>
     <div class="reel__cta">

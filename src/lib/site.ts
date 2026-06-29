@@ -64,6 +64,7 @@ export interface ReelTile {
   label: string;
   image: string | null; // resolved CDN url, or null for the placeholder
   video: string | null; // resolved CDN file url (muted loop), or null
+  project: string | null; // linked project slug, or null for no caption link
 }
 
 export interface Testimonial {
@@ -195,7 +196,7 @@ const HOME_DEFAULTS: HomePage = {
     "reel 06",
     "reel 07",
     "reel 08",
-  ].map((label) => ({ label, image: null, video: null })),
+  ].map((label) => ({ label, image: null, video: null, project: null })),
   // Empty by design — the testimonial strip stays hidden until real client
   // quotes are added in the Studio (no fabricated proof ships).
   testimonials: [],
@@ -246,7 +247,8 @@ const homeQuery = (l: Locale) => `*[_type == "homePage"][0]{
   "reelTiles": reelTiles[]{
     "label": coalesce(label.${l}, label.de),
     "image": image.asset._ref,
-    "video": video.asset->url
+    "video": video.asset->url,
+    "project": project->slug.current
   },
   "testimonials": testimonials[]{
     "quote": coalesce(quote.${l}, quote.de),
@@ -334,7 +336,12 @@ async function loadAboutPage(locale: Locale): Promise<AboutPage> {
 async function loadHomePage(locale: Locale): Promise<HomePage> {
   if (!sanityConfigured) return HOME_DEFAULTS;
   const doc = await sanityFetch<{
-    reelTiles?: Array<{ label?: string; image?: string; video?: string }>;
+    reelTiles?: Array<{
+      label?: string;
+      image?: string;
+      video?: string;
+      project?: string;
+    }>;
     testimonials?: Array<{
       quote?: string;
       attribution?: string;
@@ -348,6 +355,7 @@ async function loadHomePage(locale: Locale): Promise<HomePage> {
       label: t.label ?? "",
       image: imageUrl(t.image, { w: REEL_WIDTHS[i] }),
       video: t.video ?? null,
+      project: t.project ?? null,
     })),
     // Only keep entries with both a quote and an attribution — a half-filled
     // row never renders an anonymous or empty testimonial.

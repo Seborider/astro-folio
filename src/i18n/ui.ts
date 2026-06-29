@@ -245,7 +245,7 @@ export const ui: Record<Locale, UIDict> = {
     },
   },
   en: {
-    navWork: "Work",
+    navWork: "Projects",
     navAbout: "About",
     navArchive: "Archive",
     navImpressum: "Legal notice",
@@ -285,18 +285,18 @@ export const ui: Record<Locale, UIDict> = {
     reelHeading: "Selected motion",
     playReel: "Play showreel ",
     playVideo: "Play video ",
-    workIndexLabel: "Selected work",
+    workIndexLabel: "Selected projects",
     showreelLabel: "( Showreel )",
     close: "( Close )",
     showreelPlaceholder: "Full showreel — drop master cut here",
 
     indexLabel: "Index",
 
-    workTitle: "Work",
-    workMetaTitle: pageTitle("Work"),
+    workTitle: "Projects",
+    workMetaTitle: pageTitle("Projects"),
     workDescription:
       "Selected projects across brand, motion, editorial and digital — 2021 to now.",
-    workScramble: "( Work )",
+    workScramble: "( Projects )",
     workLede:
       "Selected projects across brand, motion, editorial and digital — 2021 to now.",
     projectsCountLabel: "projects",
@@ -340,16 +340,16 @@ export const ui: Record<Locale, UIDict> = {
       "This page doesn’t exist — or has moved. Head back to the home page or browse the work.",
     notFoundSubMeta: "This page could not be found.",
     notFoundHome: "Home ↗",
-    notFoundWork: "Work ↗",
+    notFoundWork: "Project ↗",
 
     sections: {
       hero: "Intro",
       statement: "Approach",
       reel: "Motion",
       voices: "Voices",
-      work: "Work",
+      work: "Projects",
       contact: "Contact",
-      workHero: "Work",
+      workHero: "Projects",
       projectGrid: "Projects",
       aboutHero: "About",
       aboutProcess: "Process",

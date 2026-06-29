@@ -986,10 +986,27 @@ html.loader-seen .loader {
   grid-auto-rows: clamp(90px, 12vw, 180px);
 }
 .reel__tile {
+  display: flex;
+  flex-direction: column;
+}
+.reel__tile-media {
   position: relative;
   overflow: hidden;
   cursor: none;
   background: var(--bg-soft);
+  flex: 1;
+  min-height: 0;
+}
+.reel__tile-cap {
+  display: block;
+  padding-top: 8px;
+  cursor: none;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.3s var(--ease);
+}
+.reel__tile-cap:hover {
+  color: var(--accent);
 }
 .reel__tile .placeholder {
   width: 100%;

@@ -1,5 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { getProjects, neighbours, type Project } from "./projects";
+import {
+  getProjects,
+  neighbours,
+  reelTileTarget,
+  type Project,
+} from "./projects";
 
 // loadProjects switches on sanityConfigured and calls sanityFetch/imageUrl
 // (Sanity branch) or getCollection (local JSON branch). Mock both modules so
@@ -68,6 +73,40 @@ describe("neighbours", () => {
     const { prev, next } = neighbours([], 0);
     expect(prev).toBeUndefined();
     expect(next).toBeUndefined();
+  });
+});
+
+// ── reelTileTarget ──────────────────────────────────────────────────────────
+const named = (id: string, name: string): Project =>
+  ({ id, order: 0, name }) as unknown as Project;
+
+describe("reelTileTarget", () => {
+  const projects = [named("a", "Alpha"), named("b", "Beta")];
+  const projectsAlt = [named("a", "Alpha-en"), named("b", "Beta-en")];
+
+  it("resolves a matching slug to its id and localized names", () => {
+    expect(reelTileTarget(projects, projectsAlt, "b")).toEqual({
+      id: "b",
+      name: "Beta",
+      nameAlt: "Beta-en",
+    });
+  });
+
+  it("falls back to the resolved-locale name when the alt is missing", () => {
+    expect(reelTileTarget(projects, [named("a", "Alpha-en")], "b")).toEqual({
+      id: "b",
+      name: "Beta",
+      nameAlt: "Beta",
+    });
+  });
+
+  it("returns null when the tile has no project set", () => {
+    expect(reelTileTarget(projects, projectsAlt, null)).toBeNull();
+    expect(reelTileTarget(projects, projectsAlt, undefined)).toBeNull();
+  });
+
+  it("returns null when the slug no longer matches a project", () => {
+    expect(reelTileTarget(projects, projectsAlt, "gone")).toBeNull();
   });
 });
 

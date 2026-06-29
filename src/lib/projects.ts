@@ -136,3 +136,26 @@ async function loadProjects(locale: Locale): Promise<Project[]> {
 export function neighbours(list: Project[], index: number) {
   return { prev: list[index - 1], next: list[index + 1] };
 }
+
+/**
+ * Resolve a reel tile's project slug to its detail-page heading. Returns null
+ * when the tile has no project set or the slug no longer matches a project
+ * (e.g. it was deleted in the Studio) — the caller then renders no link.
+ * `nameAlt` (the other locale's name, for the i18n scramble) falls back to the
+ * resolved-locale name, mirroring the parallel `projectsAlt` indexing.
+ */
+export function reelTileTarget(
+  projects: Project[],
+  projectsAlt: Project[],
+  slug: string | null | undefined,
+): { id: string; name: string; nameAlt: string } | null {
+  if (!slug) return null;
+  const i = projects.findIndex((p) => p.id === slug);
+  if (i < 0) return null;
+  const project = projects[i];
+  return {
+    id: project.id,
+    name: project.name,
+    nameAlt: projectsAlt[i]?.name ?? project.name,
+  };
+}
