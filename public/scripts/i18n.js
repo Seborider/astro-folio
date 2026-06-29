@@ -18,6 +18,7 @@
   const ATTR_PAIRS = [
     ["data-screen-label", "data-screen-label-alt"],
     ["data-name", "data-name-alt"],
+    ["data-cursor-label", "data-cursor-label-alt"],
     ["aria-label", "data-aria-label-alt"],
   ];
 

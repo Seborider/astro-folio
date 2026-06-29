@@ -62,11 +62,11 @@
       cursor.style.transform = "translate(" + cur.x + "px," + cur.y + "px) translate(-50%,-50%)";
       if (cursorLabel) cursorLabel.style.transform = "translate(" + tgt.x + "px," + tgt.y + "px) translate(-50%,-50%)";
     });
-    const LABELS = { play: "Play", open: "Open", view: "↗", copy: "Copy", close: "Close", home: "Top" };
+    const LABELS = { play: "Play", open: "Open", view: "↗", copy: "Copy", close: "Close", home: "Home" };
     const bindCursor = (el) => {
       el.addEventListener("pointerenter", () => {
         cursor.classList.add("is-hover");
-        const l = LABELS[el.dataset.cursor];
+        const l = el.dataset.cursorLabel || LABELS[el.dataset.cursor];
         if (l && cursorLabel) { cursorLabel.textContent = l; cursorLabel.style.opacity = "1"; }
       });
       el.addEventListener("pointerleave", () => {

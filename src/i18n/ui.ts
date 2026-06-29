@@ -3,9 +3,10 @@
  * (nav labels, filter buttons, table headers, button text, meta copy).
  * CMS content is localized in the backends; see src/lib/projects.ts/site.ts.
  *
- * Note: the microcopy inside public/scripts/ (loader states, cursor labels,
- * "Copied ✓") intentionally stays English in both locales — the motion code
- * is off-limits per CLAUDE.md.
+ * Note: the microcopy inside public/scripts/ (loader states, the static
+ * cursor LABELS map, "Copied ✓") intentionally stays English in both locales
+ * — the motion code is off-limits per CLAUDE.md. The header's secondary
+ * controls override that with a localized data-cursor-label (cursor* keys).
  */
 import { BRAND, pageTitle, type Locale } from "./index";
 
@@ -18,6 +19,10 @@ export interface UIDict {
   navDatenschutz: string;
   themeToggleLabel: string;
   langSwitchLabel: string;
+  // hover-cursor labels for the header's secondary controls
+  cursorLangSwitch: string;
+  cursorThemeSwitch: string;
+  cursorLetterReload: string;
   menuLabel: string;
   skipLink: string;
   navPrimaryLabel: string;
@@ -136,6 +141,9 @@ export const ui: Record<Locale, UIDict> = {
     navDatenschutz: "Datenschutz",
     themeToggleLabel: "Farbschema umschalten",
     langSwitchLabel: "Switch to English",
+    cursorLangSwitch: "Sprache wechseln",
+    cursorThemeSwitch: "Farbschema wechseln",
+    cursorLetterReload: "Buchstaben neu laden",
     menuLabel: "Menü",
     skipLink: "Zum Inhalt springen",
     navPrimaryLabel: "Hauptnavigation",
@@ -252,6 +260,9 @@ export const ui: Record<Locale, UIDict> = {
     navDatenschutz: "Privacy",
     themeToggleLabel: "Toggle color theme",
     langSwitchLabel: "Zu Deutsch wechseln",
+    cursorLangSwitch: "language switch",
+    cursorThemeSwitch: "theme switch",
+    cursorLetterReload: "letter reload",
     menuLabel: "Menu",
     skipLink: "Skip to content",
     navPrimaryLabel: "Primary navigation",

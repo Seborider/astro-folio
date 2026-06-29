@@ -518,6 +518,9 @@ a {
   text-transform: uppercase;
   color: var(--bg);
   transform: translate(-50%, -50%);
+  /* drop below the 56px hover circle (JS sets the inline transform, so the
+     offset rides on margin, not transform) — keeps multi-word labels off the dot */
+  margin-top: 2.4rem;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
