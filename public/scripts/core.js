@@ -57,8 +57,8 @@
   if (!isTouch && cursor) {
     window.addEventListener("pointermove", (e) => { tgt.x = e.clientX; tgt.y = e.clientY; });
     gsap.ticker.add(() => {
-      cur.x += (tgt.x - cur.x) * 0.18;
-      cur.y += (tgt.y - cur.y) * 0.18;
+      cur.x += (tgt.x - cur.x) * 0.35;
+      cur.y += (tgt.y - cur.y) * 0.35;
       cursor.style.transform = "translate(" + cur.x + "px," + cur.y + "px) translate(-50%,-50%)";
       if (cursorLabel) cursorLabel.style.transform = "translate(" + tgt.x + "px," + tgt.y + "px) translate(-50%,-50%)";
     });
