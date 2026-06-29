@@ -590,6 +590,7 @@ html.loader-seen .loader {
 }
 .header__nav {
   display: flex;
+  align-items: baseline;
   gap: 28px;
 }
 /* The locale switch is a <button> (in-place swap, no navigation) but reads as a
@@ -830,25 +831,18 @@ html.loader-seen .loader {
 }
 .hero__reset,
 .phero__reset {
-  position: absolute;
-  z-index: 4;
-  top: clamp(80px, 12vh, 140px);
-  right: var(--pad);
   display: none;
-  width: 44px;
-  height: 44px;
-  place-items: center;
-  border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
-  border-radius: 50%;
+  padding: 0;
+  border: 0;
   background: transparent;
   color: var(--ink);
-  font-size: 20px;
+  font-size: 14px;
   line-height: 1;
   cursor: none;
 }
 .hero__reset.is-active,
 .phero__reset.is-active {
-  display: grid;
+  display: inline-block;
 }
 @media (hover: none) {
   .hero__reset,

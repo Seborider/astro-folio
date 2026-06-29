@@ -1,22 +1,11 @@
 ---
 /**
  * Balloon-letter overlay for a .phero page heading — mirrors the home hero's
- * canvas + reset button. JS (balloons.ts) reads the sibling <h1 class="phero__title">
- * and mounts here; the real <h1> stays the accessible/SEO source of truth, so
- * this canvas is aria-hidden. Drop inside a `.phero` section (it's position:relative).
+ * canvas. JS (balloons.ts) reads the sibling <h1 class="phero__title"> and mounts
+ * here; the real <h1> stays the accessible/SEO source of truth, so this canvas is
+ * aria-hidden. The replay button lives in the header. Drop inside a `.phero`
+ * section (it's position:relative).
  */
-import { altOf, otherLocale, type Locale } from "../i18n";
-import { t } from "../i18n/ui";
-
-const { locale } = Astro.props as { locale: Locale };
-const tr = t(locale);
-const trA = t(otherLocale(locale));
 ---
 
 <canvas class="phero__canvas" aria-hidden="true"></canvas>
-<button
-  class="phero__reset"
-  type="button"
-  aria-label={tr.heroResetLabel}
-  data-aria-label-alt={altOf(tr.heroResetLabel, trA.heroResetLabel)}>↺</button
->

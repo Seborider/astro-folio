@@ -18,7 +18,8 @@ export function initBalloons(): void {
   const hero = document.querySelector<HTMLElement>(sel.section);
   const canvas = document.querySelector<HTMLCanvasElement>(sel.canvas);
   const title = document.querySelector<HTMLElement>(sel.title);
-  const resetBtn = document.querySelector<HTMLButtonElement>(sel.reset);
+  // One in the header, one in the mobile nav panel — wire them all.
+  const resetBtns = document.querySelectorAll<HTMLButtonElement>(sel.reset);
   if (!hero || !canvas || !title) return reveal();
 
   // Guards: reduced-motion or no WebGL → leave the plain CSS heading in place.
@@ -41,7 +42,7 @@ export function initBalloons(): void {
           .then((h) => {
             handle = h;
             canvas.classList.add("is-active");
-            resetBtn?.classList.add("is-active");
+            resetBtns.forEach((b) => b.classList.add("is-active"));
             handle.setActive(true);
           })
           .catch(reveal); // init failed → fall back to the CSS hero
@@ -53,7 +54,7 @@ export function initBalloons(): void {
   );
   io.observe(hero);
 
-  resetBtn?.addEventListener("click", () => handle?.reset());
+  resetBtns.forEach((b) => b.addEventListener("click", () => handle?.reset()));
   addEventListener(
     "pagehide",
     () => {
