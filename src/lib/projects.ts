@@ -38,8 +38,30 @@ export interface Project {
   gallery: Shot[];
 }
 
+// Raw shape returned by projectQuery: locale objects are already coalesced to
+// plain values, but assets are still refs/urls and absent fields come back null.
+interface ProjectRow {
+  id: string;
+  order: number;
+  yr: string;
+  name: string;
+  cat: string;
+  role: string;
+  client: string;
+  services: string[];
+  technologies: string[] | null;
+  intro: string;
+  ledeLink?: string | null;
+  overview: string[];
+  quote?: string[] | null;
+  cover?: string | null; // image asset _ref
+  video?: string | null;
+  gallery: { label: string; span: "full" | "half"; image?: string | null }[] | null;
+}
+
 // Link text is the URL host; shared so both backends derive it identically.
-function resolveLedeLink(url?: string | null): Project["ledeLink"] {
+// Exported for unit testing.
+export function resolveLedeLink(url?: string | null): Project["ledeLink"] {
   if (!url) return undefined;
   let host = url;
   try {
@@ -87,14 +109,15 @@ export function getProjects(
 
 async function loadProjects(locale: Locale): Promise<Project[]> {
   if (sanityConfigured) {
-    const raw = await sanityFetch<any[]>(projectQuery(locale));
-    return raw.map((p) => ({
+    const raw = await sanityFetch<ProjectRow[]>(projectQuery(locale));
+    return raw.map((p): Project => ({
       ...p,
       technologies: p.technologies ?? [], // GROQ coalesce yields null when absent
+      quote: p.quote ?? undefined, // null when absent → omit
       ledeLink: resolveLedeLink(p.ledeLink),
       cover: imageUrl(p.cover, { w: 2200 }),
       video: p.video ?? null,
-      gallery: (p.gallery || []).map((g: any) => ({
+      gallery: (p.gallery || []).map((g) => ({
         label: g.label,
         span: g.span,
         image: imageUrl(g.image, { w: g.span === "full" ? 2200 : 1200 }),

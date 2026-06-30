@@ -38,11 +38,17 @@ export async function sanityFetch<T>(query: string): Promise<T> {
  * `image.asset._ref` looks like: image-<id>-<w>x<h>-<ext>
  */
 export function imageUrl(
-  ref: string | undefined,
+  ref: string | null | undefined,
   opts: { w?: number; h?: number } = {},
 ): string | null {
   if (!ref || !PROJECT_ID) return null;
-  const [, id, dims, ext] = ref.split("-");
+  // ref = image-<id>-<w>x<h>-<ext>. The id is normally hyphen-free, but split
+  // from the ends so a hyphen in the id can't shift dims/ext out of place.
+  const parts = ref.split("-");
+  if (parts.length < 4) return null;
+  const ext = parts[parts.length - 1];
+  const dims = parts[parts.length - 2];
+  const id = parts.slice(1, -2).join("-");
   if (!id || !dims || !ext) return null;
   let url = `https://cdn.sanity.io/images/${PROJECT_ID}/${DATASET}/${id}-${dims}.${ext}`;
   const q: string[] = ["auto=format", "fit=max"];

@@ -338,13 +338,16 @@
     // The full showreel source the "Play reel" CTA returns to (clips swap it out).
     const showreelSrc = reelVideo ? reelVideo.getAttribute("src") : null;
     const lenis = () => window.__lenis;
-    const openReel = (src) => {
+    const openReel = (src, withSound) => {
       if (reelVideo) {
         if (src && reelVideo.getAttribute("src") !== src) {
           reelVideo.setAttribute("src", src); // resets + loads the new source at 0
         } else {
           reelVideo.currentTime = 0; // same source → rewind
         }
+        // The full-reel CTA is an explicit click, so it may play with sound;
+        // hover/tile opens stay muted (autoplay policy + less startling).
+        reelVideo.muted = !withSound;
         reelVideo.play().catch(() => {});
       }
       showreel.classList.add("is-open");
@@ -359,7 +362,7 @@
     };
     const play = document.getElementById("playReel");
     const close = document.getElementById("closeReel");
-    if (play) play.addEventListener("click", () => openReel(showreelSrc));
+    if (play) play.addEventListener("click", () => openReel(showreelSrc, true));
     if (close) close.addEventListener("click", closeReel);
     // Only elements that actually carry a video open the overlay — playing their own.
     document.querySelectorAll("[data-video]").forEach((el) =>

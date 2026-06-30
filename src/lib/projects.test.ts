@@ -3,6 +3,7 @@ import {
   getProjects,
   neighbours,
   reelTileTarget,
+  resolveLedeLink,
   type Project,
 } from "./projects";
 
@@ -73,6 +74,29 @@ describe("neighbours", () => {
     const { prev, next } = neighbours([], 0);
     expect(prev).toBeUndefined();
     expect(next).toBeUndefined();
+  });
+});
+
+// ── resolveLedeLink ─────────────────────────────────────────────────────────
+describe("resolveLedeLink", () => {
+  it("returns undefined for an absent url", () => {
+    expect(resolveLedeLink(undefined)).toBeUndefined();
+    expect(resolveLedeLink(null)).toBeUndefined();
+    expect(resolveLedeLink("")).toBeUndefined();
+  });
+
+  it("uses the host as the label for a valid url", () => {
+    expect(resolveLedeLink("https://www.example.com/case")).toEqual({
+      url: "https://www.example.com/case",
+      label: "www.example.com",
+    });
+  });
+
+  it("falls back to the raw string when the url is malformed", () => {
+    expect(resolveLedeLink("not a url")).toEqual({
+      url: "not a url",
+      label: "not a url",
+    });
   });
 });
 

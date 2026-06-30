@@ -26,6 +26,13 @@
   let navigating = false;
 
   const hereUrl = () => location.pathname + location.search;
+  // Drop a trailing slash on the path (keep root "/") so /work and /work/ —
+  // which differ between hosts — compare equal in the same-page guard.
+  const norm = (u) => {
+    const [path, query] = u.split("?");
+    const p = path.length > 1 ? path.replace(/\/+$/, "") : path;
+    return query ? p + "?" + query : p;
+  };
 
   document.addEventListener("click", (e) => {
     const a = e.target.closest("a[href]");
@@ -37,7 +44,7 @@
     if (e.metaKey || e.ctrlKey || e.shiftKey) return;  // let new-tab clicks through
 
     const targetUrl = href.split("#")[0];
-    if (targetUrl === hereUrl()) return;               // exact same page
+    if (norm(targetUrl) === norm(hereUrl())) return;   // same page (slash-insensitive)
 
     e.preventDefault();
     if (reduce) { location.href = href; return; }

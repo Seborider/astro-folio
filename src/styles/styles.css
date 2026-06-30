@@ -98,7 +98,7 @@
    the inversion lands darker everywhere — raise the ink % for a darker dot.
    Dark theme keeps the plain difference blend (unchanged). */
 :root[data-theme="light"] .cursor {
-  background: color-mix(in srgb, #fff 70%, var(--ink));
+  background: color-mix(in srgb, var(--blend-ink) 70%, var(--ink));
   mix-blend-mode: difference;
 }
 

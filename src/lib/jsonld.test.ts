@@ -99,4 +99,12 @@ describe("serializeJsonLd", () => {
     expect(out).not.toContain("</script>");
     expect(out).toContain("\\u003c/script>");
   });
+
+  it("escapes U+2028 / U+2029 which break inline <script> parsing", () => {
+    const out = serializeJsonLd({ x: "a\u2028b\u2029c" });
+    expect(out).not.toContain("\u2028");
+    expect(out).not.toContain("\u2029");
+    expect(out).toContain("\\u2028");
+    expect(out).toContain("\\u2029");
+  });
 });

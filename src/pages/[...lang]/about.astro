@@ -91,13 +91,11 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
     {
       about.capabilities.map((c, i) => (
         <div class="idx-row" data-reveal>
-          <>
-            <span class="n">{String(i + 1).padStart(2, "0")}</span>
-            <span class="t" data-scramble data-i18n-alt={altOf(c.title, aboutAlt.capabilities[i]?.title ?? c.title)}>
-              {c.title}
-            </span>
-            <span class="d" data-i18n-alt={altOf(c.detail, aboutAlt.capabilities[i]?.detail ?? c.detail)}>{c.detail}</span>
-          </>
+          <span class="n">{String(i + 1).padStart(2, "0")}</span>
+          <span class="t" data-scramble data-i18n-alt={altOf(c.title, aboutAlt.capabilities[i]?.title ?? c.title)}>
+            {c.title}
+          </span>
+          <span class="d" data-i18n-alt={altOf(c.detail, aboutAlt.capabilities[i]?.detail ?? c.detail)}>{c.detail}</span>
         </div>
       ))
     }
@@ -117,13 +115,11 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
     {
       about.process.map((c, i) => (
         <div class="idx-row" data-reveal>
-          <>
-            <span class="n">{String(i + 1).padStart(2, "0")}</span>
-            <span class="t" data-scramble data-i18n-alt={altOf(c.title, aboutAlt.process[i]?.title ?? c.title)}>
-              {c.title}
-            </span>
-            <span class="d" data-i18n-alt={altOf(c.detail, aboutAlt.process[i]?.detail ?? c.detail)}>{c.detail}</span>
-          </>
+          <span class="n">{String(i + 1).padStart(2, "0")}</span>
+          <span class="t" data-scramble data-i18n-alt={altOf(c.title, aboutAlt.process[i]?.title ?? c.title)}>
+            {c.title}
+          </span>
+          <span class="d" data-i18n-alt={altOf(c.detail, aboutAlt.process[i]?.detail ?? c.detail)}>{c.detail}</span>
         </div>
       ))
     }
@@ -138,13 +134,11 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
     {
       about.recognition.map((r, i) => (
         <div class="idx-row" data-reveal>
-          <>
-            <span class="n">—</span>
-            <span class="t" data-scramble data-i18n-alt={altOf(r.title, aboutAlt.recognition[i]?.title ?? r.title)}>
-              {r.title}
-            </span>
-            <span class="d" data-i18n-alt={altOf(r.detail, aboutAlt.recognition[i]?.detail ?? r.detail)}>{r.detail}</span>
-          </>
+          <span class="n">—</span>
+          <span class="t" data-scramble data-i18n-alt={altOf(r.title, aboutAlt.recognition[i]?.title ?? r.title)}>
+            {r.title}
+          </span>
+          <span class="d" data-i18n-alt={altOf(r.detail, aboutAlt.recognition[i]?.detail ?? r.detail)}>{r.detail}</span>
         </div>
       ))
     }

@@ -99,7 +99,29 @@ describe("project schema — field shapes", () => {
     expect(r.success).toBe(true);
   });
 
-  it("accepts an empty gallery array", () => {
-    expect(schema.safeParse(valid({ gallery: [] })).success).toBe(true);
+});
+
+describe("project schema — required non-empty lists", () => {
+  it("rejects an empty gallery array", () => {
+    expect(schema.safeParse(valid({ gallery: [] })).success).toBe(false);
+  });
+
+  it("rejects an empty de services list", () => {
+    expect(schema.safeParse(valid({ services: { de: [] } })).success).toBe(
+      false,
+    );
+  });
+
+  it("rejects an empty de overview list", () => {
+    expect(schema.safeParse(valid({ overview: { de: [] } })).success).toBe(
+      false,
+    );
+  });
+
+  it("accepts an empty en list (optional fallback, mirrors Sanity)", () => {
+    const r = schema.safeParse(
+      valid({ services: { de: ["Identity"], en: [] } }),
+    );
+    expect(r.success).toBe(true);
   });
 });

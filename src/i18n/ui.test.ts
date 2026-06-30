@@ -20,7 +20,7 @@ describe("t", () => {
 
   it("resolves localized nav labels", () => {
     expect(t("de").navWork).toBe("Projekte");
-    expect(t("en").navWork).toBe("Work");
+    expect(t("en").navWork).toBe("Projects");
   });
 
   it("localizes the Impressum footer label", () => {

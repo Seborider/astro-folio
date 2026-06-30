@@ -53,6 +53,18 @@ describe("imageUrl (configured)", () => {
     expect(imageUrl("image-abc123")).toBeNull();
     expect(imageUrl("notanimage")).toBeNull();
   });
+
+  it("keeps a hyphenated asset id intact (splits from the ends)", async () => {
+    const { imageUrl } = await loadSanity(ENV);
+    expect(imageUrl("image-abc-123-def-800x600-jpg")).toBe(
+      "https://cdn.sanity.io/images/p123/production/abc-123-def-800x600.jpg?auto=format&fit=max",
+    );
+  });
+
+  it("returns null for a null ref", async () => {
+    const { imageUrl } = await loadSanity(ENV);
+    expect(imageUrl(null)).toBeNull();
+  });
 });
 
 describe("imageUrl (unconfigured)", () => {

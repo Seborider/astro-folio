@@ -115,12 +115,6 @@
   resize();
   window.addEventListener("resize", resize);
 
-  // re-sample theme colors periodically (cheap, follows the theme)
-  setInterval(sampleTheme, 250);
-
-  // instant re-sample on theme toggle (chrome.js full-navigations re-init the rest)
-  window.addEventListener("themechange", sampleTheme);
-
   const start = performance.now();
   function render(now) {
     const t = (now - start) / 1000;
@@ -134,9 +128,30 @@
   }
   let raf = requestAnimationFrame(render);
 
-  // pause when tab hidden (save cycles)
+  // re-sample theme colors periodically (cheap, follows the theme); paused
+  // while the tab is hidden so it doesn't poll in the background.
+  let sampler = setInterval(sampleTheme, 250);
+
+  // instant re-sample on theme toggle (chrome.js full-navigations re-init the
+  // rest). Under reduced-motion the rAF loop is stopped, so repaint once or the
+  // canvas keeps the old theme's colors.
+  window.addEventListener("themechange", () => {
+    sampleTheme();
+    if (reduce) render(performance.now());
+  });
+
+  // pause when tab hidden (save cycles); on return resample + repaint so a
+  // theme change made while hidden isn't missed.
   document.addEventListener("visibilitychange", () => {
-    if (document.hidden) { cancelAnimationFrame(raf); }
-    else if (!reduce) { raf = requestAnimationFrame(render); }
+    if (document.hidden) {
+      cancelAnimationFrame(raf);
+      clearInterval(sampler);
+      sampler = 0;
+    } else {
+      if (!sampler) sampler = setInterval(sampleTheme, 250);
+      sampleTheme();
+      if (reduce) render(performance.now());
+      else raf = requestAnimationFrame(render);
+    }
   });
 })();

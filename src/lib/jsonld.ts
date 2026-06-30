@@ -69,5 +69,8 @@ export function creativeWorkSchema(i: CreativeWorkInput) {
 }
 
 export function serializeJsonLd(obj: unknown): string {
-  return JSON.stringify(obj).replace(/</g, "\\u003c");
+  return JSON.stringify(obj)
+    .replace(/</g, "\\u003c") // can't break out of the <script> tag
+    .replace(/\u2028/g, "\\u2028") // line/paragraph separators are valid JSON
+    .replace(/\u2029/g, "\\u2029"); // but break inline <script> parsing
 }

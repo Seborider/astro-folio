@@ -142,10 +142,8 @@ const jsonLd = creativeWorkSchema({
       {
         metaRows.map(([k, v, kA, vA]) => (
           <div class="pd-meta-row">
-            <>
-              <span class="k" data-i18n-alt={altOf(k, kA)}>{k}</span>
-              <span class="v" data-i18n-alt={altOf(v, vA)}>{v}</span>
-            </>
+            <span class="k" data-i18n-alt={altOf(k, kA)}>{k}</span>
+            <span class="v" data-i18n-alt={altOf(v, vA)}>{v}</span>
           </div>
         ))
       }

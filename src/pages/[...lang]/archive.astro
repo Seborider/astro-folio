@@ -16,8 +16,9 @@ const tr = t(locale);
 const trA = t(alt);
 const projects = await getProjects(locale);
 const projectsAlt = await getProjects(alt);
-const first = projects[0]?.yr ?? "";
-const last = projects[projects.length - 1]?.yr ?? "";
+// Projects are ordered newest-first (order asc), so [0] is the latest year.
+const latest = projects[0]?.yr ?? "";
+const earliest = projects[projects.length - 1]?.yr ?? "";
 ---
 
 <Base
@@ -46,7 +47,7 @@ const last = projects[projects.length - 1]?.yr ?? "";
     </h1>
     <div class="phero__sub">
       <p class="phero__lede" data-rise-soft data-i18n-alt={altOf(tr.archiveLede, trA.archiveLede)}>{tr.archiveLede}</p>
-      <span class="meta" data-rise-soft>( {last} — {first} )</span>
+      <span class="meta" data-rise-soft>( {earliest} — {latest} )</span>
     </div>
   </section>
 

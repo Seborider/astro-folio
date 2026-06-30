@@ -41,9 +41,6 @@ hand-built HTML motion prototype; the animation code is intentionally plain
 
 GSAP → ScrollTrigger → Lenis → webgl-bg.js → chrome.js → core.js → home.js (home only)
 
-The Tweaks panel is a React island (`<Tweaks client:idle />`, see
-`src/components/Tweaks.tsx`), not an inline script — Astro bundles and hydrates it.
-
 ## Verify after changes
 
 ```bash
@@ -54,8 +51,7 @@ npm run preview
 
 Then check, in BOTH locales (`/` and `/en/...`): home loader → hero reveal;
 /work filter; /work/<slug> detail with prev/next; the page-wipe between routes
-(including the EN/DE switcher in the header); the Tweaks toggle (bottom-right)
-opens the panel and color changes apply live; no console errors.
+(including the EN/DE switcher in the header); no console errors.
 
 Note: a Sanity dataset created before the locale migration has flat string
 fields — run `cd studio && npm run migrate:locales` once (idempotent) or the
@@ -90,7 +86,6 @@ Current coverage (keep it green when editing these):
   live Sanity I/O and are not unit-tested).
 - `src/content/config.ts` — the project Zod schema (`safeParse`, real
   `astro:content`).
-- `src/components/tweaks-panel.tsx` — `__twkIsLight` luminance check.
 
 Mocking patterns that work here: `vi.stubEnv` + `vi.resetModules()` + dynamic
 `import()` for module-level env consts (`PROJECT_ID`); `vi.mock("./sanity")`
@@ -98,9 +93,8 @@ with `sanityConfigured` as a **getter** to flip backends per test;
 `vi.mock("astro:content")` for `getCollection`; `vi.stubGlobal("fetch", ...)`
 for network code. The Zod-schema test uses the REAL `astro:content` (no mock).
 
-Two source helpers are exported solely for testing: `withDefaults`
-(`src/lib/site.ts`) and `__twkIsLight` (`src/components/tweaks-panel.tsx`).
-Keep them exported.
+One source helper is exported solely for testing: `withDefaults`
+(`src/lib/site.ts`). Keep it exported.
 
 ## Good first tasks (in priority order)
 
@@ -117,7 +111,7 @@ Keep them exported.
    → GitHub Action redeploy (see README → Deploy).
 5. **Light-theme chrome.** Make the header/cursor `mix-blend-mode` theme-aware
    (see README caveat) if a light default ships.
-6. **SEO.** Add per-page `<meta>`/OG tags and a sitemap (`@astrojs/sitemap`).
+6. **SEO.** Add per-page `<meta>`/OG tags.
 
 ## Collaboration principles
 
