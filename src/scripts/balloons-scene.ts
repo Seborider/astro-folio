@@ -113,7 +113,7 @@ export interface BalloonHandle {
 
 export async function start(
   canvas: HTMLCanvasElement,
-  lines: string[],
+  getLines: () => string[],
   hero: HTMLElement,
 ): Promise<BalloonHandle> {
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -163,6 +163,9 @@ export async function start(
   let blockH = 0;
 
   function buildLetters() {
+    // re-read the DOM each build so reset() (header replay AND locale switch)
+    // picks up the now-current localized title — not a stale start() snapshot.
+    const lines = getLines();
     // extra tracking + line gap so the rounded balloons don't merge into mush
     const { placements } = layoutGlyphs(lines, advance, {
       lineHeight: resolution * 1,

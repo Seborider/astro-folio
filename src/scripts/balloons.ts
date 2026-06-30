@@ -38,7 +38,7 @@ export function initBalloons(): void {
       if (visible && !started) {
         started = true;
         import("./balloons-scene")
-          .then(({ start }) => start(canvas, lines, hero))
+          .then(({ start }) => start(canvas, () => readLines(title), hero))
           .then((h) => {
             handle = h;
             canvas.classList.add("is-active");
@@ -55,11 +55,16 @@ export function initBalloons(): void {
   io.observe(hero);
 
   resetBtns.forEach((b) => b.addEventListener("click", () => handle?.reset()));
+  // i18n.js swaps the title text in place and fires `localechange`; replay the
+  // rise so the balloons rebuild in the new language (reset() re-reads the DOM).
+  const onLocaleChange = () => handle?.reset();
+  addEventListener("localechange", onLocaleChange);
   addEventListener(
     "pagehide",
     () => {
       handle?.destroy();
       io.disconnect();
+      removeEventListener("localechange", onLocaleChange);
     },
     { once: true },
   );
