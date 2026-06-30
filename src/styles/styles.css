@@ -513,10 +513,14 @@ a {
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: 0.08em;
-  /* --bg (not --blend-ink): differenced against the inverted cursor dot,
-     it stays readable in both themes precisely because it flips with --bg */
   text-transform: uppercase;
-  color: var(--bg);
+  /* No mix-blend-mode: difference washed out the label on mid-tone backgrounds.
+     --ink is theme-aware (dark in light mode, light in dark); the --bg halo
+     keeps it legible over a local patch of the opposite tone. */
+  color: var(--ink);
+  text-shadow:
+    0 0 2px var(--bg),
+    0 0 4px var(--bg);
   transform: translate(-50%, -50%);
   /* drop below the 56px hover circle (JS sets the inline transform, so the
      offset rides on margin, not transform) — keeps multi-word labels off the dot */
@@ -524,7 +528,6 @@ a {
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
-  mix-blend-mode: difference;
 }
 @media (hover: none) {
   body {
