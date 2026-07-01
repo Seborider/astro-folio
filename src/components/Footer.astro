@@ -73,14 +73,12 @@ const trA = t(alt);
   <div class="footer__grid">
     <div class="footer__contact">
       <div class="meta" style="margin-bottom:18px" data-i18n-alt={altOf(s.contactLabel, sA.contactLabel)}>{s.contactLabel}</div>
-      <button
+      <a
         class="big"
-        id="emailBtn"
-        type="button"
-        data-email={s.email}
-        data-cursor="copy"
+        href={`mailto:${s.email}`}
+        data-cursor="view"
         data-magnetic
-        data-i18n-alt={altOf(s.contactCta, sA.contactCta)}>{s.contactCta}</button
+        data-i18n-alt={altOf(s.contactCta, sA.contactCta)}>{s.contactCta}</a
       >
     </div>
     <div class="footer__col">

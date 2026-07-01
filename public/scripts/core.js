@@ -1,7 +1,7 @@
 /* ============================================================
    core.js — chrome shared by EVERY page.
    Cursor, Lenis smooth scroll, scramble, scroll reveals, page-hero
-   rise, clock, email-copy. Exposes window.scramble, window.__lenis
+   rise, clock. Exposes window.scramble, window.__lenis
    and window.__revealHero (home.js calls the latter after its loader).
    Vanilla. GSAP + ScrollTrigger + Lenis assumed loaded first.
    ============================================================ */
@@ -62,7 +62,7 @@
       cursor.style.transform = "translate(" + cur.x + "px," + cur.y + "px) translate(-50%,-50%)";
       if (cursorLabel) cursorLabel.style.transform = "translate(" + tgt.x + "px," + tgt.y + "px) translate(-50%,-50%)";
     });
-    const LABELS = { play: "Play", open: "Open", view: "↗", copy: "Copy", close: "Close", home: "Home" };
+    const LABELS = { play: "Play", open: "Open", view: "↗", close: "Close", home: "Home" };
     const bindCursor = (el) => {
       el.addEventListener("pointerenter", () => {
         cursor.classList.add("is-hover");
@@ -297,18 +297,6 @@
         trigger: el, start: "top 86%", once: true,
         onEnter: () => scramble(el, { duration: 600 }),
       });
-    });
-  }
-
-  /* ---------------- email copy ---------------- */
-  const emailBtn = document.getElementById("emailBtn");
-  if (emailBtn) {
-    emailBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (navigator.clipboard) navigator.clipboard.writeText(emailBtn.dataset.email || "hello@studio.demo").catch(() => {});
-      const o = emailBtn.textContent;
-      emailBtn.textContent = "Copied ✓";
-      setTimeout(() => (emailBtn.textContent = o), 1600);
     });
   }
 
