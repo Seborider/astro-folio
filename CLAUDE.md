@@ -236,6 +236,10 @@ go-live wiring. In rough priority:
 2. **Real media.** Upload cover + gallery images in the Studio (they resolve via
    `src/lib/sanity.ts` and render through `Media.astro`). For the hero/showreel
    video slots use Mux or Cloudflare Stream rather than committing large MP4s.
+   **Reel-tile previews must be recorded/exported at 16:9 — 1920×1080.** Every
+   reel tile's media box is pinned to `aspect-ratio: 16/9` (`.reel__tile-media`
+   in `styles.css`), so a 16:9 source fills any slot via `object-fit: cover`
+   with no crop and no letterbox bars. Off-ratio footage reintroduces a crop.
 3. **Redeploy-on-publish wiring.** Connect Sanity publish → rebuild (see
    Deployment). Not yet committed — [CONFIRM] the chosen path.
 4. **Light-theme chrome polish.** The `mix-blend-mode: difference` header/cursor

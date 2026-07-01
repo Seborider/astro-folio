@@ -42,7 +42,10 @@ const jsonLd = [
 ];
 // Fixed 8-slot reel layout — editors fill tiles in order and only set
 // tiles render. Keep in sync with REEL_WIDTHS in src/lib/site.ts.
-const reelSlots = ["s3 r2", "s3 r2", "s2 r2", "s2", "s2", "s2", "s2", "s2"];
+// Two 3-col tiles on top, then two rows of three 2-col tiles; every tile's
+// media box is 16:9 (see .reel__tile-media) so one 1920×1080 recording fits
+// any slot with no crop and no letterbox bars.
+const reelSlots = ["s3", "s3", "s2", "s2", "s2", "s2", "s2", "s2"];
 ---
 
 <Base

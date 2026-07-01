@@ -983,7 +983,9 @@ html.loader-seen .loader {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: clamp(8px, 1vw, 16px);
-  grid-auto-rows: clamp(90px, 12vw, 180px);
+  /* Rows size to content; tile height comes from the media's 16:9 box, so
+     every tile is the same aspect ratio at different column widths. */
+  grid-auto-rows: auto;
 }
 .reel__tile {
   display: flex;
@@ -994,8 +996,10 @@ html.loader-seen .loader {
   overflow: hidden;
   cursor: none;
   background: var(--bg-soft);
-  flex: 1;
-  min-height: 0;
+  /* Fixed box AR == recording AR (1920×1080) → Media.astro's object-fit:cover
+     fits exactly: no crop, no bars. Caption sits below without shrinking it. */
+  width: 100%;
+  aspect-ratio: 16 / 9;
 }
 .reel__tile-cap {
   display: block;
@@ -1027,12 +1031,6 @@ html.loader-seen .loader {
 }
 .reel__tile.s3 {
   grid-column: span 3;
-}
-.reel__tile.r2 {
-  grid-row: span 2;
-}
-.reel__tile.r3 {
-  grid-row: span 3;
 }
 .reel__tile img.placeholder,
 .reel__tile .ph-motion {
@@ -2131,15 +2129,10 @@ html.loader-seen .loader {
 @media (max-width: 860px) {
   .reel__grid {
     grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: 38vw;
   }
   .reel__tile.s2,
   .reel__tile.s3 {
     grid-column: span 2;
-  }
-  .reel__tile.r2,
-  .reel__tile.r3 {
-    grid-row: span 1;
   }
   .header__nav {
     gap: 16px;
