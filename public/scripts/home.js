@@ -60,8 +60,12 @@
     const carCount = document.getElementById("carCount");
     const items = carousel.querySelectorAll(".carousel__item");
     if (carCount && items.length) {
-      let step = items[0].offsetWidth + 16;
-      window.addEventListener("resize", () => { step = items[0].offsetWidth + 16; });
+      // Measure the true step (item width + CSS gap) instead of hardcoding
+      // the gap — .carousel's gap is clamp(10px, 1.4vw, 22px), not 16px.
+      const measure = () =>
+        items.length > 1 ? items[1].offsetLeft - items[0].offsetLeft : items[0].offsetWidth;
+      let step = measure();
+      window.addEventListener("resize", () => { step = measure(); });
       carousel.addEventListener("scroll", () => {
         const i = Math.round(carousel.scrollLeft / step);
         carCount.textContent = "( " + Math.min(items.length, i + 1) + " / " + items.length + " )";

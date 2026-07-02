@@ -27,7 +27,12 @@
   function swapDom() {
     document.querySelectorAll("[data-i18n-alt]").forEach(function (el) {
       const html = el.hasAttribute("data-i18n-html");
-      const cur = html ? el.innerHTML : el.textContent;
+      // A scramble animation may be mid-flight: textContent is then random
+      // glyphs. data-text always holds the true current string — store THAT
+      // as the alternate, never the scrambled frame.
+      const cur = html
+        ? el.innerHTML
+        : el.getAttribute("data-text") || el.textContent;
       const alt = el.getAttribute("data-i18n-alt");
       if (html) el.innerHTML = alt;
       else el.textContent = alt;

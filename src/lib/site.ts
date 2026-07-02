@@ -9,7 +9,8 @@
  * below — DE prose is currently an EN duplicate pending real translation.
  */
 import { sanityConfigured, sanityFetch, imageUrl } from "./sanity";
-import { BRAND, DEFAULT_LOCALE, pageTitle, type Locale } from "../i18n";
+import { BRAND, pageTitle, type Locale } from "../i18n";
+import { memoByLocale } from "./memo";
 
 export interface SocialLink {
   label: string;
@@ -205,9 +206,19 @@ const HOME_DEFAULTS: HomePage = {
   showreelVideo: null,
 };
 
-// Per-slot image widths; indices mirror reelSlots in index.astro
-// (slots 0–1 span 3 of 6 grid columns, the rest 2).
-const REEL_WIDTHS = [1600, 1600, 1000, 1000, 1000, 1000, 1000, 1000];
+// One source for the fixed 8-slot reel layout: grid class + image width.
+// Slots 0–1 span 3 of 6 grid columns (wider tiles → wider images), the rest 2.
+// index.astro renders the classes; loadHomePage picks the widths.
+export const REEL_SLOTS = [
+  { cls: "s3", w: 1600 },
+  { cls: "s3", w: 1600 },
+  { cls: "s2", w: 1000 },
+  { cls: "s2", w: 1000 },
+  { cls: "s2", w: 1000 },
+  { cls: "s2", w: 1000 },
+  { cls: "s2", w: 1000 },
+  { cls: "s2", w: 1000 },
+] as const;
 
 const siteQuery = (l: Locale) => `*[_type == "siteSettings"][0]{
   "headerMark": coalesce(headerMark.${l}, headerMark.de),
@@ -273,46 +284,6 @@ export function withDefaults<T extends object>(
   return out;
 }
 
-const siteCache = new Map<Locale, Promise<SiteSettings>>();
-const aboutCache = new Map<Locale, Promise<AboutPage>>();
-const homeCache = new Map<Locale, Promise<HomePage>>();
-
-export function getSiteSettings(
-  locale: Locale = DEFAULT_LOCALE,
-): Promise<SiteSettings> {
-  if (import.meta.env.DEV) return loadSiteSettings(locale);
-  let p = siteCache.get(locale);
-  if (!p) {
-    p = loadSiteSettings(locale);
-    siteCache.set(locale, p);
-  }
-  return p;
-}
-
-export function getAboutPage(
-  locale: Locale = DEFAULT_LOCALE,
-): Promise<AboutPage> {
-  if (import.meta.env.DEV) return loadAboutPage(locale);
-  let p = aboutCache.get(locale);
-  if (!p) {
-    p = loadAboutPage(locale);
-    aboutCache.set(locale, p);
-  }
-  return p;
-}
-
-export function getHomePage(
-  locale: Locale = DEFAULT_LOCALE,
-): Promise<HomePage> {
-  if (import.meta.env.DEV) return loadHomePage(locale);
-  let p = homeCache.get(locale);
-  if (!p) {
-    p = loadHomePage(locale);
-    homeCache.set(locale, p);
-  }
-  return p;
-}
-
 async function loadSiteSettings(locale: Locale): Promise<SiteSettings> {
   if (!sanityConfigured) return SITE_DEFAULTS[locale];
   const doc = await sanityFetch<Record<string, unknown> | null>(
@@ -351,9 +322,9 @@ async function loadHomePage(locale: Locale): Promise<HomePage> {
   } | null>(homeQuery(locale));
   const raw = doc?.reelTiles ?? [];
   return {
-    reelTiles: raw.slice(0, REEL_WIDTHS.length).map((t, i) => ({
+    reelTiles: raw.slice(0, REEL_SLOTS.length).map((t, i) => ({
       label: t.label ?? "",
-      image: imageUrl(t.image, { w: REEL_WIDTHS[i] }),
+      image: imageUrl(t.image, { w: REEL_SLOTS[i].w }),
       video: t.video ?? null,
       project: t.project ?? null,
     })),
@@ -369,3 +340,7 @@ async function loadHomePage(locale: Locale): Promise<HomePage> {
     showreelVideo: doc?.showreelVideo ?? null,
   };
 }
+
+export const getSiteSettings = memoByLocale(loadSiteSettings);
+export const getAboutPage = memoByLocale(loadAboutPage);
+export const getHomePage = memoByLocale(loadHomePage);

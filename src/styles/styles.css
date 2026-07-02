@@ -298,9 +298,16 @@ html.vt .page-wipe {
 .scrollbar.is-ready {
   opacity: 1;
 }
+/* interactive (click-to-jump + drag) only when the page actually scrolls —
+   core.js toggles .can-scroll from the measured limit */
+.scrollbar.can-scroll {
+  pointer-events: auto;
+  touch-action: none;
+}
 /* the nav panel sits below the scrollbar — hide it while the menu is open */
 .menu-open .scrollbar {
   opacity: 0;
+  pointer-events: none;
 }
 .scrollbar__thumb {
   position: absolute;
@@ -1547,7 +1554,7 @@ html.loader-seen .loader {
   max-width: 36ch;
 }
 
-/* Technologies carousel — native scroll-snap, no JS. Logos are inline <svg>
+/* Technologies carousel — native scroll-snap. Logos are inline <svg>
    set via set:html so fill:currentColor follows --ink. */
 .tech {
   display: flex;
@@ -1559,10 +1566,44 @@ html.loader-seen .loader {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   color: var(--ink);
+  scrollbar-width: none; /* native bar hidden (like .carousel); .tech-scroll mirrors it */
+}
+.tech::-webkit-scrollbar {
+  display: none;
 }
 .tech:focus-visible {
   outline: 1px solid var(--accent);
   outline-offset: 6px;
+}
+/* horizontal twin of the page scroll indicator (.scrollbar__thumb): same
+   2px --ink-dim thumb, synced (and click/drag-wired) by the inline script in
+   about.astro. Only shown (.is-ready) when the strip actually overflows.
+   The track is taller than the visible 2px line — that's the hit target. */
+.tech-scroll {
+  position: relative;
+  height: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s var(--ease);
+}
+.tech-scroll.is-ready {
+  opacity: 1;
+  pointer-events: auto;
+  touch-action: none;
+}
+.tech-scroll__thumb {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ink-dim);
+  will-change: transform, width;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tech-scroll {
+    transition: none;
+  }
 }
 .tech__item {
   flex: 0 0 auto;

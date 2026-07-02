@@ -173,6 +173,7 @@ describe("getProjects — local JSON fallback", () => {
     expect(result[0].services).toEqual(["en-svc"]);
     expect(result[1].name).toBe("Bravo"); // en missing → de
     expect(result[1].services).toEqual(["service-de"]);
+    expect(result[0].coverThumb).toBe(result[0].cover); // JSON: same url, no resizing
   });
 
   it("requests the local collection, not the network", async () => {
@@ -296,6 +297,7 @@ describe("getProjects — Sanity backend", () => {
 
     expect(project.name).toBe("X"); // GROQ already coalesced
     expect(project.cover).toBe("url:cover-ref:2200");
+    expect(project.coverThumb).toBe("url:cover-ref:800");
     // full → 2200, half → 1200
     expect(project.gallery[0].image).toBe("url:g1:2200");
     expect(project.gallery[1].image).toBe("url:g2:1200");

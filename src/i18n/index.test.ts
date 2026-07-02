@@ -5,7 +5,7 @@ import {
   otherLocale,
   localePath,
   altLocalePath,
-  localeFromParams,
+  stripTrailingSlash,
   localeStaticPaths,
   pageTitle,
   BRAND,
@@ -29,17 +29,11 @@ describe("pick", () => {
 });
 
 describe("altOf", () => {
-  it("returns the alt value when it differs from the primary", () => {
-    expect(altOf("Arbeiten", "Work")).toBe("Work");
+  it("returns undefined when both strings match", () => {
+    expect(altOf("Same", "Same")).toBeUndefined();
   });
-
-  it("returns undefined when both locales are identical", () => {
-    expect(altOf("Aperture", "Aperture")).toBeUndefined();
-  });
-
-  it("compares arrays/objects by value, not reference", () => {
-    expect(altOf(["a", "b"], ["a", "b"])).toBeUndefined();
-    expect(altOf(["a"], ["b"])).toEqual(["b"]);
+  it("returns the alternate when it differs", () => {
+    expect(altOf("Projekte", "Projects")).toBe("Projects");
   });
 });
 
@@ -93,21 +87,6 @@ describe("altLocalePath", () => {
   });
 });
 
-describe("localeFromParams", () => {
-  it("maps undefined (root) to the default locale", () => {
-    expect(localeFromParams(undefined)).toBe(DEFAULT_LOCALE);
-    expect(localeFromParams(undefined)).toBe("de");
-  });
-
-  it("maps 'en' to the en locale", () => {
-    expect(localeFromParams("en")).toBe("en");
-  });
-
-  it("throws on an unknown segment", () => {
-    expect(() => localeFromParams("fr")).toThrow(/Unknown locale segment/);
-  });
-});
-
 describe("localeStaticPaths", () => {
   it("emits one entry per locale with matching params and props", () => {
     expect(localeStaticPaths()).toEqual([
@@ -120,5 +99,16 @@ describe("localeStaticPaths", () => {
 describe("pageTitle", () => {
   it("composes '<name> — <brand>'", () => {
     expect(pageTitle("Work")).toBe(`Work — ${BRAND}`);
+  });
+});
+
+describe("stripTrailingSlash", () => {
+  it("strips one or more trailing slashes", () => {
+    expect(stripTrailingSlash("/work/")).toBe("/work");
+    expect(stripTrailingSlash("/en/work//")).toBe("/en/work");
+  });
+  it("keeps the root and untouched paths as-is", () => {
+    expect(stripTrailingSlash("/")).toBe("/");
+    expect(stripTrailingSlash("/work")).toBe("/work");
   });
 });

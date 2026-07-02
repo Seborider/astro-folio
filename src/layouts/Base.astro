@@ -22,7 +22,7 @@ import "@fontsource/space-mono/400-italic.css";
 import "@fontsource/space-mono/700.css";
 import "../styles/styles.css";
 import Header from "../components/Header.astro";
-import { altOf, BRAND, DEFAULT_LOCALE, altLocalePath, otherLocale, type Locale } from "../i18n";
+import { altOf, BRAND, DEFAULT_LOCALE, altLocalePath, stripTrailingSlash, otherLocale, type Locale } from "../i18n";
 import { t } from "../i18n/ui";
 import { serializeJsonLd } from "../lib/jsonld";
 
@@ -52,10 +52,7 @@ const trA = t(otherLocale(locale));
 
 // hreflang pair — this page in both locales (slugs are shared across locales).
 // Normalize the trailing slash so self and alternate URLs match in style.
-const path =
-  Astro.url.pathname.length > 1
-    ? Astro.url.pathname.replace(/\/+$/, "")
-    : Astro.url.pathname;
+const path = stripTrailingSlash(Astro.url.pathname);
 const dePath = locale === "de" ? path : altLocalePath("en", path);
 const enPath = locale === "en" ? path : altLocalePath("de", path);
 
@@ -256,17 +253,13 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
       </div>
     </div>
 
-    <!-- libraries -->
-    <script
-      is:inline
-      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
-    ></script>
-    <script
-      is:inline
-      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
-    ></script>
-    <script is:inline src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"
-    ></script>
+    <!-- libraries — self-hosted (public/vendor/), pinned: gsap 3.12.5, lenis 1.1.13.
+         No third-party CDN request (DSGVO, same rationale as the fonts) and no
+         missing-SRI supply-chain exposure. To upgrade: re-download into
+         public/vendor/ and bump the versions here. -->
+    <script is:inline src="/vendor/gsap.min.js"></script>
+    <script is:inline src="/vendor/ScrollTrigger.min.js"></script>
+    <script is:inline src="/vendor/lenis.min.js"></script>
 
     <!-- autoplay looping media only when motion is allowed (WCAG 2.2.2).
          Media.astro marks videos data-autoplay (not the native attribute) so

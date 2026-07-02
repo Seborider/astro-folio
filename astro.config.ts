@@ -33,5 +33,5 @@ export default defineConfig({
   image: { service: passthroughImageService() },
   // Native cross-fade between pages is available via <ViewTransitions/> if you
   // prefer it over the custom wipe in /public/scripts/chrome.js (see README).
-  prefetch: true,
+  prefetch: { prefetchAll: true },
 });

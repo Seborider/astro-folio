@@ -15,21 +15,31 @@
   // page's entrance, so content already on screen is shown in its final state
   // instead of being animated in again (which looked like the page loading
   // twice). Cold loads / refreshes (no inbound navigation) animate as before.
+  // Chrome exposes this via the Navigation API; Safari runs cross-document VT
+  // without it, so fall back to navigation timing + a same-origin referrer
+  // (an internal navigation, not a cold load or reload).
   const nav = window.navigation;
+  const navEntry = performance.getEntriesByType("navigation")[0];
   const viaVT =
     document.documentElement.classList.contains("vt") &&
-    !!(nav && nav.activation && nav.activation.from) &&
-    nav.activation.navigationType !== "reload";
+    (nav && nav.activation
+      ? !!nav.activation.from && nav.activation.navigationType !== "reload"
+      : !!navEntry &&
+        navEntry.type !== "reload" &&
+        (document.referrer === location.origin || document.referrer.indexOf(location.origin + "/") === 0));
   window.__viaVT = viaVT; // home.js reads this for its loader path
 
   /* ---------------- scramble ---------------- */
   const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*/<>+=0123456789";
   function scramble(el, opts) {
     opts = opts || {};
-    const target = el.dataset.text || el.textContent;
+    const initial = el.dataset.text || el.textContent;
     const dur = opts.duration || 800;
     const start = performance.now();
     function frame(now) {
+      // re-read per frame: i18n.js may swap data-text mid-animation, and the
+      // animation must resolve to the NEW locale's string, not a stale capture
+      const target = el.dataset.text || initial;
       const p = Math.min(1, (now - start) / dur);
       const e = 1 - Math.pow(1 - p, 3);
       const revealed = Math.floor(e * target.length);
@@ -145,6 +155,8 @@
     sbScrolls = limit > 0;
     sbThumb.style.opacity = sbScrolls ? "" : "0"; // hide on pages that don't scroll
     sbThumb.style.height = sbThumbH + "px";
+    // the rail only takes pointer input when there is something to scroll
+    scrollbar.classList.toggle("can-scroll", sbScrolls);
   }
   // Scroll hot path: no layout reads, just slide the thumb.
   function updateScrollbar(scroll, limit) {
@@ -160,6 +172,34 @@
     updateScrollbar(scroll, limit);
   }
   window.addEventListener("resize", syncScrollbar);
+  // Click / drag: the rail is a real scrollbar, not just an indicator. A click
+  // jumps (thumb centered on the pointer) and the same gesture keeps dragging.
+  // The thumb itself only ever follows real scroll (updateScrollbar), so the
+  // pipeline stays one-way: pointer → scroll → thumb.
+  if (scrollbar && sbThumb) {
+    let sbGrab = -1; // pointer offset inside the thumb while dragging (px); -1 = idle
+    const sbDragTo = (clientY) => {
+      const range = sbTrackH - sbThumbH;
+      if (range <= 0) return;
+      const rect = scrollbar.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, (clientY - rect.top - sbGrab) / range));
+      const l = window.__lenis;
+      const limit = l ? l.limit : document.documentElement.scrollHeight - window.innerHeight;
+      if (l) l.scrollTo(p * limit, { immediate: true });
+      else window.scrollTo(0, p * limit);
+    };
+    scrollbar.addEventListener("pointerdown", (e) => {
+      if (!sbScrolls) return;
+      e.preventDefault(); // no text selection / touch scroll while dragging
+      const t = sbThumb.getBoundingClientRect();
+      sbGrab = e.clientY >= t.top && e.clientY <= t.bottom ? e.clientY - t.top : sbThumbH / 2;
+      scrollbar.setPointerCapture(e.pointerId);
+      sbDragTo(e.clientY);
+    });
+    scrollbar.addEventListener("pointermove", (e) => { if (sbGrab >= 0) sbDragTo(e.clientY); });
+    scrollbar.addEventListener("pointerup", () => { sbGrab = -1; });
+    scrollbar.addEventListener("pointercancel", () => { sbGrab = -1; });
+  }
 
   /* ---------------- section index ---------------- */
   // Surfaces the active section's localized data-screen-label in the fixed
@@ -182,10 +222,13 @@
     );
     sections.forEach((s) => io.observe(s));
     // Reveal only after the hero so it never clashes with hero corner copy.
-    const onScroll = () =>
-      el.classList.toggle("is-visible", window.scrollY > innerHeight * 0.6);
+    const onScroll = () => {
+      const y = window.__lenis ? window.__lenis.scroll : window.scrollY;
+      el.classList.toggle("is-visible", y > innerHeight * 0.6);
+    };
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    if (window.__lenis) window.__lenis.on("scroll", onScroll);
+    else window.addEventListener("scroll", onScroll, { passive: true });
   }
 
   /* ---------------- Lenis ---------------- */
@@ -326,6 +369,9 @@
     // The full showreel source the "Play reel" CTA returns to (clips swap it out).
     const showreelSrc = reelVideo ? reelVideo.getAttribute("src") : null;
     const lenis = () => window.__lenis;
+    const play = document.getElementById("playReel");
+    const close = document.getElementById("closeReel");
+    let lastFocus = null;
     const openReel = (src, withSound) => {
       if (reelVideo) {
         if (src && reelVideo.getAttribute("src") !== src) {
@@ -341,15 +387,19 @@
       showreel.classList.add("is-open");
       document.documentElement.classList.add("reel-open");
       if (lenis()) lenis().stop();
+      // dialog focus: remember the opener, move focus into the overlay
+      lastFocus = document.activeElement;
+      if (close) close.focus();
     };
     const closeReel = () => {
       showreel.classList.remove("is-open");
       document.documentElement.classList.remove("reel-open");
       if (reelVideo) reelVideo.pause();
       if (lenis()) lenis().start();
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+      // opener not focusable (e.g. a reel tile div) → don't strand focus in the hidden dialog
+      if (showreel.contains(document.activeElement)) document.activeElement.blur();
     };
-    const play = document.getElementById("playReel");
-    const close = document.getElementById("closeReel");
     if (play) play.addEventListener("click", () => openReel(showreelSrc, true));
     if (close) close.addEventListener("click", closeReel);
     // Only elements that actually carry a video open the overlay — playing their own.
@@ -357,7 +407,19 @@
       el.addEventListener("click", () => openReel(el.dataset.video)),
     );
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && showreel.classList.contains("is-open")) closeReel();
+      if (!showreel.classList.contains("is-open")) return;
+      if (e.key === "Escape") { closeReel(); return; }
+      // minimal focus trap: cycle Tab within the overlay's focusables
+      if (e.key !== "Tab") return;
+      const f = showreel.querySelectorAll("button, video[controls], a[href]");
+      if (!f.length) return;
+      const first = f[0];
+      const last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
     });
   }
 

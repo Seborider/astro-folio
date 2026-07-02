@@ -46,7 +46,7 @@ A doc edit isn't optional follow-up — it ships with the code.
   translatable) in the GROQ query in `src/lib/projects.ts`. The same pairing
   applies to the singleton documents — `homePage`, `aboutPage`, `siteSettings`,
   `impressumPage`, `datenschutzPage` schemas mirror `src/lib/site.ts`,
-  `impressum.ts`, `datenschutz.ts` (each with a `withDefaults` JSON fallback).
+  `legal.ts` (each with a `withDefaults` JSON fallback).
 - Styling is one file, `src/styles/styles.css`, token-driven (`--bg`, `--ink`,
   `--accent`; the rest derive via `color-mix`). Reuse tokens; don't hardcode hex.
 - Reveal animations are declarative: `data-reveal`, `.reveal-lines` (with
@@ -62,7 +62,7 @@ A doc edit isn't optional follow-up — it ships with the code.
 - **Pages**, all bilingual (DE default `/`, EN `/en/…`): home (loader → hero →
   statement → showreel → work preview → archive band), `/about` (with a
   technologies carousel), `/work` (project grid + discipline filter derived
-  from `cat`), `/work/<slug>` (detail with prev/next wrap-around, external
+  from `cat`), `/work/<slug>` (detail with prev/next — list ends render no neighbour link, external
   lede link, technologies, optional project video), `/archive` (full
   chronological table), `/impressum`, `/datenschutz`, and a `404`.
 - **Balloon hero.** A Three.js scene renders the page title as rising balloon
@@ -73,8 +73,13 @@ A doc edit isn't optional follow-up — it ships with the code.
   to the active theme. (The old live-only "Tweaks" color panel was removed.)
 - **Motion layer.** Custom cursor (hover states on links), Lenis smooth scroll,
   WebGL shader background, character-scramble headings, declarative scroll
-  reveals, CSS page-wipe transition, showreel overlay, cursor-following work
-  preview, a mobile header menu, and a custom scrollbar.
+  reveals, CSS page-wipe transition, showreel overlay (dialog semantics: focus
+  trap, Escape, focus restore), cursor-following work preview, a mobile header
+  menu, and a custom scrollbar — interactive, not just an indicator: click the
+  rail to jump, drag the thumb to scroll (wired in core.js; the rail takes
+  pointer input only when the page scrolls). The /about technologies strip
+  hides its native bar and mirrors the same thumb, with the same click/drag
+  behavior, via `.tech-scroll` + an inline script.
 - **i18n.** Header EN/DE switcher (immediate, same-page), localized chrome and
   content, `t(locale)` UI strings; `public/scripts/i18n.js` handles the
   client-side switch wiring.
@@ -88,10 +93,11 @@ A doc edit isn't optional follow-up — it ships with the code.
 
 ## Script load order (in src/layouts/Base.astro)
 
-GSAP → ScrollTrigger → Lenis → webgl-bg.js → chrome.js → core.js → home.js (home only)
+GSAP → ScrollTrigger → Lenis → webgl-bg.js → chrome.js → i18n.js → core.js → home.js (home only)
 
-The bundled `src/scripts/balloons*.ts` hero and `public/scripts/i18n.js` load
-separately (not part of this ordered chain).
+**Libraries are self-hosted** from `public/vendor/` (pinned versions: gsap 3.12.5, lenis 1.1.13). No third-party CDN requests — shipped with the site to respect DSGVO (Datenschutz page promises) and avoid SRI/supply-chain exposure. To upgrade: re-download the pinned files into `public/vendor/` and update the version comments in `src/layouts/Base.astro`.
+
+The bundled `src/scripts/balloons*.ts` hero loads separately (not part of this ordered chain).
 
 ## Verify after changes
 
@@ -125,19 +131,30 @@ history — treat them as checklist items):
   runtime. Publishing in the Studio does **not** change the live site until the
   next build (see Deployment).
 - **`en` falls back to `de`, never the reverse.** DE is required in both
-  backends; a missing/empty EN coalesces to DE. Don't author EN-only fields.
+  backends; a *missing* EN coalesces to DE. An EN field authored as an empty
+  string is kept as-is (both `pick()` and GROQ `coalesce` only treat
+  null/missing as absent) — never author empty EN fields, leave them unset.
 - **Scramble `data-text` must equal the localized visible text.** A mismatch
   leaves the scramble animation resolving to the wrong string per locale.
 - **Internal links must start with `/`** or `chrome.js` won't apply the wipe.
   Build them with `localePath(locale, …)` so they stay in-language.
 - **Script load order is load-bearing** (see above). GSAP/ScrollTrigger/Lenis
   must exist before `core.js`/`home.js` run.
+- **Never reintroduce third-party CDN scripts.** GSAP/ScrollTrigger/Lenis are
+  self-hosted in `public/vendor/` to respect DSGVO (Datenschutz page promises
+  no third-party IP leaks) and avoid SRI/supply-chain exposure. If upgrading
+  libraries, always re-download into `public/vendor/` — don't link to CDNs.
 - **Theme/cursor `mix-blend-mode` caveat.** The header nav and cursor use
   `mix-blend-mode: difference`; carried over from the prototype, this can look
   faint on light backgrounds. The dark/light rework touched this area
   repeatedly — re-check both themes after any chrome/cursor change.
 - **`order` drives prev/next and list order**, not file/array order (data
   collections are unordered). Give every project a unique `order`.
+- **CMS strings are trusted HTML.** Bio/quote/statement lines, legal bodies
+  and technology SVGs render via `set:html` (and swap via `innerHTML` in
+  i18n.js) — deliberately unsanitized. Anyone with Studio write access can
+  inject markup site-wide; keep Studio access limited to the site owner and
+  never render third-party-supplied content through these fields.
 
 ## Deployment
 
@@ -196,25 +213,25 @@ stays out of the unit suite.
 
 Current coverage (keep it green when editing these):
 
-- `src/i18n/index.ts` — locale helpers (`pick`, `localePath`, `altLocalePath`,
-  `localeFromParams`, `localeStaticPaths`, `pageTitle`).
+- `src/i18n/index.ts` — locale helpers (`pick`, `altOf`, `localePath`, `altLocalePath`,
+  `localeStaticPaths`, `pageTitle`, `stripTrailingSlash`).
 - `src/i18n/ui.ts` — `t()` plus a de/en key-parity guard.
 - `src/lib/sanity.ts` — `imageUrl` (ref→CDN url) and `sanityFetch` (mocked
   global `fetch`; never hits the network).
-- `src/lib/projects.ts` — `neighbours` wrap-around, `resolveLedeLink`,
+- `src/lib/projects.ts` — `neighbours` (adjacent items; ends yield undefined), `resolveLedeLink`,
   `reelTileTarget`, and `getProjects` for BOTH backends with `./sanity` +
   `astro:content` mocked.
 - `src/lib/site.ts` — `withDefaults` per-field merge (the loaders themselves do
   live Sanity I/O and are not unit-tested).
 - `src/lib/jsonld.ts` — `personSchema`/`webSiteSchema`/`creativeWorkSchema`
   shape and `serializeJsonLd`.
-- `src/lib/impressum.ts`, `src/lib/datenschutz.ts` — localized legal-page
-  resolution with JSON defaults.
+- `src/lib/legal.ts` — localized legal-page resolution (Impressum + Datenschutz) with JSON defaults.
 - `src/scripts/balloons-layout.ts` — pure balloon-letter layout geometry (the
   one piece of the motion code that's pure math, so it IS tested; the WebGL
   scene around it is not).
 - `src/content.config.ts` — the project Zod schema (`safeParse`, real
   `astro:content`).
+- `src/lib/memo.ts` — `memoByLocale` (per-locale memo, DEV bypass).
 
 Mocking patterns that work here: `vi.stubEnv` + `vi.resetModules()` + dynamic
 `import()` for module-level env consts (`PROJECT_ID`); `vi.mock("./sanity")`

@@ -162,9 +162,76 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
             </li>
           ))}
         </ul>
+        {/* thin scroll indicator — horizontal twin of the page scrollbar */}
+        <div class="tech-scroll" aria-hidden="true">
+          <div class="tech-scroll__thumb"></div>
+        </div>
       </section>
     )
   }
 
   <Footer locale={locale} />
 </Base>
+
+<script is:inline>
+  // Technologies-strip scroll indicator — mirrors the page scrollbar wired in
+  // core.js: the native bar is hidden in CSS, this thin thumb tracks progress.
+  // Same measure/update split: geometry off the scroll hot path.
+  (function () {
+    const strip = document.querySelector(".tech");
+    const bar = document.querySelector(".tech-scroll");
+    const thumb = bar && bar.querySelector(".tech-scroll__thumb");
+    if (!strip || !thumb) return;
+    let trackW = 0, thumbW = 0;
+    function measure() {
+      const overflows = strip.scrollWidth > strip.clientWidth;
+      trackW = bar.clientWidth;
+      thumbW = Math.max(24, trackW * (strip.clientWidth / strip.scrollWidth));
+      thumb.style.width = thumbW + "px";
+      bar.classList.toggle("is-ready", overflows); // hide when nothing to scroll
+    }
+    function update() {
+      const max = strip.scrollWidth - strip.clientWidth;
+      const p = max > 0 ? strip.scrollLeft / max : 0;
+      thumb.style.transform = "translateX(" + p * (trackW - thumbW) + "px)";
+    }
+    measure();
+    update();
+    strip.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", function () {
+      measure();
+      update();
+    });
+
+    // Click / drag on the track — same semantics as the page rail (core.js):
+    // a click jumps (thumb centered on the pointer), the gesture keeps
+    // dragging. Snap is suspended while dragging so the thumb doesn't fight
+    // the strip's mandatory snap points; it re-engages on release.
+    let grab = -1; // pointer offset inside the thumb while dragging (px); -1 = idle
+    function dragTo(clientX) {
+      const range = trackW - thumbW;
+      const max = strip.scrollWidth - strip.clientWidth;
+      if (range <= 0 || max <= 0) return;
+      const rect = bar.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, (clientX - rect.left - grab) / range));
+      strip.scrollLeft = p * max;
+    }
+    bar.addEventListener("pointerdown", function (e) {
+      e.preventDefault(); // no text selection / touch scroll while dragging
+      const t = thumb.getBoundingClientRect();
+      grab = e.clientX >= t.left && e.clientX <= t.right ? e.clientX - t.left : thumbW / 2;
+      strip.style.scrollSnapType = "none";
+      bar.setPointerCapture(e.pointerId);
+      dragTo(e.clientX);
+    });
+    bar.addEventListener("pointermove", function (e) {
+      if (grab >= 0) dragTo(e.clientX);
+    });
+    function endDrag() {
+      grab = -1;
+      strip.style.scrollSnapType = "";
+    }
+    bar.addEventListener("pointerup", endDrag);
+    bar.addEventListener("pointercancel", endDrag);
+  })();
+</script>

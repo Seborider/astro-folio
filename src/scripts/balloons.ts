@@ -59,15 +59,21 @@ export function initBalloons(): void {
   // rise so the balloons rebuild in the new language (reset() re-reads the DOM).
   const onLocaleChange = () => handle?.reset();
   addEventListener("localechange", onLocaleChange);
-  addEventListener(
-    "pagehide",
-    () => {
-      handle?.destroy();
-      io.disconnect();
-      removeEventListener("localechange", onLocaleChange);
-    },
-    { once: true },
-  );
+  // bfcache: a persisted pagehide must NOT destroy the scene — the page can
+  // come back via the back button with the <h1> still hidden and the canvas
+  // dead. Pause instead, resume on pageshow; only tear down on a real unload.
+  addEventListener("pagehide", (e) => {
+    if (e.persisted) {
+      handle?.setActive(false);
+      return;
+    }
+    handle?.destroy();
+    io.disconnect();
+    removeEventListener("localechange", onLocaleChange);
+  });
+  addEventListener("pageshow", (e) => {
+    if (e.persisted) handle?.setActive(true);
+  });
 }
 
 function hasWebGL(): boolean {

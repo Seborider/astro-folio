@@ -4,7 +4,7 @@ import Footer from "../../components/Footer.astro";
 import Media from "../../components/Media.astro";
 import Showreel from "../../components/Showreel.astro";
 import { getProjects, reelTileTarget } from "../../lib/projects";
-import { getHomePage, getSiteSettings } from "../../lib/site";
+import { REEL_SLOTS, getHomePage, getSiteSettings } from "../../lib/site";
 import { altOf, BRAND, BRAND_LINES, localePath, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
 import { personSchema, webSiteSchema } from "../../lib/jsonld";
@@ -25,7 +25,7 @@ const carousel = projects.map((p, i) => ({
   name: p.name,
   nameAlt: projectsAlt[i]?.name,
   yr: p.yr,
-  cover: p.cover,
+  cover: p.coverThumb,
 }));
 const home = await getHomePage(locale);
 const homeAlt = await getHomePage(alt);
@@ -40,12 +40,11 @@ const jsonLd = [
   }),
   webSiteSchema({ name: BRAND, url: homeUrl, inLanguage: locale }),
 ];
-// Fixed 8-slot reel layout — editors fill tiles in order and only set
-// tiles render. Keep in sync with REEL_WIDTHS in src/lib/site.ts.
-// Two 3-col tiles on top, then two rows of three 2-col tiles; every tile's
-// media box is 16:9 (see .reel__tile-media) so one 1920×1080 recording fits
-// any slot with no crop and no letterbox bars.
-const reelSlots = ["s3", "s3", "s2", "s2", "s2", "s2", "s2", "s2"];
+const hasTileVideo = home.reelTiles.some((t) => t.video);
+// The overlay <video> must exist whenever ANY clip can open it (tiles swap
+// their src in), but the "Play showreel" CTA only makes sense when there is
+// a master reel to play — or nothing at all (then it opens the placeholder).
+const showPlayCta = Boolean(home.showreelVideo) || !hasTileVideo;
 ---
 
 <Base
@@ -141,10 +140,13 @@ const reelSlots = ["s3", "s3", "s2", "s2", "s2", "s2", "s2", "s2"];
     </div>
     <div class="reel__grid">
       {
+        // Two 3-col tiles on top, then two rows of three 2-col tiles; every tile's
+        // media box is 16:9 (see .reel__tile-media) so one 1920×1080 recording fits
+        // any slot with no crop and no letterbox bars.
         home.reelTiles.map((tile, i) => {
           const target = reelTileTarget(projects, projectsAlt, tile.project);
           return (
-            <div class={`reel__tile ${reelSlots[i]}`} data-reveal>
+            <div class={`reel__tile ${REEL_SLOTS[i].cls}`} data-reveal>
               <div class="reel__tile-media" data-video={tile.video}>
                 <span class="tile-no">{String(i + 1).padStart(2, "0")}</span>
                 <Media src={tile.image} video={tile.video} label={tile.label} />
@@ -164,11 +166,13 @@ const reelSlots = ["s3", "s3", "s2", "s2", "s2", "s2", "s2", "s2"];
         })
       }
     </div>
-    <div class="reel__cta">
-      <button id="playReel" data-cursor="play" data-magnetic
-        ><span class="tri"></span> <span data-i18n-alt={altOf(tr.playReel, trA.playReel)}>{tr.playReel}</span></button
-      >
-    </div>
+    {showPlayCta && (
+      <div class="reel__cta">
+        <button id="playReel" data-cursor="play" data-magnetic
+          ><span class="tri"></span> <span data-i18n-alt={altOf(tr.playReel, trA.playReel)}>{tr.playReel}</span></button
+        >
+      </div>
+    )}
   </section>
 
   <!-- WORK LIST -->
@@ -193,7 +197,7 @@ const reelSlots = ["s3", "s3", "s2", "s2", "s2", "s2", "s2", "s2"];
             data-cursor="open"
             data-name={p.name}
             data-name-alt={altOf(p.name, projectsAlt[i]?.name ?? p.name)}
-            data-cover={p.cover}
+            data-cover={p.coverThumb}
             data-reveal
           >
             <span class="idx">{String(i + 1).padStart(2, "0")}</span>
@@ -240,6 +244,6 @@ const reelSlots = ["s3", "s3", "s2", "s2", "s2", "s2", "s2", "s2"];
   <Showreel
     locale={locale}
     src={home.showreelVideo}
-    hasVideo={Boolean(home.showreelVideo || home.reelTiles.some((t) => t.video))}
+    hasVideo={Boolean(home.showreelVideo) || hasTileVideo}
   />
 </Base>

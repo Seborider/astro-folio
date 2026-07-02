@@ -11,7 +11,8 @@
  */
 import { getCollection } from "astro:content";
 import { sanityConfigured, sanityFetch, imageUrl } from "./sanity";
-import { DEFAULT_LOCALE, pick, type Locale } from "../i18n";
+import { pick, type Locale } from "../i18n";
+import { memoByLocale } from "./memo";
 
 export interface Shot {
   label: string;
@@ -34,6 +35,7 @@ export interface Project {
   overview: string[];
   quote?: string[];
   cover?: string | null;
+  coverThumb?: string | null; // thumbnail-width cover (hover preview, carousel); Sanity w=800, JSON = cover
   video?: string | null; // optional video file url (not translatable); play affordance + overlay
   gallery: Shot[];
 }
@@ -93,19 +95,7 @@ const projectQuery = (l: Locale) => `*[_type == "project"] | order(order asc){
   "gallery": gallery[]{ "label": coalesce(label.${l}, label.de), span, "image": image.asset._ref }
 }`;
 
-const cache = new Map<Locale, Promise<Project[]>>(); // per-locale memo for the static build
-
-export function getProjects(
-  locale: Locale = DEFAULT_LOCALE,
-): Promise<Project[]> {
-  if (import.meta.env.DEV) return loadProjects(locale); // always fresh in dev
-  let p = cache.get(locale);
-  if (!p) {
-    p = loadProjects(locale);
-    cache.set(locale, p);
-  }
-  return p;
-}
+export const getProjects = memoByLocale(loadProjects);
 
 async function loadProjects(locale: Locale): Promise<Project[]> {
   if (sanityConfigured) {
@@ -116,6 +106,7 @@ async function loadProjects(locale: Locale): Promise<Project[]> {
       quote: p.quote ?? undefined, // null when absent → omit
       ledeLink: resolveLedeLink(p.ledeLink),
       cover: imageUrl(p.cover, { w: 2200 }),
+      coverThumb: imageUrl(p.cover, { w: 800 }),
       video: p.video ?? null,
       gallery: (p.gallery || []).map((g) => ({
         label: g.label,
@@ -145,6 +136,7 @@ async function loadProjects(locale: Locale): Promise<Project[]> {
         overview: pick(d.overview, locale),
         quote: d.quote && pick(d.quote, locale),
         cover: d.cover,
+        coverThumb: d.cover, // local paths can't be resized — same URL
         video: d.video ?? null,
         gallery: d.gallery.map((g) => ({
           label: pick(g.label, locale),

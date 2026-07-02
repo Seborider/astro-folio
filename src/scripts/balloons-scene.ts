@@ -126,9 +126,16 @@ export async function start(
   // Smooth vertical gradient environment → one clean highlight band, no striped
   // reflections (RoomEnvironment's walls showed up as stripes on the gloss).
   const pmrem = new PMREMGenerator(renderer);
-  const envTex = gradientEnvTexture();
-  scene.environment = pmrem.fromEquirectangular(envTex).texture;
-  envTex.dispose();
+  // The gradient reads --fog, which the theme toggle swaps — rebuild the
+  // reflection environment on themechange so the gloss matches the new theme.
+  function applyEnvironment() {
+    const envTex = gradientEnvTexture();
+    scene.environment?.dispose();
+    scene.environment = pmrem.fromEquirectangular(envTex).texture;
+    envTex.dispose();
+  }
+  applyEnvironment();
+  window.addEventListener("themechange", applyEnvironment);
 
   const key = new DirectionalLight(0xffffff, 2.6);
   key.position.set(2, 4, 5);
@@ -765,6 +772,7 @@ export async function start(
     ro.disconnect();
     for (const l of letters) disposeLetter(l);
     for (const b of bursts) disposeBurst(b);
+    window.removeEventListener("themechange", applyEnvironment);
     scene.environment?.dispose();
     pmrem.dispose();
     renderer.dispose();

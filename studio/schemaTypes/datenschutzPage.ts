@@ -3,7 +3,7 @@ import { defineType, defineField } from "sanity";
 /**
  * datenschutzPage — singleton for the /datenschutz (privacy policy) page
  * content. Create ONE document of this type. Every field is optional: anything
- * left blank falls back to the built-in defaults in src/lib/datenschutz.ts.
+ * left blank falls back to the built-in defaults in src/lib/legal.ts.
  * Text fields are { de, en } locale objects (./locale.ts); a missing EN
  * coalesces to DE in the app's GROQ query.
  */

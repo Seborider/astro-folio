@@ -25,7 +25,14 @@ const tr = t(locale);
 const trA = t(otherLocale(locale));
 ---
 
-<div class="showreel" id="showreel">
+<div
+  class="showreel"
+  id="showreel"
+  role="dialog"
+  aria-modal="true"
+  aria-label={tr.showreelLabel}
+  data-aria-label-alt={altOf(tr.showreelLabel, trA.showreelLabel)}
+>
   <div class="showreel__bar">
     <span class="meta" data-i18n-alt={altOf(tr.showreelLabel, trA.showreelLabel)}>{tr.showreelLabel}</span>
     <button class="showreel__close" id="closeReel" data-cursor="close" data-i18n-alt={altOf(tr.close, trA.close)}
