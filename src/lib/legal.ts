@@ -1,26 +1,47 @@
 /**
- * datenschutz.ts — loader for the Datenschutzerklärung (privacy policy)
- * singleton, mirroring impressum.ts: read Sanity when configured, fall back to
- * the built-in per-locale defaults below otherwise. The merge is per-field
- * (withDefaults), so a half-filled Studio document still renders a complete page.
- *
- * The defaults describe THIS site honestly: a static portfolio with self-hosted
- * fonts, no cookies, no analytics, no tracking. The only personal data are the
- * server access logs kept by the host (Art. 6 Abs. 1 lit. f DSGVO) and contact
- * by email. Replace the controller block with real data before going live.
+ * legal.ts — one loader for both legal-page singletons (Impressum +
+ * Datenschutz). They share an identical shape and query; only the Sanity
+ * _type and the built-in defaults differ, so a single factory replaces the
+ * two former copy-paste files (impressum.ts / datenschutz.ts).
  */
 import { sanityConfigured, sanityFetch } from "./sanity";
 import { withDefaults } from "./site";
-import { DEFAULT_LOCALE, pageTitle, type Locale } from "../i18n";
+import { memoByLocale } from "./memo";
+import { pageTitle, type Locale } from "../i18n";
 
-export interface DatenschutzPage {
+export interface LegalPage {
   metaTitle: string;
   title: string;
   lede: string;
   body: string[]; // paragraphs; may contain <br> and <span class="dim">
 }
 
-const DATENSCHUTZ_DEFAULTS: Record<Locale, DatenschutzPage> = {
+const IMPRESSUM_DEFAULTS: Record<Locale, LegalPage> = {
+  de: {
+    metaTitle: pageTitle("Impressum"),
+    title: "Impressum",
+    lede: "Angaben gemäß § 5 DDG.",
+    body: [
+      'Sebo Mayer<br>Musterstraße 1<br>12345 Musterstadt<br>Deutschland',
+      '<span class="dim">Kontakt</span><br>E-Mail: hello@studio.demo',
+      '<span class="dim">Verantwortlich für den Inhalt</span> nach § 18 Abs. 2 MStV: Sebo Mayer, Anschrift wie oben.',
+      "Plattform der EU-Kommission zur Online-Streitbeilegung: https://ec.europa.eu/consumers/odr",
+    ],
+  },
+  en: {
+    metaTitle: pageTitle("Legal notice"),
+    title: "Legal notice",
+    lede: "Information pursuant to § 5 DDG.",
+    body: [
+      'Sebo Mayer<br>Musterstraße 1<br>12345 Musterstadt<br>Germany',
+      '<span class="dim">Contact</span><br>Email: hello@studio.demo',
+      '<span class="dim">Responsible for the content</span> pursuant to § 18 (2) MStV: Sebo Mayer, address as above.',
+      "EU Commission online dispute resolution platform: https://ec.europa.eu/consumers/odr",
+    ],
+  },
+};
+
+const DATENSCHUTZ_DEFAULTS: Record<Locale, LegalPage> = {
   de: {
     metaTitle: pageTitle("Datenschutz"),
     title: "Datenschutz",
@@ -49,31 +70,25 @@ const DATENSCHUTZ_DEFAULTS: Record<Locale, DatenschutzPage> = {
   },
 };
 
-const datenschutzQuery = (l: Locale) => `*[_type == "datenschutzPage"][0]{
+const legalQuery = (type: string, l: Locale) => `*[_type == "${type}"][0]{
   "metaTitle": coalesce(metaTitle.${l}, metaTitle.de),
   "title": coalesce(title.${l}, title.de),
   "lede": coalesce(lede.${l}, lede.de),
   "body": coalesce(body.${l}, body.de)
 }`;
 
-const datenschutzCache = new Map<Locale, Promise<DatenschutzPage>>();
-
-export function getDatenschutzPage(
-  locale: Locale = DEFAULT_LOCALE,
-): Promise<DatenschutzPage> {
-  if (import.meta.env.DEV) return loadDatenschutzPage(locale);
-  let p = datenschutzCache.get(locale);
-  if (!p) {
-    p = loadDatenschutzPage(locale);
-    datenschutzCache.set(locale, p);
-  }
-  return p;
+function legalLoader(
+  type: "impressumPage" | "datenschutzPage",
+  defaults: Record<Locale, LegalPage>,
+) {
+  return memoByLocale(async (locale: Locale): Promise<LegalPage> => {
+    if (!sanityConfigured) return defaults[locale];
+    const doc = await sanityFetch<Record<string, unknown> | null>(
+      legalQuery(type, locale),
+    );
+    return withDefaults(defaults[locale], doc);
+  });
 }
 
-async function loadDatenschutzPage(locale: Locale): Promise<DatenschutzPage> {
-  if (!sanityConfigured) return DATENSCHUTZ_DEFAULTS[locale];
-  const doc = await sanityFetch<Record<string, unknown> | null>(
-    datenschutzQuery(locale),
-  );
-  return withDefaults(DATENSCHUTZ_DEFAULTS[locale], doc);
-}
+export const getImpressumPage = legalLoader("impressumPage", IMPRESSUM_DEFAULTS);
+export const getDatenschutzPage = legalLoader("datenschutzPage", DATENSCHUTZ_DEFAULTS);

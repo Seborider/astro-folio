@@ -1,0 +1,62 @@
+---
+/**
+ * LegalPage.astro — shared template for the two legal pages (Impressum,
+ * Datenschutz). The pages differ only in which loader fills `page` and the
+ * side label; everything else (hero, scramble, body, footer) is identical.
+ */
+import Base from "../layouts/Base.astro";
+import Footer from "./Footer.astro";
+import PheroCanvas from "./PheroCanvas.astro";
+import { altOf, type Locale } from "../i18n";
+import { t } from "../i18n/ui";
+import type { LegalPage as LegalPageData } from "../lib/legal";
+
+interface Props {
+  locale: Locale;
+  page: LegalPageData;
+  pageAlt: LegalPageData;
+  sideLabel: string; // e.g. tr.navImpressum — shown beside the body
+  sideLabelAlt: string;
+}
+const { locale, page, pageAlt, sideLabel, sideLabelAlt } = Astro.props;
+const tr = t(locale);
+const scramble = `( ${page.title} )`;
+const scrambleAlt = `( ${pageAlt.title} )`;
+---
+
+<Base
+  title={page.metaTitle}
+  description={page.lede}
+  titleAlt={pageAlt.metaTitle}
+  locale={locale}
+>
+  <!-- PAGE HERO -->
+  <section
+    class="phero"
+    data-screen-label={page.title}
+    data-screen-label-alt={altOf(page.title, pageAlt.title)}
+  >
+    <PheroCanvas locale={locale} />
+    <div class="phero__index meta">
+      <span data-scramble-now data-text={scramble} data-i18n-alt={altOf(scramble, scrambleAlt)}
+        >{scramble}</span
+      ><span class="rule"></span><span>{tr.indexLabel}</span>
+    </div>
+    <h1 class="phero__title">
+      <span class="line"><span data-rise data-i18n-alt={altOf(page.title, pageAlt.title)}>{page.title}</span></span>
+    </h1>
+    <div class="phero__sub">
+      <p class="phero__lede" data-rise-soft data-i18n-alt={altOf(page.lede, pageAlt.lede)}>{page.lede}</p>
+    </div>
+  </section>
+
+  <!-- BODY -->
+  <section class="about-cols">
+    <div class="about-cols__label meta" data-i18n-alt={altOf(`( ${sideLabel} )`, `( ${sideLabelAlt} )`)}>( {sideLabel} )</div>
+    <div class="about-cols__body">
+      {page.body.map((p, i) => <p set:html={p} data-i18n-html data-i18n-alt={altOf(p, pageAlt.body[i] ?? p)} />)}
+    </div>
+  </section>
+
+  <Footer locale={locale} />
+</Base>
