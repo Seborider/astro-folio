@@ -37,7 +37,9 @@
   let bgCol, fogCol, fogAmt, vig;
   function sampleTheme() {
     bgCol = resolve("--bg", "#080808");
-    // --fog unset (dark) → fall back to the old ink tint; --fog-amt/--vig keep dark defaults
+    // --fog/--fog-amt are set for both themes in styles.css (the <html>
+    // background approximates the shader from them); fallbacks kept as belt
+    // and braces should the tokens ever go missing again
     fogCol = resolve("--fog", "#e9e6df");
     fogAmt = num("--fog-amt", 0.3);
     vig = num("--vig", 0.55);

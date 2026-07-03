@@ -282,22 +282,35 @@
   window.__revealHero = revealHero;
 
   // Shared entrance scheduler: every route arrival routes through here so the
-  // hero rise plays once, at the right time. On a View-Transition arrival, wait
-  // for the wipe (vtRiseIn) to finish so the rise reads as the page's own
-  // entrance instead of doubling. Reduced motion is handled inside revealHero.
+  // hero rise plays once, at the right time. On a View-Transition arrival the
+  // rise overlaps the tail of the wipe (vtRiseIn): its ease-out has the page
+  // ~97% up at 60% of the duration, so starting the hero there reads as one
+  // continuous entrance instead of rise → pause → hero. Reduced motion is
+  // handled inside revealHero.
+  const WIPE_OVERLAP = 1.5; // start the hero rise at this fraction of vtRiseIn
   function revealHeroEntrance() {
     if (!viaVT) {
       requestAnimationFrame(() => revealHero());
       return;
     }
     // The <head> captures `pagereveal` (it fires before these end-of-body
-    // scripts run) and stashes the inbound transition on window.__vt. Sequence
-    // the rise after the wipe (vtRiseIn) finishes; if there's no transition
-    // (reveal skipped), fall back to the next frame. The else-branch listener
-    // covers the reverse ordering, should core ever run before the reveal.
+    // scripts run) and stashes the inbound transition on window.__vt. Once the
+    // transition is ready, read the running vtRiseIn animation's own duration
+    // (so this stays in sync if the CSS timing changes) and schedule the rise
+    // at WIPE_OVERLAP; `finished` stays on as the backstop for skipped or
+    // reduced-motion transitions. If there's no transition (reveal skipped),
+    // fall back to the next frame. The else-branch listener covers the reverse
+    // ordering, should core ever run before the reveal.
     const afterWipe = () => {
-      if (window.__vt) window.__vt.finished.finally(() => revealHero());
-      else requestAnimationFrame(() => revealHero());
+      const vt = window.__vt;
+      if (!vt) { requestAnimationFrame(() => revealHero()); return; }
+      let done = false;
+      const go = () => { if (!done) { done = true; revealHero(); } };
+      vt.ready.then(() => {
+        const wipe = document.getAnimations().find((a) => a.animationName === "vtRiseIn");
+        if (wipe) setTimeout(go, (Number(wipe.effect.getTiming().duration) || 0) * WIPE_OVERLAP);
+      }).catch(() => {});
+      vt.finished.finally(go);
     };
     if (window.__vtSeen) afterWipe();
     else window.addEventListener("pagereveal", afterWipe, { once: true });

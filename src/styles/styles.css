@@ -40,6 +40,11 @@
      (here --bg; light mode overrides to --ink, see below) */
   --blink-bg: var(--bg);
   --accent: oklch(0.72 0.13 300); /* violet */
+  /* atmospheric haze — sampled by webgl-bg.js for the shader AND painted as
+     the root-background approximation on <html> below. Values match the JS
+     fallbacks that applied while these were unset (light overrides both). */
+  --fog: #e9e6df;
+  --fog-amt: 0.3;
   /* difference-blended chrome (header, cursor, tile numbers) */
   --blend-ink: var(--ink);
   --grain-blend: screen;
@@ -111,7 +116,26 @@
 html {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* The raw root background shows in the frames a cross-document swap can leak
+     (compositor gap before the view-transition snapshots render), on
+     overscroll, and when WebGL is unavailable. A flat --bg flashed white
+     (light) / near-black (dark) against the shader clouds, so approximate the
+     shader here with the same --fog/--fog-amt tokens the canvas samples.
+     The plain --bg line stays first as the fallback where color-mix/calc is
+     unsupported. */
   background: var(--bg);
+  background:
+    radial-gradient(
+      120% 85% at 18% 20%,
+      color-mix(in srgb, var(--fog) calc(var(--fog-amt) * 55%), transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      110% 75% at 82% 60%,
+      color-mix(in srgb, var(--fog) calc(var(--fog-amt) * 40%), transparent),
+      transparent 60%
+    ),
+    color-mix(in srgb, var(--fog) calc(var(--fog-amt) * 30%), var(--bg));
   scrollbar-width: none; /* Firefox — hide native bar (custom one in JS) */
 }
 html::-webkit-scrollbar {

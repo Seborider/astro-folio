@@ -68,6 +68,21 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- root-background backstop for the window before styles.css applies
+         (dev serves CSS through Vite's module graph, so the document is
+         briefly unstyled → white flash). Hex = the haze colors styles.css
+         derives from --bg/--fog — keep in sync if those tokens change.
+         @layer: unlayered styles.css always overrides this once loaded. -->
+    <style is:inline>
+      @layer backstop {
+        html {
+          background: #2d2631;
+        }
+        html[data-theme="light"] {
+          background: #c6d9eb;
+        }
+      }
+    </style>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title data-i18n-alt={altOf(title, titleAlt ?? title)}>{title}</title>
     {noindex && <meta name="robots" content="noindex" />}
@@ -208,8 +223,8 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
     </script>
     <!-- View-Transition arrivals fire `pagereveal` before the end-of-body
          motion scripts run, so capture it here (in <head>) and stash the
-         inbound transition. core.js reads window.__vt/__vtSeen to sequence the
-         hero rise after the wipe (vtRiseIn) finishes. -->
+         inbound transition. core.js reads window.__vt/__vtSeen to overlap the
+         hero rise with the tail of the wipe (vtRiseIn). -->
     <script is:inline>
       window.__vtSeen = false;
       window.addEventListener(
@@ -221,6 +236,14 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
         { once: true },
       );
     </script>
+    <!-- Hold the first render (and so the View-Transition activation) until
+         #vt-ready — the last element in <body>, after the synchronous motion
+         scripts — has been parsed. Without this the browser can paint (and
+         snapshot ::view-transition-new) mid-parse, 1–2 frames before core.js
+         arms the hero's hidden state: the settled page flashed before the rise.
+         Self-releasing: an unknown fragment or a non-supporting browser just
+         ignores the link; render-blocking always ends when parsing does. -->
+    <link rel="expect" href="#vt-ready" blocking="render" />
   </head>
   <body>
     <a class="skip-link" href="#top" data-i18n-alt={altOf(tr.skipLink, trA.skipLink)}
@@ -288,5 +311,9 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
       import { initBalloons } from "../scripts/balloons";
       initBalloons();
     </script>
+
+    <!-- render-blocking marker — see the rel="expect" link in <head>. Parsing
+         reaches this only after the synchronous scripts above have run. -->
+    <div id="vt-ready" hidden></div>
   </body>
 </html>

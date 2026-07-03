@@ -150,6 +150,14 @@ history — treat them as checklist items):
   repeatedly — re-check both themes after any chrome/cursor change.
 - **`order` drives prev/next and list order**, not file/array order (data
   collections are unordered). Give every project a unique `order`.
+- **First render is blocked until `#vt-ready`** (`<link rel="expect"
+  blocking="render">` in Base.astro pointing at the last element in `<body>`).
+  Without it Chrome paints mid-parse, 1–2 frames before core.js arms the hero's
+  hidden state, and a View-Transition arrival flashed the settled page before
+  the `vtRiseIn` rise. Keep the marker `<div id="vt-ready">` as the LAST element
+  in `<body>` (after the synchronous script chain); moving it above the scripts
+  brings the flicker back. Self-releasing: non-supporting browsers ignore the
+  link, and render-blocking always ends when parsing does.
 - **CMS strings are trusted HTML.** Bio/quote/statement lines, legal bodies
   and technology SVGs render via `set:html` (and swap via `innerHTML` in
   i18n.js) — deliberately unsanitized. Anyone with Studio write access can
