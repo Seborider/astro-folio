@@ -175,9 +175,9 @@ time.
 
 - Build command: `npm run build`. Output / publish directory: `dist`.
 - Node is the build toolchain, not a runtime — the served output is static
-  HTML/CSS/JS. [CONFIRM] the exact Hostinger pipeline (git-based static build
-  vs. a Node.js-app slot running the build and serving `dist/`); if it's a
-  Node.js-app slot, [CONFIRM] the start/serve command and document it here.
+  HTML/CSS/JS. The pipeline is Hostinger's **git-based auto-build**: it watches
+  the GitHub repo and rebuilds/redeploys on every push to `main` (no Node.js-app
+  slot, no serve command).
 - Set `site` in `astro.config.ts` to the production URL before deploying — it
   feeds canonical URLs, the sitemap, and the hreflang alternates. (Currently
   `https://sebo.zone`; [CONFIRM] this is the intended production domain.)
@@ -197,11 +197,19 @@ the static HTML:
 site by itself — static HTML holds the old content until the next build. To
 auto-rebuild:
 
-- Sanity webhook (manage → API → Webhooks) → the host's build/deploy hook URL.
-- If Hostinger exposes no public build-hook URL, bridge it: Sanity webhook →
-  GitHub `repository_dispatch` → a GitHub Action that triggers the redeploy.
-  [CONFIRM] which path is wired (host build hook vs. GitHub Action) and add the
-  concrete URL/workflow once it exists — neither is committed to this repo yet.
+Hostinger exposes no public build-hook URL, so the GitHub-bridge path is wired:
+
+- Sanity webhook (manage → API → Webhooks) → `POST
+  https://api.github.com/repos/Seborider/astro-folio/dispatches` with an
+  `Authorization: Bearer <PAT>` header and body
+  `{"event_type":"sanity-publish"}` (fine-grained PAT, this repo only,
+  `contents: write`; the token lives only in the Sanity webhook config —
+  never in this repo).
+- `.github/workflows/redeploy.yml` listens for `repository_dispatch` (type
+  `sanity-publish`) and pushes an empty commit to `main` using the built-in
+  `GITHUB_TOKEN` — Hostinger's git-based auto-build picks up the push and
+  redeploys. (GitHub suppresses only *workflow* triggers from `GITHUB_TOKEN`
+  pushes; external deploy webhooks like Hostinger's still fire.)
 
 ## Testing
 
@@ -265,8 +273,10 @@ go-live wiring. In rough priority:
    reel tile's media box is pinned to `aspect-ratio: 16/9` (`.reel__tile-media`
    in `styles.css`), so a 16:9 source fills any slot via `object-fit: cover`
    with no crop and no letterbox bars. Off-ratio footage reintroduces a crop.
-3. **Redeploy-on-publish wiring.** Connect Sanity publish → rebuild (see
-   Deployment). Not yet committed — [CONFIRM] the chosen path.
+3. **Redeploy-on-publish wiring.** The repo side is committed:
+   `.github/workflows/redeploy.yml` (repository_dispatch, event type
+   `sanity-publish` → empty commit → Hostinger git auto-build). Still manual:
+   create the fine-grained PAT and the Sanity webhook (see Deployment).
 4. **Light-theme chrome polish.** The `mix-blend-mode: difference` header/cursor
    can look faint on light backgrounds (see Gotchas) — verify across the
    dark/light toggle.

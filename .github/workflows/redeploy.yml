@@ -1,0 +1,22 @@
+# Sanity publish → repository_dispatch (sanity-publish) → empty commit to main
+# → Hostinger's git-based auto-build redeploys. See CLAUDE.md → Deployment.
+name: Redeploy on Sanity publish
+
+on:
+  repository_dispatch:
+    types: [sanity-publish]
+
+permissions:
+  contents: write
+
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Push empty commit to trigger Hostinger rebuild
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore: redeploy on Sanity publish"
+          git push
