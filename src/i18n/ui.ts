@@ -162,7 +162,7 @@ export const ui: Record<Locale, UIDict> = {
     heroMetaB: "DEVELOPMENT",
     heroMetaC: "PORTFOLIO",
     heroMetaYear: "( 2026 )",
-    heroCity: "( Kopenhagen )",
+    heroCity: "( Germany )",
     scrollCue: "( Scrollen )",
     heroResetLabel: "Buchstaben zurücksetzen",
     statementLabel: "Ansatz",
