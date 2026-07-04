@@ -186,11 +186,9 @@ export const ui: Record<Locale, UIDict> = {
 
     workTitle: "Projekte",
     workMetaTitle: pageTitle("Projekte"),
-    workDescription:
-      "Ausgewählte Projekte aus Brand, Motion, Editorial und Digital — 2021 bis heute.",
+    workDescription: "Ausgewählte Projekte aus Design, Motion und Development.",
     workScramble: "( Projekte )",
-    workLede:
-      "Ausgewählte Projekte aus Brand, Motion, Editorial und Digital — 2021 bis heute.",
+    workLede: "Ausgewählte Projekte aus Design, Motion und Development.",
     projectsCountLabel: "Projekte",
     filterAll: "Alle",
     filterBrand: "Brand",
