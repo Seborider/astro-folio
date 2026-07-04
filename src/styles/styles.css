@@ -857,6 +857,17 @@ html.loader-seen .loader {
 .phero__canvas.is-active {
   pointer-events: auto;
 }
+/* Sub-page hero text lifts above the canvas like .hero__inner does on home. */
+.phero__index,
+.phero__sub,
+.pd-sub {
+  position: relative;
+  z-index: 2;
+}
+.phero__index,
+.phero__sub {
+  pointer-events: none; /* text-only; keep the canvas interactive beneath (.pd-sub keeps events for its lede link) */
+}
 /* When balloons will run, hide the real <h1> from the very first paint (no
    serif flicker before the canvas mounts). It stays in the DOM for a11y/SEO and
    is the visible fallback when balloons don't run (no class added). */
