@@ -2219,6 +2219,10 @@ html.loader-seen .loader {
   .footer__col {
     grid-column: span 6;
   }
+  /* INDEX (3rd grid child) spans both rows so its bottom meets STANDORT's */
+  .footer__grid .footer__col:nth-child(3) {
+    grid-row: span 2;
+  }
   .work__row {
     grid-template-columns: 30px 1fr;
   }
