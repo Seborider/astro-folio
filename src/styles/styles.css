@@ -89,12 +89,15 @@
   --hero-fade-out: 130%;
 }
 
-/* light mode: drop the difference-blend chrome trick on the header and the
-   faded footer note so both read as solid body text (dark mode unchanged) */
+/* light mode: keep the header background-reactive (difference, same trick as
+   the cursor below) so it stays readable over dark sections while scrolling.
+   Mix ink into the near-white source so the inversion lands dark enough on the
+   white base; text needs more contrast than the cursor dot, hence the higher
+   blend-ink share (85% vs the cursor's 70%). */
 :root[data-theme="light"] .header {
-  mix-blend-mode: normal;
-  color: var(--ink);
+  color: color-mix(in srgb, var(--blend-ink) 85%, var(--ink));
 }
+/* light mode: the faded footer note reads as solid body text (dark unchanged) */
 :root[data-theme="light"] .footer__bottom {
   color: var(--ink);
 }
