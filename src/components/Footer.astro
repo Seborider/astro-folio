@@ -85,7 +85,13 @@ const trA = t(alt);
       <h4 data-i18n-alt={altOf(tr.footSocials, trA.footSocials)}>{tr.footSocials}</h4>
       {
         s.socials.map((soc, i) => (
-          <a href={soc.url} data-cursor="view" data-i18n-alt={altOf(soc.label, sA.socials[i]?.label ?? soc.label)}>
+          <a
+            href={soc.url}
+            target={soc.url.startsWith("/") ? undefined : "_blank"}
+            rel={soc.url.startsWith("/") ? undefined : "noopener noreferrer"}
+            data-cursor="view"
+            data-i18n-alt={altOf(soc.label, sA.socials[i]?.label ?? soc.label)}
+          >
             {soc.label}
           </a>
         ))
