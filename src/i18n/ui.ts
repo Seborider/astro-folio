@@ -167,13 +167,13 @@ export const ui: Record<Locale, UIDict> = {
     heroResetLabel: "Buchstaben zurücksetzen",
     statementLabel: "Ansatz",
     statementLines: [
-      "Alles",
-      "beginnt als ein",
-      "<em>Zufall</em>",
-      "der Aufmerksamkeit.",
+      "Software",
+      "beginnt nicht im Code,",
+      "sondern bei den",
+      "<em>Menschen</em>.",
     ],
     statementAttr:
-      "Eine Praxis zwischen Brand, Motion und Editorial — gebaut auf langsames Sehen, scharfe Typografie und die Überzeugung, dass Zurückhaltung ihre eigene Art von Lärm ist.",
+      "Vom Interface bis zur Architektur, von Web zu Mobile ist meine Arbeit gebaut auf sauberem Handwerk, kontinuierlichem Lernen und der Überzeugung, dass Zurückhaltung ihre eigene Art von Lärm ist.",
     reelHeading: "Ausgewählte Projekte",
     playReel: "Showreel abspielen ",
     playVideo: "Video abspielen ",
@@ -284,10 +284,10 @@ export const ui: Record<Locale, UIDict> = {
     heroResetLabel: "Reset letters",
     statementLabel: "Approach",
     statementLines: [
-      "Everything",
-      "begins as an",
-      "<em>accident</em>",
-      "of attention.",
+      "Software",
+      "doesn't start in code,",
+      "it starts with",
+      "<em>people</em>.",
     ],
     statementAttr:
       "A practice across brand, motion and editorial — built on slow looking, sharp typography, and the belief that restraint is its own kind of noise.",
