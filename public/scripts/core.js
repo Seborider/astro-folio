@@ -348,11 +348,27 @@
     });
     gsap.utils.toArray("[data-scramble]").forEach((el) => {
       el.dataset.text = el.textContent;
-      if (viaVT && inView(el)) return; // already shows its final text
-      ScrollTrigger.create({
+      const arm = () => ScrollTrigger.create({
         trigger: el, start: "top 86%", once: true,
         onEnter: () => scramble(el, { duration: 600 }),
       });
+      // Inside a collapsed <details> (about page) the element measures at 0,
+      // so an immediate trigger would fire — and burn its once — while hidden.
+      // Re-arm on every open so the titles replay each time: in-view rows
+      // scramble right away, the rest as they scroll in. Closing kills the
+      // pending trigger so it can't fire while hidden. <summary> content is
+      // visible while collapsed, so it keeps the normal scroll trigger.
+      const fold = el.closest("details");
+      if (fold && !fold.open && !el.closest("summary")) {
+        let st = null;
+        fold.addEventListener("toggle", () => {
+          if (st) st.kill();
+          st = fold.open ? arm() : null;
+        });
+        return;
+      }
+      if (viaVT && inView(el)) return; // already shows its final text
+      arm();
     });
   }
 

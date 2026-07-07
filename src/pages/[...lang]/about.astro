@@ -83,11 +83,12 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
   </section>
 
   <!-- CAPABILITIES -->
-  <section class="idx-list">
-    <div class="idx-list__head">
-      <h2 data-i18n-alt={altOf(about.capabilitiesHeading, aboutAlt.capabilitiesHeading)}>{about.capabilitiesHeading}</h2>
+  <details class="idx-list">
+    <summary class="idx-list__head">
+      <span class="fold-chev" aria-hidden="true"></span>
+      <h2 data-scramble data-i18n-alt={altOf(about.capabilitiesHeading, aboutAlt.capabilitiesHeading)}>{about.capabilitiesHeading}</h2>
       <span class="meta">{capRange}</span>
-    </div>
+    </summary>
     {
       about.capabilities.map((c, i) => (
         <div class="idx-row" data-reveal>
@@ -99,19 +100,20 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
         </div>
       ))
     }
-  </section>
+  </details>
 
   <!-- PROCESS -->
-  <section
+  <details
     class="idx-list"
     style="margin-top:clamp(60px,10vh,120px)"
     data-screen-label={tr.sections.aboutProcess}
     data-screen-label-alt={altOf(tr.sections.aboutProcess, trA.sections.aboutProcess)}
   >
-    <div class="idx-list__head">
-      <h2 data-i18n-alt={altOf(about.processHeading, aboutAlt.processHeading)}>{about.processHeading}</h2>
+    <summary class="idx-list__head">
+      <span class="fold-chev" aria-hidden="true"></span>
+      <h2 data-scramble data-i18n-alt={altOf(about.processHeading, aboutAlt.processHeading)}>{about.processHeading}</h2>
       <span class="meta">{procRange}</span>
-    </div>
+    </summary>
     {
       about.process.map((c, i) => (
         <div class="idx-row" data-reveal>
@@ -123,14 +125,15 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
         </div>
       ))
     }
-  </section>
+  </details>
 
   <!-- RECOGNITION -->
-  <section class="idx-list" style="margin-top:clamp(60px,10vh,120px)">
-    <div class="idx-list__head">
-      <h2 data-i18n-alt={altOf(about.recognitionHeading, aboutAlt.recognitionHeading)}>{about.recognitionHeading}</h2>
+  <details class="idx-list" style="margin-top:clamp(60px,10vh,120px)">
+    <summary class="idx-list__head">
+      <span class="fold-chev" aria-hidden="true"></span>
+      <h2 data-scramble data-i18n-alt={altOf(about.recognitionHeading, aboutAlt.recognitionHeading)}>{about.recognitionHeading}</h2>
       <span class="meta" data-i18n-alt={altOf(tr.selectedLabel, trA.selectedLabel)}>{tr.selectedLabel}</span>
-    </div>
+    </summary>
     {
       about.recognition.map((r, i) => (
         <div class="idx-row" data-reveal>
@@ -142,17 +145,18 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
         </div>
       ))
     }
-  </section>
+  </details>
 
   <!-- TECHNOLOGIES -->
   {
     about.technologies.length > 0 && (
-      <section class="idx-list" style="margin-top:clamp(60px,10vh,120px)">
-        <div class="idx-list__head">
-          <h2 data-i18n-alt={altOf(tr.technologiesHeading, trA.technologiesHeading)}>
+      <details class="idx-list" style="margin-top:clamp(60px,10vh,120px)">
+        <summary class="idx-list__head">
+          <span class="fold-chev" aria-hidden="true" />
+          <h2 data-scramble data-i18n-alt={altOf(tr.technologiesHeading, trA.technologiesHeading)}>
             {tr.technologiesHeading}
           </h2>
-        </div>
+        </summary>
         <ul class="tech" tabindex="0" aria-label={tr.technologiesHeading}>
           {about.technologies.map((tech) => (
             <li class="tech__item">
@@ -166,7 +170,7 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
         <div class="tech-scroll" aria-hidden="true">
           <div class="tech-scroll__thumb"></div>
         </div>
-      </section>
+      </details>
     )
   }
 
@@ -197,6 +201,10 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
     }
     measure();
     update();
+    // The strip sits inside a collapsed <details>; geometry is 0 until it
+    // opens, so re-measure on every toggle.
+    const fold = strip.closest("details");
+    if (fold) fold.addEventListener("toggle", function () { measure(); update(); });
     strip.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", function () {
       measure();
@@ -234,4 +242,18 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
     bar.addEventListener("pointerup", endDrag);
     bar.addEventListener("pointercancel", endDrag);
   })();
+
+  // Expanding/collapsing a section changes the page height — recompute the
+  // ScrollTrigger positions core.js registered (Lenis resizes itself via its
+  // own ResizeObserver).
+  document.querySelectorAll("details.idx-list").forEach(function (d) {
+    d.addEventListener("toggle", function () {
+      if (window.ScrollTrigger) ScrollTrigger.refresh();
+    });
+    // the height keeps changing until the ::details-content transition ends —
+    // refresh again once it settles so trigger positions match the final layout
+    d.addEventListener("transitionend", function (e) {
+      if (e.pseudoElement === "::details-content" && window.ScrollTrigger) ScrollTrigger.refresh();
+    });
+  });
 </script>
