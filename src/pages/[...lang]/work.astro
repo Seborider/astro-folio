@@ -3,7 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
 import Media from "../../components/Media.astro";
 import PheroCanvas from "../../components/PheroCanvas.astro";
-import { getProjects } from "../../lib/projects";
+import { getProjects, tagUnion } from "../../lib/projects";
 import { altOf, localePath, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
 
@@ -18,25 +18,13 @@ const trA = t(alt);
 const projects = await getProjects(locale);
 const projectsAlt = await getProjects(alt);
 
-// Derive filter tokens from the human category string — EN and DE keywords,
-// since `cat` is translated. Tokens stay locale-independent. (For a CMS,
-// prefer an explicit `tags` field over deriving — see README.)
-function filtersFor(cat: string): string[] {
-  const c = cat.toLowerCase();
-  const t: string[] = [];
-  if (
-    /brand|identity|identität|marke|art direction|packaging|verpackung/.test(c)
-  )
-    t.push("brand");
-  if (/motion|film|title|titel|3d|campaign|kampagne|animation|bewegung/.test(c))
-    t.push("motion");
-  if (
-    /editorial|redaktion|photography|fotografie|exhibition|ausstellung/.test(c)
-  )
-    t.push("editorial");
-  if (/web|webgl|digital/.test(c)) t.push("digital");
-  return t.length ? t : ["brand"];
-}
+// Filter buttons derive from the tags authored on the projects (union across
+// the list, build-time, backend-agnostic). Tokens are locale-independent;
+// the alt label is the other locale's resolution of the same token.
+const tags = tagUnion(projects);
+const altTagLabels = new Map(
+  tagUnion(projectsAlt).map((tag) => [tag.token, tag.label]),
+);
 ---
 
 <Base
@@ -77,12 +65,17 @@ function filtersFor(cat: string): string[] {
     <button class="is-active" data-filter="all" data-cursor="open" data-i18n-alt={altOf(tr.filterAll, trA.filterAll)}
       >{tr.filterAll}</button
     >
-    <button data-filter="brand" data-cursor="open" data-i18n-alt={altOf(tr.filterBrand, trA.filterBrand)}>{tr.filterBrand}</button>
-    <button data-filter="motion" data-cursor="open" data-i18n-alt={altOf(tr.filterMotion, trA.filterMotion)}>{tr.filterMotion}</button>
-    <button data-filter="editorial" data-cursor="open" data-i18n-alt={altOf(tr.filterEditorial, trA.filterEditorial)}
-      >{tr.filterEditorial}</button
-    >
-    <button data-filter="digital" data-cursor="open" data-i18n-alt={altOf(tr.filterDigital, trA.filterDigital)}>{tr.filterDigital}</button>
+    {
+      tags.map((tag) => (
+        <button
+          data-filter={tag.token}
+          data-cursor="open"
+          data-i18n-alt={altOf(tag.label, altTagLabels.get(tag.token) ?? tag.label)}
+        >
+          {tag.label}
+        </button>
+      ))
+    }
   </div>
 
   <!-- filter result announcement (WCAG 4.1.3) — both locale units baked in; the
@@ -107,14 +100,14 @@ function filtersFor(cat: string): string[] {
     {
       projects.map((p, i) => {
         const wide = i % 5 === 0;
-        const tags = filtersFor(p.cat).join(" ");
+        const cats = p.tags.map((tag) => tag.token).join(" ");
         const pA = projectsAlt[i];
         return (
           <a
             class={`proj${wide ? " is-wide" : ""}`}
             href={localePath(locale, `/work/${p.id}`)}
             data-cursor="open"
-            data-cat={tags}
+            data-cat={cats}
             data-reveal
           >
             <div class="proj__media">

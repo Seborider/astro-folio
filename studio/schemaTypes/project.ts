@@ -72,6 +72,13 @@ export default defineType({
       type: "localeStringArray",
     }),
     defineField({
+      name: "tags",
+      title: "Tags (optional)",
+      description:
+        "Filter tags for the /work page — the filter buttons derive from the tags used across all projects. A project with no tags matches only “All”.",
+      type: "localeStringArray",
+    }),
+    defineField({
       name: "intro",
       title: "Intro (one-line lede)",
       type: "localeText",

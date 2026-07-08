@@ -30,6 +30,7 @@ export interface Project {
   client: string;
   services: string[];
   technologies: string[]; // optional in source; [] when absent
+  tags: Tag[]; // /work filter tags; [] when absent (matches only "All")
   intro: string;
   ledeLink?: { url: string; label: string }; // label locale-resolved, host-fallback applied
   overview: string[];
@@ -52,6 +53,8 @@ interface ProjectRow {
   client: string;
   services: string[];
   technologies: string[] | null;
+  tags: string[] | null; // locale-coalesced labels
+  tagsDe: string[] | null; // de originals — token source
   intro: string;
   ledeLink?: string | null;
   overview: string[];
@@ -86,6 +89,8 @@ const projectQuery = (l: Locale) => `*[_type == "project"] | order(order asc){
   "client": coalesce(client.${l}, client.de),
   "services": coalesce(services.${l}, services.de),
   "technologies": coalesce(technologies.${l}, technologies.de),
+  "tags": coalesce(tags.${l}, tags.de),
+  "tagsDe": tags.de,
   "intro": coalesce(intro.${l}, intro.de),
   ledeLink,
   "overview": coalesce(overview.${l}, overview.de),
@@ -100,9 +105,10 @@ export const getProjects = memoByLocale(loadProjects);
 async function loadProjects(locale: Locale): Promise<Project[]> {
   if (sanityConfigured) {
     const raw = await sanityFetch<ProjectRow[]>(projectQuery(locale));
-    return raw.map((p): Project => ({
+    return raw.map(({ tagsDe, ...p }): Project => ({
       ...p,
       technologies: p.technologies ?? [], // GROQ coalesce yields null when absent
+      tags: resolveTags(p.tags, tagsDe),
       quote: p.quote ?? undefined, // null when absent → omit
       ledeLink: resolveLedeLink(p.ledeLink),
       cover: imageUrl(p.cover, { w: 2200 }),
@@ -131,6 +137,7 @@ async function loadProjects(locale: Locale): Promise<Project[]> {
         client: pick(d.client, locale),
         services: pick(d.services, locale),
         technologies: d.technologies ? pick(d.technologies, locale) : [],
+        tags: resolveTags(d.tags && pick(d.tags, locale), d.tags?.de),
         intro: pick(d.intro, locale),
         ledeLink: resolveLedeLink(d.ledeLink),
         overview: pick(d.overview, locale),
@@ -173,4 +180,45 @@ export function reelTileTarget(
     name: project.name,
     nameAlt: projectsAlt[i]?.name ?? project.name,
   };
+}
+
+// ── tags ────────────────────────────────────────────────────────────────────
+// Filter tags for /work: authored per project as a localized string list in
+// BOTH backends. The visible label is locale-resolved; the token is a slug of
+// the DE value, so data-filter/data-cat matching is locale-independent and
+// survives the in-place EN/DE switch.
+
+export interface Tag {
+  token: string; // stable, locale-independent (slug of the de label)
+  label: string; // locale-resolved display label
+}
+
+export function tagToken(label: string): string {
+  return label
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // strip diacritics: ä→a, é→e
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+// labels = the locale-resolved list, deLabels = the DE originals (token
+// source). Zipped by index; a missing de entry falls back to the label itself.
+export function resolveTags(
+  labels?: string[] | null,
+  deLabels?: string[] | null,
+): Tag[] {
+  return (labels ?? []).map((label, i) => ({
+    token: tagToken(deLabels?.[i] ?? label),
+    label,
+  }));
+}
+
+// Union of all tags across projects — encounter order, first label wins.
+// Structural param type so it also accepts the alt-locale list.
+export function tagUnion(projects: { tags: Tag[] }[]): Tag[] {
+  const seen = new Map<string, string>();
+  for (const p of projects)
+    for (const t of p.tags) if (!seen.has(t.token)) seen.set(t.token, t.label);
+  return [...seen].map(([token, label]) => ({ token, label }));
 }

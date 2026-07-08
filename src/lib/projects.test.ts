@@ -4,7 +4,11 @@ import {
   neighbours,
   reelTileTarget,
   resolveLedeLink,
+  tagToken,
+  resolveTags,
+  tagUnion,
   type Project,
+  type Tag,
 } from "./projects";
 
 // loadProjects switches on sanityConfigured and calls sanityFetch/imageUrl
@@ -254,6 +258,18 @@ describe("getProjects — local JSON fallback", () => {
     ]);
   });
 
+  it("maps tags with locale labels and de-derived tokens, [] when absent", async () => {
+    mocks.getCollection.mockResolvedValue([
+      entry("a", 1, { tags: { de: ["Marke"], en: ["Brand"] } }),
+      entry("b", 2, { tags: { de: ["Motion"] } }), // no en → de labels
+      entry("c", 3), // field absent → []
+    ]);
+    const result = await getProjects("en");
+    expect(result[0].tags).toEqual([{ token: "marke", label: "Brand" }]);
+    expect(result[1].tags).toEqual([{ token: "motion", label: "Motion" }]);
+    expect(result[2].tags).toEqual([]);
+  });
+
   it("returns an empty list when the collection is empty", async () => {
     mocks.getCollection.mockResolvedValue([]);
     expect(await getProjects("de")).toEqual([]);
@@ -354,6 +370,24 @@ describe("getProjects — Sanity backend", () => {
     expect(project.gallery).toEqual([]);
   });
 
+  it("maps tags from coalesced labels + de tokens, [] when null", async () => {
+    mocks.sanityConfigured = true;
+    mocks.sanityFetch.mockResolvedValue([
+      row({ tags: ["Brand EN"], tagsDe: ["Marke"] }),
+      row({ tags: null, tagsDe: null }), // coalesce yields null when absent
+    ]);
+    const result = await getProjects("en");
+    expect(result[0].tags).toEqual([{ token: "marke", label: "Brand EN" }]);
+    expect(result[1].tags).toEqual([]);
+    // raw tagsDe must not leak into the Project shape
+    expect("tagsDe" in result[0]).toBe(false);
+    // projection carries both the coalesced labels and the de token source
+    expect(mocks.sanityFetch.mock.calls[0][0]).toContain(
+      "coalesce(tags.en, tags.de)",
+    );
+    expect(mocks.sanityFetch.mock.calls[0][0]).toContain('"tagsDe": tags.de');
+  });
+
   it("defaults to the de locale when none is passed", async () => {
     mocks.sanityConfigured = true;
     mocks.sanityFetch.mockResolvedValue([row()]);
@@ -361,5 +395,64 @@ describe("getProjects — Sanity backend", () => {
     expect(mocks.sanityFetch.mock.calls[0][0]).toContain(
       "coalesce(name.de, name.de)",
     );
+  });
+});
+
+// ── tags: tagToken / resolveTags / tagUnion ─────────────────────────────────
+describe("tagToken", () => {
+  it("slugs to lowercase with hyphens", () => {
+    expect(tagToken("Title Design")).toBe("title-design");
+  });
+
+  it("strips diacritics", () => {
+    expect(tagToken("Identität")).toBe("identitat");
+  });
+
+  it("collapses punctuation runs and trims edge hyphens", () => {
+    expect(tagToken(" 3D / Motion ")).toBe("3d-motion");
+  });
+});
+
+describe("resolveTags", () => {
+  it("returns [] for absent lists", () => {
+    expect(resolveTags(undefined, undefined)).toEqual([]);
+    expect(resolveTags(null, null)).toEqual([]);
+  });
+
+  it("derives tokens from the de labels, keeps locale-resolved labels", () => {
+    expect(resolveTags(["Editorial EN"], ["Redaktion"])).toEqual([
+      { token: "redaktion", label: "Editorial EN" },
+    ]);
+  });
+
+  it("falls back to the label itself when the de entry is missing", () => {
+    expect(resolveTags(["Brand", "Extra"], ["Brand"])).toEqual([
+      { token: "brand", label: "Brand" },
+      { token: "extra", label: "Extra" },
+    ]);
+  });
+});
+
+describe("tagUnion", () => {
+  const proj = (...tags: Tag[]) => ({ tags });
+
+  it("unions by token in encounter order; first label wins", () => {
+    const u = tagUnion([
+      proj(
+        { token: "brand", label: "Brand" },
+        { token: "motion", label: "Motion" },
+      ),
+      proj({ token: "brand", label: "Brand (dupe)" }),
+      proj({ token: "digital", label: "Digital" }),
+    ]);
+    expect(u).toEqual([
+      { token: "brand", label: "Brand" },
+      { token: "motion", label: "Motion" },
+      { token: "digital", label: "Digital" },
+    ]);
+  });
+
+  it("is empty when no project has tags", () => {
+    expect(tagUnion([proj(), proj()])).toEqual([]);
   });
 });

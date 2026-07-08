@@ -68,5 +68,8 @@
       },
       "span": "full"
     }
-  ]
+  ],
+  "tags": {
+    "de": ["Motion"]
+  }
 }

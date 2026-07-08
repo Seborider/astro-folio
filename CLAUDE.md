@@ -61,8 +61,10 @@ A doc edit isn't optional follow-up — it ships with the code.
 
 - **Pages**, all bilingual (DE default `/`, EN `/en/…`): home (loader → hero →
   statement → showreel → work preview → archive band), `/about` (with a
-  technologies carousel), `/work` (project grid + discipline filter derived
-  from `cat`), `/work/<slug>` (detail with prev/next — list ends render no neighbour link, external
+  technologies carousel), `/work` (project grid + tag-driven filter — buttons
+  derive at build time from the union of the projects' authored `tags`; a
+  project without tags matches only "All"; the filter token is a slug of the
+  DE label so it survives the EN/DE switch), `/work/<slug>` (detail with prev/next — list ends render no neighbour link, external
   lede link, technologies, optional project video), `/archive` (full
   chronological table), `/impressum`, `/datenschutz`, and a `404`.
 - **Balloon hero.** A Three.js scene renders the page title as rising balloon
@@ -235,6 +237,7 @@ Current coverage (keep it green when editing these):
 - `src/lib/sanity.ts` — `imageUrl` (ref→CDN url) and `sanityFetch` (mocked
   global `fetch`; never hits the network).
 - `src/lib/projects.ts` — `neighbours` (adjacent items; ends yield undefined), `resolveLedeLink`,
+  the tag helpers (`tagToken`, `resolveTags`, `tagUnion`),
   `reelTileTarget`, and `getProjects` for BOTH backends with `./sanity` +
   `astro:content` mocked.
 - `src/lib/site.ts` — `withDefaults` per-field merge (the loaders themselves do
@@ -282,11 +285,8 @@ go-live wiring. In rough priority:
    dark/light toggle.
 
 Done already (don't re-do): SEO/OG/JSON-LD/sitemap, project video, technologies
-carousel, accessibility pass, the balloon hero, and the dark/light theme system.
-
-Possible later: replace the regex-derived discipline filter in `work.astro`
-with an explicit `tags: string[]` on BOTH schemas, if filtering needs to be
-authored rather than inferred from `cat`.
+carousel, accessibility pass, the balloon hero, the dark/light theme system,
+and the tag-driven /work filter (authored `tags` on BOTH schemas).
 
 ## Collaboration principles
 

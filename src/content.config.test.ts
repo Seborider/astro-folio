@@ -99,6 +99,24 @@ describe("project schema — field shapes", () => {
     expect(r.success).toBe(true);
   });
 
+  it("accepts optional localized tags and preserves them", () => {
+    const r = schema.safeParse(
+      valid({ tags: { de: ["Marke"], en: ["Brand"] } }),
+    );
+    expect(r.success).toBe(true);
+    if (r.success)
+      expect(r.data.tags).toEqual({ de: ["Marke"], en: ["Brand"] });
+  });
+
+  it("leaves tags undefined when absent (optional field)", () => {
+    const r = schema.safeParse(valid());
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.tags).toBeUndefined();
+  });
+
+  it("rejects tags given as a bare array instead of a localized object", () => {
+    expect(schema.safeParse(valid({ tags: ["Brand"] })).success).toBe(false);
+  });
 });
 
 describe("project schema — required non-empty lists", () => {

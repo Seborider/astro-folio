@@ -69,10 +69,6 @@ export interface UIDict {
   workLede: string;
   projectsCountLabel: string;
   filterAll: string;
-  filterBrand: string;
-  filterMotion: string;
-  filterEditorial: string;
-  filterDigital: string;
 
   // project detail
   metaClient: string;
@@ -191,10 +187,6 @@ export const ui: Record<Locale, UIDict> = {
     workLede: "Ausgewählte Projekte aus Design, Motion und Development.",
     projectsCountLabel: "Projekte",
     filterAll: "Alle",
-    filterBrand: "Brand",
-    filterMotion: "Motion",
-    filterEditorial: "Editorial",
-    filterDigital: "Digital",
 
     metaClient: "Kunde",
     metaYear: "Jahr",
@@ -310,10 +302,6 @@ export const ui: Record<Locale, UIDict> = {
       "Selected projects across brand, motion, editorial and digital — 2021 to now.",
     projectsCountLabel: "projects",
     filterAll: "All",
-    filterBrand: "Brand",
-    filterMotion: "Motion",
-    filterEditorial: "Editorial",
-    filterDigital: "Digital",
 
     metaClient: "Client",
     metaYear: "Year",

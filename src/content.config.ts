@@ -37,6 +37,7 @@ const projects = defineCollection({
     client: localized(z.string()),
     services: requiredList(),
     technologies: localized(z.array(z.string())).optional(), // tech/tools used
+    tags: localized(z.array(z.string())).optional(), // /work filter tags; buttons derive from the union
     intro: localized(z.string()), // one-line lede
     ledeLink: z.string().url().optional(), // external link below the lede (host = text)
     overview: requiredList(), // paragraphs
