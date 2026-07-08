@@ -1943,7 +1943,7 @@ details.idx-list[open]::details-content {
   padding: 0 var(--pad) clamp(60px, 10vh, 120px);
 }
 .pd-cover .frame {
-  aspect-ratio: 21/9;
+  aspect-ratio: 16/9;
   overflow: hidden;
 }
 .pd-cover .frame .placeholder {
