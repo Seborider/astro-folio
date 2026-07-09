@@ -924,7 +924,7 @@ html.loader-seen .loader {
   font-size: clamp(11px, 1.05vw, 14px);
   letter-spacing: 0.02em;
   color: var(--ink-dim);
-  max-width: 60ch;
+  max-width: 62ch;
 }
 .hero__meta b {
   color: var(--ink);
@@ -1525,7 +1525,7 @@ html.loader-seen .loader {
   font-size: clamp(15px, 1.5vw, 19px);
   line-height: 1.55;
   color: var(--ink);
-  max-width: 56ch;
+  max-width: 80ch;
 }
 .about-cols__body p .dim {
   color: var(--ink-dim);
@@ -1925,6 +1925,11 @@ details.idx-list[open]::details-content {
   line-height: 1.15;
   max-width: 24ch;
 }
+@media (min-width: 861px) {
+  .pd-lede {
+    max-width: 40ch;
+  }
+}
 .pd-lede-link {
   display: inline-block;
   margin-top: 16px;
@@ -1996,7 +2001,7 @@ details.idx-list[open]::details-content {
   font-size: clamp(22px, 2.6vw, 40px);
   line-height: 1.28;
   letter-spacing: -0.01em;
-  max-width: 26ch;
+  max-width: 40ch;
 }
 
 .pd-gallery {
