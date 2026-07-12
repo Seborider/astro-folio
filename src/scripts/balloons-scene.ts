@@ -487,12 +487,14 @@ export async function start(
     const kind = obj?.userData.kind as string | undefined;
     if (kind) {
       cursor.classList.add("is-hover");
+      cursor.classList.toggle("is-scissors", kind === "string");
+      cursor.classList.toggle("is-needle", kind !== "string");
       if (cursorLabel) {
         cursorLabel.textContent = kind === "string" ? "CUT" : "POP";
         cursorLabel.style.opacity = "1";
       }
     } else {
-      cursor.classList.remove("is-hover");
+      cursor.classList.remove("is-hover", "is-needle", "is-scissors");
       if (cursorLabel) cursorLabel.style.opacity = "0";
     }
   }
