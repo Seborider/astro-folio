@@ -1,0 +1,86 @@
+{
+  "order": 1001,
+  "name": {
+    "de": "STL Browser",
+    "en": "STL Browser"
+  },
+  "cat": {
+    "de": "Desktop · 3D · Tooling",
+    "en": "Desktop · 3D · Tooling"
+  },
+  "yr": "2026",
+  "role": {
+    "de": "Konzept, Design & Entwicklung",
+    "en": "Concept, design & development"
+  },
+  "client": {
+    "de": "Eigenprojekt",
+    "en": "Personal project"
+  },
+  "services": {
+    "de": [
+      "Desktop-App-Entwicklung",
+      "3D-Rendering",
+      "UI-Design"
+    ],
+    "en": [
+      "Desktop app development",
+      "3D rendering",
+      "UI design"
+    ]
+  },
+  "technologies": {
+    "de": [
+      "Rust",
+      "Tauri 2",
+      "React 19",
+      "TypeScript",
+      "Three.js",
+      "Tailwind CSS",
+      "Zustand",
+      "SQLite"
+    ],
+    "en": [
+      "Rust",
+      "Tauri 2",
+      "React 19",
+      "TypeScript",
+      "Three.js",
+      "Tailwind CSS",
+      "Zustand",
+      "SQLite"
+    ]
+  },
+  "intro": {
+    "de": "Ein macOS-Desktop-Browser im Photos.app-Stil zur Vorschau von 3D-Druckdateien (.stl, .3mf, .obj).",
+    "en": "A Photos.app-style macOS desktop browser for previewing 3D-printing files (.stl, .3mf, .obj)."
+  },
+  "ledeLink": "https://github.com/Seborider/stl-browser",
+  "overview": {
+    "de": [
+      "STL Browser rendert Thumbnails direkt aus den lokalen Mesh-Dateien und zeigt sie in einem virtualisierten Grid, mit Metadaten und einer Detailansicht mit Orbit, Pan und Zoom.",
+      "Das Backend ist Rust mit Tauri 2 (tokio, rusqlite, notify, blake3); das Frontend React 19 mit react-three-fiber und Three.js. Version 1 zielt auf Apple Silicon."
+    ],
+    "en": [
+      "STL Browser renders thumbnails straight from the local mesh files and presents them in a virtualized grid, with metadata and a detail viewer with orbit, pan and zoom.",
+      "The backend is Rust with Tauri 2 (tokio, rusqlite, notify, blake3); the frontend is React 19 with react-three-fiber and Three.js. Version 1 targets Apple Silicon."
+    ]
+  },
+  "gallery": [
+    {
+      "label": {
+        "de": "Bibliotheksansicht",
+        "en": "Library view"
+      },
+      "span": "full"
+    }
+  ],
+  "tags": {
+    "de": [
+      "Digital"
+    ]
+  },
+  "tags": {
+    "de": ["Digital"]
+  }
+}
