@@ -1771,11 +1771,11 @@ details.idx-list[open]::details-content {
 }
 .proj__media {
   position: relative;
-  aspect-ratio: 4/3;
+  aspect-ratio: 16/9;
   overflow: hidden;
 }
 .proj.is-wide .proj__media {
-  aspect-ratio: 21/9;
+  aspect-ratio: 16/9;
 }
 .proj__media .placeholder {
   width: 100%;
@@ -2315,7 +2315,7 @@ details.idx-list[open]::details-content {
     grid-column: span 1;
   }
   .proj.is-wide .proj__media {
-    aspect-ratio: 4/3;
+    aspect-ratio: 16/9;
   }
   .idx-row {
     grid-template-columns: 36px 1fr;
