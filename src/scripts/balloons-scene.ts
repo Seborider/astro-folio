@@ -14,6 +14,7 @@ import {
   CanvasTexture,
   CatmullRomCurve3,
   Color,
+  CylinderGeometry,
   DirectionalLight,
   DoubleSide,
   EquirectangularReflectionMapping,
@@ -39,7 +40,15 @@ import {
   FontLoader,
   type Font,
 } from "three/examples/jsm/loaders/FontLoader.js";
-import { layoutGlyphs, riseOffset, type GlyphPlacement } from "./balloons-layout";
+import {
+  hintLaunch,
+  hintSwayVel,
+  hintTurn,
+  layoutGlyphs,
+  riseOffset,
+  type GlyphPlacement,
+} from "./balloons-layout";
+import { t } from "../i18n/ui";
 
 const FONT_URL = "/fonts/paytone-one.typeface.json";
 // ponytail: fixed festive palette; wire to --accent later if the brand wants mono.
@@ -74,6 +83,18 @@ const BOUNCE_REST = 0.85; // letter–letter collision restitution
 const OFFSET_CLAMP = 1.5; // max push offset, keeps a collision from flinging a letter
 const VEL_MAX = 6; // max push velocity
 const BURST_LIFE = 0.9; // pop-shred lifetime, seconds
+// touch-only hint balloons (the CUT/POP cursor affordance is invisible on touch)
+const HINT_Z = -1.6; // behind the ropes (-0.35) and the letters (±~0.35)
+const HINT_RADIUS = 0.4; // small next to the ~1-unit letters
+const HINT_KNOT_Y = -HINT_RADIUS * 1.15; // knot sits on the squashed underside
+const HINT_STRING_LEN = 0.5; // knot → sign, root units
+const HINT_TILT = 0.22; // lean per unit of lateral velocity — the rig tips into
+// its drift so the string angles and the sign trails, pendulum-style
+// y-axis twist amplitudes — scales the normalized hintTurn oscillator
+const HINT_TURN_SIGN = 70; // deg — the card foreshortens as it turns
+const HINT_TURN_BALLOON = 0.6; // rad — same twist on the balloon group
+const HINT_SIGN_PERSPECTIVE = 400; // px — depth for the CSS rotateY
+const HINT_FIRST_DELAY = 3; // let the intro rise land before the first hint
 
 interface Letter {
   group: Group; // holds the balloon mesh only
@@ -95,6 +116,18 @@ interface Letter {
   ropeFalling: boolean; // popped → the detached rope drops out of view
   vy: number;
   vx: number;
+}
+
+interface Hint {
+  group: Group; // balloon + knot + sign string, rises via stepRise like a cut letter
+  el: HTMLSpanElement; // the DOM sign in the overlay layer, projected each frame
+  vy: number;
+  vx: number;
+  lift: number; // per-launch helium acceleration (randomized in hintLaunch)
+  swayAmp: number; // per-launch left/right meander (see hintSwayVel)
+  swayFreq: number;
+  swayPhase: number;
+  age: number; // seconds since launch — drives the sway cycle
 }
 
 interface Burst {
@@ -162,6 +195,29 @@ export async function start(
   let letters: Letter[] = [];
   let pickables: Mesh[] = [];
   const bursts: Burst[] = [];
+  // touch-only interaction hints: labelled background balloons on a random
+  // launch cadence; the first cut/pop stops new launches, reset() resumes them.
+  const hints: Hint[] = [];
+  let hintCount = 0; // total launched — drives the label alternation
+  let hintTimer = HINT_FIRST_DELAY; // seconds until the next launch
+  let hintsStopped = false;
+  // visible extents in root-local units (set by refit) — hint launch span/exit
+  let viewHalfW = 5;
+  let viewTopY = 3;
+  // DOM overlay for the hint labels — styled like the cursor label (--ink +
+  // --bg halo, see styles.css) so the text adapts to the theme/background
+  // live; touch-only so the desktop DOM stays untouched.
+  const labelLayer = isTouch ? document.createElement("div") : null;
+  if (labelLayer) {
+    labelLayer.className = "hint-labels";
+    labelLayer.setAttribute("aria-hidden", "true");
+    hero.appendChild(labelLayer);
+  }
+  const hintWorld = new Vector3(); // scratch for the per-frame label projection
+  // canvas pixel size, cached in resize() — reading clientWidth/Height in the
+  // frame loop between label style writes would force a reflow per hint
+  let canvasW = 1;
+  let canvasH = 1;
   // fixed bottom anchor (root-local y just below the visible bottom edge);
   // each rope's lower end is pinned here so it's tied to the page bottom.
   let bottomAnchorY = -3;
@@ -210,6 +266,18 @@ export async function start(
     });
   }
 
+  // the glossy latex look, shared by the letter and hint balloons
+  function balloonMaterial(i: number): MeshPhysicalMaterial {
+    return new MeshPhysicalMaterial({
+      color: new Color(PALETTE[i % PALETTE.length]),
+      roughness: 0.06,
+      metalness: 0,
+      clearcoat: 1,
+      clearcoatRoughness: 0.06,
+      envMapIntensity: 1.7,
+    });
+  }
+
   function makeLetter(p: GlyphPlacement, i: number): Letter {
     const geo = roundedGlyphGeometry(p.char);
     geo.center(); // origin = glyph centre
@@ -218,15 +286,7 @@ export async function start(
     const hx = (bb.max.x - bb.min.x) / 2; // collision box half-extents
     const hy = (bb.max.y - bb.min.y) / 2;
 
-    const mat = new MeshPhysicalMaterial({
-      color: new Color(PALETTE[i % PALETTE.length]),
-      roughness: 0.06,
-      metalness: 0,
-      clearcoat: 1,
-      clearcoatRoughness: 0.06,
-      envMapIntensity: 1.7,
-    });
-    const balloon = new Mesh(geo, mat);
+    const balloon = new Mesh(geo, balloonMaterial(i));
     balloon.userData.kind = "balloon";
 
     const group = new Group();
@@ -372,6 +432,8 @@ export async function start(
     root.scale.setScalar(scale);
     // page bottom in root-local units, a touch below the edge so the knot hides
     bottomAnchorY = -(visH / 2) / scale - 0.3;
+    viewHalfW = visW / 2 / scale;
+    viewTopY = visH / 2 / scale;
   }
 
   // Pop = the balloon tears into a few glossy, curved latex shreds (sphere
@@ -429,6 +491,100 @@ export async function start(
     bursts.push({ group, vels, spins, mat, life: BURST_LIFE });
   }
 
+  // The one rise motion — cut letters and hint balloons both advance through
+  // here. Letters use the fixed rates; hints carry a per-launch randomized
+  // lift from hintLaunch. The tumble line only matters for letters — a hint's
+  // rotation.z is overwritten by its sway lean right after each step.
+  function stepRise(
+    o: { group: Group; vy: number; vx: number; lift?: number },
+    dt: number,
+  ) {
+    o.vy += (o.lift ?? 0.9) * dt; // helium
+    o.group.position.y += o.vy * dt;
+    o.group.position.x += o.vx * dt;
+    o.group.rotation.z += dt * 0.6;
+  }
+
+  function launchHint() {
+    if (!labelLayer) return;
+    const spec = hintLaunch(hintCount, viewHalfW * 0.8, Math.random);
+    hintTimer = spec.delay;
+    // read the locale at launch time — <html lang> is the live source of truth
+    // (i18n.js flips it on the header switch), so labels follow the visitor
+    const dict = t(document.documentElement.lang === "en" ? "en" : "de");
+
+    const group = new Group();
+    const balloon = new Mesh(
+      new SphereGeometry(HINT_RADIUS, 24, 18),
+      balloonMaterial(hintCount),
+    );
+    balloon.scale.y = 1.15;
+    // the tied-off knot at the bottom that keeps the air in — a small nub in
+    // the balloon's own material, half-buried in the underside
+    const knot = new Mesh(
+      new SphereGeometry(HINT_RADIUS * 0.22, 10, 8),
+      balloon.material,
+    );
+    knot.scale.y = 0.7;
+    knot.position.y = HINT_KNOT_Y;
+    // the short string the sign hangs from, tied to the knot. The balloon
+    // rises upright (the sign's weight, spin 0 below), so a static vertical
+    // cylinder is the correct shape — no per-frame simulation needed.
+    const string = new Mesh(
+      new CylinderGeometry(ROPE_RADIUS, ROPE_RADIUS, HINT_STRING_LEN, 5),
+      new MeshBasicMaterial({ color: ROPE_COLOR }),
+    );
+    string.position.y = HINT_KNOT_Y - HINT_STRING_LEN / 2;
+    group.add(balloon, knot, string);
+    group.position.set(spec.x, bottomAnchorY - HINT_RADIUS * 2, HINT_Z);
+    root.add(group);
+
+    const el = document.createElement("span");
+    el.textContent = spec.label === 0 ? dict.hintCut : dict.hintPop;
+    labelLayer.appendChild(el);
+
+    hints.push({
+      group,
+      el,
+      vy: spec.vy,
+      vx: spec.vx,
+      lift: spec.lift,
+      swayAmp: spec.swayAmp,
+      swayFreq: spec.swayFreq,
+      swayPhase: spec.swayPhase,
+      age: 0,
+    });
+    hintCount++;
+  }
+
+  // place a hint's DOM sign at the lower end of its string (local → world →
+  // NDC → canvas px), top-anchored so the card hangs off the string. Going
+  // through the group's matrix means the sign rides the lean too — it swings
+  // wherever the string end swings, and the CSS rotate keeps the card aligned
+  // with the string (three.js +z is CCW in y-up, CSS is y-down → negate).
+  // The label layer sits below the canvas, so the letters still cover the
+  // sign when the balloon passes behind them.
+  function placeHintLabel(h: Hint, turn: number) {
+    hintWorld.set(0, HINT_KNOT_Y - HINT_STRING_LEN, 0);
+    h.group.localToWorld(hintWorld);
+    hintWorld.project(camera);
+    const x = ((hintWorld.x + 1) / 2) * canvasW;
+    const y = ((1 - hintWorld.y) / 2) * canvasH;
+    // the twist: perspective + rotateY around the hanging axis, so the card
+    // narrows as it turns edge-on — matching the balloon group's rotation.y
+    h.el.style.transform = `translate(${x}px, ${y}px) translate(-50%, 0) rotate(${-h.group.rotation.z}rad) perspective(${HINT_SIGN_PERSPECTIVE}px) rotateY(${HINT_TURN_SIGN * turn}deg)`;
+  }
+
+  function disposeHint(h: Hint) {
+    disposeGroup(h.group);
+    h.el.remove();
+  }
+
+  function clearHints() {
+    for (const h of hints) disposeHint(h);
+    hints.length = 0;
+  }
+
   function pop(l: Letter) {
     if (l.mode === "gone") return;
     const world = l.balloon.getWorldPosition(new Vector3());
@@ -437,11 +593,13 @@ export async function start(
     l.group.visible = false;
     l.ropeFalling = true; // the held string drops away
     l.vy = 0;
+    hintsStopped = true; // the user got it — no more hint launches until reset
     rebuildPickables();
   }
 
   function cut(l: Letter) {
     if (l.mode !== "float") return;
+    hintsStopped = true;
     l.mode = "rising";
     l.vy = 0.4;
     l.vx = (Math.random() - 0.5) * 0.6;
@@ -464,6 +622,10 @@ export async function start(
     for (const b of bursts) disposeBurst(b);
     bursts.length = 0;
     letters = [];
+    clearHints();
+    hintsStopped = false; // header reload → hints resume
+    hintTimer = HINT_FIRST_DELAY;
+    hintCount = 0;
     buildLetters();
     introStart = performance.now(); // replay the rise on reset
   }
@@ -588,6 +750,8 @@ export async function start(
   function resize() {
     const r = hero.getBoundingClientRect();
     renderer.setSize(r.width, r.height, false);
+    canvasW = r.width;
+    canvasH = r.height;
     camera.aspect = r.width / r.height;
     camera.updateProjectionMatrix();
     refit();
@@ -702,10 +866,7 @@ export async function start(
         l.group.rotation.z = Math.sin(t * 0.6 + l.phase) * 0.04 - l.ovx * 0.12;
         stepRope(l, dt, t);
       } else if (l.mode === "rising") {
-        l.vy += 0.9 * dt; // helium
-        l.group.position.y += l.vy * dt;
-        l.group.position.x += l.vx * dt;
-        l.group.rotation.z += dt * 0.6;
+        stepRise(l, dt);
         if (l.group.position.y > l.baseY + 9) {
           l.mode = "gone";
           l.group.visible = false;
@@ -722,6 +883,34 @@ export async function start(
           l.tube.visible = false;
           l.proxy.visible = false;
           l.ropeFalling = false;
+        }
+      }
+    }
+
+    // touch-only hint balloons: launch on the random cadence, ride the same
+    // rise as a cut letter, despawn above the visible top
+    if (isTouch) {
+      if (!hintsStopped) {
+        hintTimer -= dt;
+        if (hintTimer <= 0) launchHint();
+      }
+      for (let i = hints.length - 1; i >= 0; i--) {
+        const h = hints[i];
+        stepRise(h, dt);
+        // real-balloon meander: integrate the sway velocity on top of the
+        // base drift, and lean the whole rig into the lateral motion — the
+        // string angles with it and the sign trails behind, pendulum-style
+        h.age += dt;
+        const sv = hintSwayVel(h, h.age);
+        h.group.position.x += sv * dt;
+        h.group.rotation.z = -HINT_TILT * (h.vx + sv);
+        // string torsion: balloon and sign twist around the vertical axis
+        const turn = hintTurn(h, h.age);
+        h.group.rotation.y = HINT_TURN_BALLOON * turn;
+        placeHintLabel(h, turn);
+        if (h.group.position.y > viewTopY + HINT_RADIUS * 3) {
+          disposeHint(h);
+          hints.splice(i, 1);
         }
       }
     }
@@ -774,6 +963,8 @@ export async function start(
     ro.disconnect();
     for (const l of letters) disposeLetter(l);
     for (const b of bursts) disposeBurst(b);
+    clearHints();
+    labelLayer?.remove();
     window.removeEventListener("themechange", applyEnvironment);
     scene.environment?.dispose();
     pmrem.dispose();

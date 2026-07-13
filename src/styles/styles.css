@@ -877,6 +877,40 @@ html.loader-seen .loader {
 .phero__canvas.is-active {
   pointer-events: auto;
 }
+/* Touch hint-balloon labels: DOM overlay UNDER the balloon canvas (the scene
+   projects each balloon into it per frame). Below z-index 1 the letters
+   painted on the canvas cover a passing label — it shows only through the
+   canvas's transparent sky, so it stays "behind" the letters like its balloon
+   (which is why each label hangs beneath its balloon, not across it). Styled
+   like the cursor label — theme-aware --ink with a --bg halo — because
+   mix-blend-mode: difference washes out on the mid-tone balloon colours. */
+.hint-labels {
+  position: absolute;
+  inset: 0;
+  z-index: 0; /* above .hero__bg (same level, later in DOM), below the canvas */
+  overflow: hidden;
+  pointer-events: none;
+}
+/* Each label is a small sign card hanging off its balloon's string (the scene
+   anchors the span's top edge to the string end). Token-driven, so the sign
+   follows the theme live. */
+.hint-labels span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid color-mix(in srgb, var(--ink) 55%, transparent);
+  border-radius: 2px;
+  padding: 3px 7px;
+  transform-origin: 50% 0; /* pivots where it hangs off the string */
+  will-change: transform;
+}
 /* Sub-page hero text lifts above the canvas like .hero__inner does on home. */
 .phero__index,
 .phero__sub,

@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
   HERO_SELECTORS,
+  HINT_DELAY_MAX,
+  HINT_DELAY_MIN,
+  HINT_LIFT,
+  HINT_SWAY_AMP,
+  HINT_SWAY_FREQ,
+  HINT_VX,
+  HINT_VY,
   PD_SELECTORS,
   PHERO_SELECTORS,
   RISE_BOB,
@@ -8,6 +15,9 @@ import {
   RISE_DUR,
   RISE_SETTLE_DUR,
   RISE_STAGGER,
+  hintLaunch,
+  hintSwayVel,
+  hintTurn,
   layoutGlyphs,
   pickSelectors,
   readLines,
@@ -53,6 +63,118 @@ describe("riseOffset", () => {
     expect(reversals.length).toBeGreaterThan(0);
     // settled back to home once the settle window passes
     expect(at(0, RISE_DUR + RISE_SETTLE_DUR + 0.1)).toBe(0);
+  });
+});
+
+describe("hintLaunch", () => {
+  it("alternates the label index 0,1,0,1 by launch count", () => {
+    const labels = [0, 1, 2, 3].map((i) => hintLaunch(i, 5, () => 0.5).label);
+    expect(labels).toEqual([0, 1, 0, 1]);
+  });
+
+  it("keeps the delay inside [HINT_DELAY_MIN, HINT_DELAY_MAX]", () => {
+    expect(hintLaunch(0, 5, () => 0).delay).toBe(HINT_DELAY_MIN);
+    expect(hintLaunch(0, 5, () => 1).delay).toBe(HINT_DELAY_MAX);
+    const d = hintLaunch(0, 5, () => 0.5).delay;
+    expect(d).toBeGreaterThan(HINT_DELAY_MIN);
+    expect(d).toBeLessThan(HINT_DELAY_MAX);
+  });
+
+  it("spreads x across the full half-width span", () => {
+    expect(hintLaunch(0, 5, () => 0).x).toBe(-5);
+    expect(hintLaunch(0, 5, () => 1).x).toBe(5);
+    expect(hintLaunch(0, 5, () => 0.5).x).toBe(0);
+  });
+
+  it("is deterministic for a fixed rand", () => {
+    expect(hintLaunch(3, 2, () => 0.25)).toEqual(hintLaunch(3, 2, () => 0.25));
+  });
+
+  it("handles a zero half-width (degenerate viewport)", () => {
+    expect(hintLaunch(0, 0, () => 1).x).toBe(0);
+  });
+
+  it("samples the rise motion inside its documented ranges", () => {
+    const lo = hintLaunch(0, 5, () => 0);
+    expect([lo.vy, lo.vx, lo.lift]).toEqual([HINT_VY[0], HINT_VX[0], HINT_LIFT[0]]);
+    const hi = hintLaunch(0, 5, () => 1);
+    expect([hi.vy, hi.vx, hi.lift]).toEqual([HINT_VY[1], HINT_VX[1], HINT_LIFT[1]]);
+  });
+
+  it("varies the motion between launches (no shared path)", () => {
+    // a counter-based rand gives each field a different draw — two launches
+    // starting at different counter values must not ride identical motion
+    const seq = (start: number) => {
+      let n = start;
+      return () => (n++ % 10) / 10;
+    };
+    const a = hintLaunch(0, 5, seq(0));
+    const b = hintLaunch(0, 5, seq(3));
+    expect(a.vy).not.toBe(b.vy);
+    expect(a.lift).not.toBe(b.lift);
+  });
+
+  it("samples the sway inside its ranges, phase across the full circle", () => {
+    const lo = hintLaunch(0, 5, () => 0);
+    expect([lo.swayAmp, lo.swayFreq, lo.swayPhase]).toEqual([
+      HINT_SWAY_AMP[0],
+      HINT_SWAY_FREQ[0],
+      0,
+    ]);
+    const hi = hintLaunch(0, 5, () => 1);
+    expect(hi.swayAmp).toBeCloseTo(HINT_SWAY_AMP[1], 10);
+    expect(hi.swayFreq).toBeCloseTo(HINT_SWAY_FREQ[1], 10);
+    expect(hi.swayPhase).toBeCloseTo(2 * Math.PI, 10);
+  });
+});
+
+describe("hintSwayVel", () => {
+  const spec = { swayAmp: 0.6, swayFreq: 1, swayPhase: 0 };
+
+  it("peaks at amp*freq when the cosine is 1", () => {
+    expect(hintSwayVel(spec, 0)).toBeCloseTo(0.6, 10);
+  });
+
+  it("reverses direction half a period later (left↔right)", () => {
+    expect(hintSwayVel(spec, Math.PI)).toBeCloseTo(-0.6, 10);
+  });
+
+  it("stays bounded by amp*freq at any age", () => {
+    for (const age of [0.3, 1.7, 4.2, 9.9]) {
+      expect(Math.abs(hintSwayVel(spec, age))).toBeLessThanOrEqual(0.6 + 1e-12);
+    }
+  });
+
+  it("honours the phase offset", () => {
+    const shifted = { ...spec, swayPhase: Math.PI / 2 };
+    expect(hintSwayVel(shifted, 0)).toBeCloseTo(0, 10);
+  });
+});
+
+describe("hintTurn", () => {
+  const spec = { swayPhase: 0 };
+
+  it("stays normalized to [-1, 1] at any age", () => {
+    for (const age of [0, 0.4, 1.1, 2.8, 7.5]) {
+      expect(Math.abs(hintTurn(spec, age))).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it("turns back and forth (sign reverses over time)", () => {
+    const samples = Array.from({ length: 24 }, (_, k) => hintTurn(spec, k * 0.25));
+    expect(samples.some((v) => v > 0.1)).toBe(true);
+    expect(samples.some((v) => v < -0.1)).toBe(true);
+  });
+
+  it("gives different launches a different twist (phase-dependent)", () => {
+    expect(hintTurn({ swayPhase: 0.2 }, 1)).not.toBeCloseTo(
+      hintTurn({ swayPhase: 4.8 }, 1),
+      5,
+    );
+  });
+
+  it("is deterministic for the same inputs", () => {
+    expect(hintTurn(spec, 2)).toBe(hintTurn(spec, 2));
   });
 });
 

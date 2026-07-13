@@ -47,6 +47,9 @@ export interface UIDict {
   heroCity: string;
   scrollCue: string;
   heroResetLabel: string;
+  // touch-only hint balloons in the balloon hero (balloons-scene.ts)
+  hintCut: string;
+  hintPop: string;
   statementLabel: string;
   statementLines: string[]; // reveal-lines; may contain <em>
   statementAttr: string;
@@ -161,6 +164,8 @@ export const ui: Record<Locale, UIDict> = {
     heroCity: "( Germany )",
     scrollCue: "( Scrollen )",
     heroResetLabel: "Buchstaben zurücksetzen",
+    hintCut: "Schneid mich los",
+    hintPop: "Lass mich platzen",
     statementLabel: "Ansatz",
     statementLines: [
       "Software",
@@ -274,6 +279,8 @@ export const ui: Record<Locale, UIDict> = {
     heroCity: "( Copenhagen )",
     scrollCue: "( Scroll )",
     heroResetLabel: "Reset letters",
+    hintCut: "Cut me loose",
+    hintPop: "Pop me",
     statementLabel: "Approach",
     statementLines: [
       "Software",

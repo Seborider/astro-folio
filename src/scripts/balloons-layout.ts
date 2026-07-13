@@ -106,6 +106,84 @@ export function riseOffset(i: number, now: number, t0: number): number {
   return RISE_BOB * envelope * Math.sin(RISE_BOUNCES * 2 * Math.PI * tau);
 }
 
+// Touch-device hint balloons: small labelled balloons that drift up behind the
+// letters (the desktop CUT/POP cursor affordance is invisible on touch). Pure
+// scheduling only — the scene launches one, then waits `delay` for the next.
+export const HINT_DELAY_MIN = 2; // seconds between launches, lower bound
+export const HINT_DELAY_MAX = 5; // upper bound
+// per-launch rise variation, [min, max] — sampled per balloon so each one
+// rises a little differently (the cut letters keep their fixed scene rates)
+export const HINT_VY: [number, number] = [0.25, 0.6]; // initial climb speed
+export const HINT_VX: [number, number] = [-0.35, 0.35]; // sideways drift
+export const HINT_LIFT: [number, number] = [0.5, 1.2]; // helium acceleration
+// no spin range: the sign hanging off the knot weighs the balloon down, so a
+// hint balloon rises upright (the scene passes spin 0 to the shared rise).
+// Instead of tumbling it meanders: a per-launch sinusoidal left/right sway.
+export const HINT_SWAY_AMP: [number, number] = [0.3, 0.9]; // sway width, root units
+export const HINT_SWAY_FREQ: [number, number] = [0.5, 1.2]; // sway rate, rad/s
+
+const pickIn = ([lo, hi]: [number, number], rand: () => number) =>
+  lo + rand() * (hi - lo);
+
+export interface HintLaunch {
+  delay: number; // seconds until the NEXT launch
+  x: number; // horizontal start, root-local units
+  label: number; // alternates 0/1 → "cut me loose" / "pop me"
+  vy: number; // initial climb speed
+  vx: number; // sideways drift
+  lift: number; // helium acceleration
+  swayAmp: number; // left/right meander width
+  swayFreq: number; // meander rate
+  swayPhase: number; // where in the cycle this balloon starts
+}
+
+/** Launch spec for hint balloon `i`; `rand` is injected so it stays testable. */
+export function hintLaunch(
+  i: number,
+  halfWidth: number,
+  rand: () => number,
+): HintLaunch {
+  return {
+    delay: HINT_DELAY_MIN + rand() * (HINT_DELAY_MAX - HINT_DELAY_MIN),
+    x: (rand() * 2 - 1) * halfWidth,
+    label: i % 2,
+    vy: pickIn(HINT_VY, rand),
+    vx: pickIn(HINT_VX, rand),
+    lift: pickIn(HINT_LIFT, rand),
+    swayAmp: pickIn(HINT_SWAY_AMP, rand),
+    swayFreq: pickIn(HINT_SWAY_FREQ, rand),
+    swayPhase: rand() * 2 * Math.PI,
+  };
+}
+
+/**
+ * Lateral sway velocity `age` seconds after launch — the derivative of a
+ * sinusoidal meander, so integrating it in the scene traces smooth left/right
+ * arcs bounded by ±amp. The scene also leans the rig by this velocity, which
+ * is what angles the string and swings the sign.
+ */
+export function hintSwayVel(
+  spec: { swayAmp: number; swayFreq: number; swayPhase: number },
+  age: number,
+): number {
+  return (
+    spec.swayAmp *
+    spec.swayFreq *
+    Math.cos(spec.swayFreq * age + spec.swayPhase)
+  );
+}
+
+/**
+ * Twist of the whole rig around its vertical (y) axis, normalized [-1, 1] —
+ * the string's torsion turns the balloon and its sign back and forth as they
+ * rise, the way a hanging tag twists in the air. Phase derives from the
+ * balloon's swayPhase so every launch twists on its own rhythm. The scene
+ * scales it to radians (balloon) and a perspective rotateY (sign).
+ */
+export function hintTurn(spec: { swayPhase: number }, age: number): number {
+  return Math.sin(1.3 * age + spec.swayPhase * 1.7);
+}
+
 export interface GlyphPlacement {
   char: string;
   line: number;
