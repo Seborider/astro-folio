@@ -169,10 +169,10 @@ const langLabelAlt = locale === "de" ? "DE" : "EN";
       setOpen(btn.getAttribute("aria-expanded") !== "true");
     });
     panel.addEventListener("click", function (e) {
-      // Close on activation of a menu option: nav links (navigation proceeds
-      // untouched, so chrome.js's wipe still runs) and the locale switch.
-      // Theme toggle / letter reload stay open — they adjust the page in place.
-      if (!e.target.closest("a, [data-locale-toggle]")) return;
+      // Only nav links navigate away — close as we leave. The locale toggle
+      // is a <button> (swaps text in place), so it never matches here and the
+      // panel stays open across the switch, mirroring the theme toggle.
+      if (!e.target.closest("a")) return;
       setOpen(false);
     });
     document.addEventListener("keydown", function (e) {
