@@ -3,15 +3,15 @@
 This file is auto-generated from "sanity dev".
 Modifications to this file are automatically discarded.
 -->
-<head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" name="viewport"/><meta content="noindex" name="robots"/><meta content="same-origin" name="referrer"/><link href="/static/favicon.ico" rel="icon" sizes="any"/><link href="/static/favicon.svg" rel="icon" type="image/svg+xml"/><link href="/static/apple-touch-icon.png" rel="apple-touch-icon"/><link href="/static/manifest.webmanifest" rel="manifest"/><title>Sanity Studio</title><script>
+<head><meta charSet="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" name="viewport"/><meta content="noindex" name="robots"/><meta content="same-origin" name="referrer"/><link href="/static/favicon.ico" rel="icon" sizes="any"/><link href="/static/favicon.svg" rel="icon" type="image/svg+xml"/><link href="/static/apple-touch-icon.png" rel="apple-touch-icon"/><link href="/static/manifest.webmanifest" rel="manifest"/><title>Sanity Studio</title><script>
 ;(function () {
-  const _caughtErrors = []
+  var _caughtErrors = []
 
-  const errorChannel = (function () {
-    const subscribers = []
+  var errorChannel = (function () {
+    var subscribers = []
 
     function publish(msg) {
-      for (const i = 0; i < subscribers.length; i += 1) {
+      for (var i = 0; i < subscribers.length; i += 1) {
         subscribers[i](msg)
       }
     }
@@ -20,7 +20,7 @@ Modifications to this file are automatically discarded.
       subscribers.push(subscriber)
 
       return function () {
-        const idx = subscribers.indexOf(subscriber)
+        var idx = subscribers.indexOf(subscriber)
 
         if (idx > -1) {
           subscribers.splice(idx, 1)
@@ -55,7 +55,7 @@ Modifications to this file are automatically discarded.
     })
   }
 
-  const ERROR_BOX_STYLE = [
+  var ERROR_BOX_STYLE = [
     'background: #fff',
     'border-radius: 6px',
     'box-sizing: border-box',
@@ -72,7 +72,7 @@ Modifications to this file are automatically discarded.
     'width: 100%',
   ].join(';')
 
-  const ERROR_CODE_STYLE = [
+  var ERROR_CODE_STYLE = [
     'color: #972E2A',
     "font-family: -apple-system-ui-monospace, 'SF Mono', Menlo, Monaco, Consolas, monospace",
     'font-size: 13px',
@@ -81,10 +81,10 @@ Modifications to this file are automatically discarded.
   ].join(';')
 
   function _renderErrorOverlay(error, params) {
-    const errorElement = document.querySelector('#__sanityError') || document.createElement('div')
-    const colno = params.event.colno
-    const lineno = params.event.lineno
-    const filename = params.event.filename
+    var errorElement = document.querySelector('#__sanityError') || document.createElement('div')
+    var colno = params.event.colno
+    var lineno = params.event.lineno
+    var filename = params.event.filename
 
     errorElement.id = '__sanityError'
     errorElement.innerHTML = [
@@ -136,7 +136,7 @@ Modifications to this file are automatically discarded.
       })
 
       _nextTick(function () {
-        const idx = _caughtErrors.indexOf(error)
+        var idx = _caughtErrors.indexOf(error)
 
         if (idx > -1) _caughtErrors.splice(idx, 1)
       })
@@ -161,7 +161,7 @@ Modifications to this file are automatically discarded.
 
     _nextTick(function () {
       _nextTick(function () {
-        const idx = _caughtErrors.indexOf(event.error)
+        var idx = _caughtErrors.indexOf(event.error)
 
         if (idx > -1) _caughtErrors.splice(idx, 1)
       })

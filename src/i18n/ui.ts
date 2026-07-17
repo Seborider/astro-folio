@@ -164,8 +164,8 @@ export const ui: Record<Locale, UIDict> = {
     heroCity: "( Germany )",
     scrollCue: "( Scrollen )",
     heroResetLabel: "Buchstaben zurücksetzen",
-    hintCut: "Schneid mich los",
-    hintPop: "Lass mich platzen",
+    hintCut: "Schneid die Ballon-Buchstaben los!",
+    hintPop: "Lass die Ballon-Buchstaben platzen!",
     statementLabel: "Ansatz",
     statementLines: [
       "Software",
@@ -279,8 +279,8 @@ export const ui: Record<Locale, UIDict> = {
     heroCity: "( Copenhagen )",
     scrollCue: "( Scroll )",
     heroResetLabel: "Reset letters",
-    hintCut: "Cut me loose",
-    hintPop: "Pop me",
+    hintCut: "Cut the balloon letters loose!",
+    hintPop: "Pop the balloon letters!",
     statementLabel: "Approach",
     statementLines: [
       "Software",
