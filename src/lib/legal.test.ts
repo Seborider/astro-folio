@@ -72,6 +72,19 @@ describe("getImpressumPage — Sanity backend", () => {
     expect(page.body).toEqual(["one", "two"]);
   });
 
+  it("converts newlines in body entries to <br> (Studio textarea line breaks)", async () => {
+    mocks.sanityConfigured = true;
+    mocks.sanityFetch.mockResolvedValue({
+      body: ["Sebo Mayer\nMusterstraße 1\r\n12345 Musterstadt", "no breaks"],
+    });
+
+    const page = await getImpressumPage("de");
+    expect(page.body).toEqual([
+      "Sebo Mayer<br>Musterstraße 1<br>12345 Musterstadt",
+      "no breaks",
+    ]);
+  });
+
   it("keeps the per-field default when a doc field is null", async () => {
     mocks.sanityConfigured = true;
     mocks.sanityFetch.mockResolvedValue({ title: "Imprint", body: null });

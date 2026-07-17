@@ -160,6 +160,11 @@ history — treat them as checklist items):
   in `<body>` (after the synchronous script chain); moving it above the scripts
   brings the flicker back. Self-releasing: non-supporting browsers ignore the
   link, and render-blocking always ends when parsing does.
+- **Legal body line breaks.** The legal `body` entries are plain textareas,
+  not Portable Text; the loader (`src/lib/legal.ts`) converts typed newlines
+  to `<br>`. Author multi-line content (an address) as ONE entry with Enter
+  between lines — separate array entries render as separate paragraphs with
+  the full paragraph gap.
 - **CMS strings are trusted HTML.** Bio/quote/statement lines, legal bodies
   and technology SVGs render via `set:html` (and swap via `innerHTML` in
   i18n.js) — deliberately unsanitized. Anyone with Studio write access can

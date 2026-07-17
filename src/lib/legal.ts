@@ -86,7 +86,10 @@ function legalLoader(
     const doc = await sanityFetch<Record<string, unknown> | null>(
       legalQuery(type, locale),
     );
-    return withDefaults(defaults[locale], doc);
+    const page = withDefaults(defaults[locale], doc);
+    // Studio body entries are plain textareas: an editor's Enter is a "\n"
+    // that HTML would collapse to a space. Preserve it as a line break.
+    return { ...page, body: page.body.map((p) => p.replace(/\r?\n/g, "<br>")) };
   });
 }
 
