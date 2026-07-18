@@ -53,7 +53,11 @@ A doc edit isn't optional follow-up — it ships with the code.
   `.line > span`), `data-scramble`. `core.js` wires them on every page.
 - Internal links must start with `/` so `chrome.js` applies the wipe transition.
   Build them with `localePath(locale, "/work")` from `src/i18n` so they stay in
-  the visitor's language.
+  the visitor's language. **Trailing slash is always-on** (`trailingSlash:
+  "always"` in `astro.config.ts`): `localePath`/`altLocalePath` and the
+  canonical/hreflang builders in `Base.astro` emit trailing-slash URLs (via
+  `withTrailingSlash`) so links resolve 200 with no redirect and match the
+  sitemap. `chrome.js` compares slash-insensitively, so the wipe is unaffected.
 - Render media through `Media.astro` (shows `<img>` when a src exists, else the
   labelled placeholder) so layout is identical with or without CMS images.
 
@@ -81,7 +85,12 @@ A doc edit isn't optional follow-up — it ships with the code.
   rail to jump, drag the thumb to scroll (wired in core.js; the rail takes
   pointer input only when the page scrolls). The /about technologies strip
   hides its native bar and mirrors the same thumb, with the same click/drag
-  behavior, via `.tech-scroll` + an inline script.
+  behavior, via `.tech-scroll` + an inline script. Reel-tile autoplay videos
+  (`video[data-autoplay]`, the only autoplay media, all on the home page) are
+  gated in `home.js` behind an IntersectionObserver — a clip only plays/streams
+  once it scrolls into view (no cold-load streaming) and never under
+  reduced-motion. `Media.astro` still marks them `data-autoplay` (not the native
+  attribute) with `poster={src}`, so nothing streams on parse.
 - **i18n.** Header EN/DE switcher (immediate, same-page), localized chrome and
   content, `t(locale)` UI strings; `public/scripts/i18n.js` handles the
   client-side switch wiring.

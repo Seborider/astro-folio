@@ -3,7 +3,7 @@
 The code is done: every page has a unique title + description, canonical +
 hreflang (DE/EN/x-default), Open Graph + Twitter cards, JSON-LD (Person +
 WebSite on home, CreativeWork per project), a sitemap, and a robots.txt.
-None of that makes you *appear* in Google by itself. Below is what only you
+None of that makes you _appear_ in Google by itself. Below is what only you
 can do — in order of impact.
 
 ---
@@ -48,10 +48,11 @@ the fallback for everything else.
 **Where:** https://search.google.com/search-console → "Add property" → enter
 your domain.
 
-**Why:** this is how you *tell Google your site exists*, see which queries you
+**Why:** this is how you _tell Google your site exists_, see which queries you
 rank for, and find indexing problems. Without it you're invisible and blind.
 
 Steps:
+
 1. **Verify ownership.** Easiest for most hosts: the "Domain" property + a DNS
    TXT record (your host's DNS panel). Alternative: "URL prefix" property +
    upload an HTML file or add a `<meta>` tag (drop it into `Base.astro`'s
@@ -87,6 +88,7 @@ Each project page's SEO is built from CMS/content fields. Make them count:
 - **`yr`** → becomes `dateCreated`.
 
 Also worth doing in the Studio:
+
 - **Add your GitHub** (and any other profiles) to site settings → socials.
   Those feed `Person.sameAs` in the home JSON-LD, which is how Google links
   this site to your identity across the web. You currently have LinkedIn +
@@ -107,12 +109,13 @@ days to a few weeks**, sometimes longer for a brand-new domain with no
 history. There is no button that makes it instant. A new site with zero
 backlinks can take a month+ to show up for anything but your own name.
 
-**What this repo work actually does:** it removes the *technical* reasons
+**What this repo work actually does:** it removes the _technical_ reasons
 Google might ignore or misread your pages — duplicate URLs, missing
 descriptions, wrong language targeting, unparseable structure, undiscoverable
-pages. This is table stakes, not an advantage. It gets you *eligible*.
+pages. This is table stakes, not an advantage. It gets you _eligible_.
 
 **What actually moves rankings (and is NOT code):**
+
 - **Content** — real, specific, text-rich pages. Google ranks words; a
   portfolio that's mostly images and motion has little for it to read. Your
   project `intro`/`overview` text matters more than any meta tag.
@@ -130,5 +133,5 @@ them.
 
 **Don't expect** to outrank your name twins or industry sites quickly. Realistic
 first win: ranking #1 for **"Sebo Mayer"** (your own name) within a few weeks.
-Generic terms like "web developer copenhagen" are a long game of content +
+Generic terms like "web developer Tittmoning" are a long game of content +
 backlinks.
