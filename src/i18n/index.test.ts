@@ -6,6 +6,7 @@ import {
   localePath,
   altLocalePath,
   stripTrailingSlash,
+  withTrailingSlash,
   localeStaticPaths,
   pageTitle,
   BRAND,
@@ -45,45 +46,61 @@ describe("otherLocale", () => {
 });
 
 describe("localePath", () => {
-  it("leaves paths unprefixed for the default (de) locale", () => {
-    expect(localePath("de", "/work")).toBe("/work");
+  it("leaves the de locale unprefixed but adds a trailing slash", () => {
+    expect(localePath("de", "/work")).toBe("/work/");
     expect(localePath("de", "/")).toBe("/");
   });
 
-  it("prefixes /en for the en locale", () => {
-    expect(localePath("en", "/work")).toBe("/en/work");
+  it("prefixes /en and adds a trailing slash for the en locale", () => {
+    expect(localePath("en", "/work")).toBe("/en/work/");
   });
 
-  it("maps the root to /en (not /en/) for en", () => {
-    expect(localePath("en", "/")).toBe("/en");
+  it("maps the root to /en/ for en", () => {
+    expect(localePath("en", "/")).toBe("/en/");
+  });
+
+  it("does not double a slash on an already-slashed path", () => {
+    expect(localePath("de", "/work/")).toBe("/work/");
+    expect(localePath("en", "/work/")).toBe("/en/work/");
   });
 });
 
 describe("altLocalePath", () => {
-  it("switches de pages to their /en twin", () => {
-    expect(altLocalePath("de", "/work")).toBe("/en/work");
-    expect(altLocalePath("de", "/")).toBe("/en");
+  it("switches de pages to their trailing-slashed /en twin", () => {
+    expect(altLocalePath("de", "/work")).toBe("/en/work/");
+    expect(altLocalePath("de", "/")).toBe("/en/");
   });
 
-  it("switches en pages back to de (strips the /en prefix)", () => {
-    expect(altLocalePath("en", "/en/work")).toBe("/work");
+  it("switches en pages back to de with a trailing slash", () => {
+    expect(altLocalePath("en", "/en/work")).toBe("/work/");
     expect(altLocalePath("en", "/en")).toBe("/");
   });
 
-  it("normalizes a trailing slash before switching", () => {
-    expect(altLocalePath("de", "/work/")).toBe("/en/work");
-    expect(altLocalePath("en", "/en/work/")).toBe("/work");
+  it("normalizes a trailing slash before switching, then re-adds it", () => {
+    expect(altLocalePath("de", "/work/")).toBe("/en/work/");
+    expect(altLocalePath("en", "/en/work/")).toBe("/work/");
   });
 
-  it("preserves the bare root slash (does not strip it)", () => {
-    expect(altLocalePath("de", "/")).toBe("/en");
+  it("preserves the bare root slash", () => {
+    expect(altLocalePath("de", "/")).toBe("/en/");
   });
 
   it("round-trips a path through both locales", () => {
-    const de = "/work/halcyon";
+    const de = "/work/halcyon/";
     const en = altLocalePath("de", de);
-    expect(en).toBe("/en/work/halcyon");
+    expect(en).toBe("/en/work/halcyon/");
     expect(altLocalePath("en", en)).toBe(de);
+  });
+});
+
+describe("withTrailingSlash", () => {
+  it("adds a slash when missing", () => {
+    expect(withTrailingSlash("/work")).toBe("/work/");
+    expect(withTrailingSlash("/en/work")).toBe("/en/work/");
+  });
+  it("leaves an already-slashed path (and the root) untouched", () => {
+    expect(withTrailingSlash("/work/")).toBe("/work/");
+    expect(withTrailingSlash("/")).toBe("/");
   });
 });
 

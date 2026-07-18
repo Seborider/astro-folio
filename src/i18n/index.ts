@@ -38,10 +38,17 @@ export function pick<T>(v: Localized<T>, locale: Locale): T {
 export const altOf = (primary: string, alt: string): string | undefined =>
   primary === alt ? undefined : alt;
 
-/** Prefix an internal path for a locale. Always starts with "/" (chrome.js wipe). */
+/** Ensure a path ends with "/" (canonical trailing-slash form; root stays "/").
+ *  trailingSlash:"always" in astro.config makes every route serve at its
+ *  slashed URL — canonical/hreflang/internal links must match to avoid a 3xx. */
+export const withTrailingSlash = (path: string): string =>
+  path.endsWith("/") ? path : path + "/";
+
+/** Prefix an internal path for a locale. Always starts with "/" (chrome.js wipe)
+ *  and ends with "/" (trailingSlash:"always" — links hit the 200 directly). */
 export function localePath(locale: Locale, path: string): string {
-  if (locale === DEFAULT_LOCALE) return path;
-  return path === "/" ? "/en" : `/en${path}`;
+  const p = locale === DEFAULT_LOCALE ? path : path === "/" ? "/en" : `/en${path}`;
+  return withTrailingSlash(p);
 }
 
 /** Drop trailing slashes (keep root "/") so build-time and client paths compare equal. */
@@ -51,13 +58,14 @@ export const stripTrailingSlash = (path: string): string =>
 /**
  * The same page in the OTHER locale — for the header switcher and hreflang.
  * Normalizes a trailing slash first (build-time Astro.url.pathname may carry
- * one; chrome.js compares location.pathname raw).
+ * one; chrome.js compares location.pathname raw), then re-adds it so the
+ * emitted hreflang matches the canonical trailing-slash URL.
  */
 export function altLocalePath(locale: Locale, pathname: string): string {
   const clean = stripTrailingSlash(pathname);
   if (locale === "en") {
     if (clean === "/en") return "/";
-    return clean.startsWith("/en/") ? clean.slice(3) : clean;
+    return withTrailingSlash(clean.startsWith("/en/") ? clean.slice(3) : clean);
   }
   return localePath("en", clean);
 }

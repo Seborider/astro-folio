@@ -6,6 +6,8 @@ export default defineConfig({
   // sitemap emits sitemap-index.xml at build with hreflang alternates; DE is
   // the unprefixed default, EN lives under /en/ (mirrors the i18n block below).
   integrations: [
+    // Sitemap follows the top-level trailingSlash:"always" below, so its URLs
+    // equal the canonical trailing-slash URLs (no 3xx on submitted URLs).
     sitemap({
       i18n: {
         defaultLocale: "de",
@@ -26,6 +28,10 @@ export default defineConfig({
   },
   // Fully static output — no server/database required.
   output: "static",
+  // Every route serves at its trailing-slash URL (directory build format emits
+  // /work/index.html → /work/). Canonical, hreflang and internal links are all
+  // built with a trailing slash (src/i18n) so they resolve 200 with no redirect.
+  trailingSlash: "always",
   // No Astro image processing: Media.astro renders raw <img>/<video> URLs
   // (Sanity CDN or local paths). The passthrough service skips Sharp so the
   // build needs no native image dependency. Switch to the default Sharp

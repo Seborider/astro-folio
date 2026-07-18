@@ -22,7 +22,7 @@ import "@fontsource/space-mono/400-italic.css";
 import "@fontsource/space-mono/700.css";
 import "../styles/styles.css";
 import Header from "../components/Header.astro";
-import { altOf, BRAND, DEFAULT_LOCALE, altLocalePath, stripTrailingSlash, otherLocale, type Locale } from "../i18n";
+import { altOf, BRAND, DEFAULT_LOCALE, altLocalePath, withTrailingSlash, otherLocale, type Locale } from "../i18n";
 import { t } from "../i18n/ui";
 import { serializeJsonLd } from "../lib/jsonld";
 
@@ -51,16 +51,18 @@ const tr = t(locale);
 const trA = t(otherLocale(locale));
 
 // hreflang pair — this page in both locales (slugs are shared across locales).
-// Normalize the trailing slash so self and alternate URLs match in style.
-const path = stripTrailingSlash(Astro.url.pathname);
-const dePath = locale === "de" ? path : altLocalePath("en", path);
-const enPath = locale === "en" ? path : altLocalePath("de", path);
+// Force the trailing-slash form so self, canonical and alternate URLs all match
+// the served (200) URL under trailingSlash:"always".
+const path = withTrailingSlash(Astro.url.pathname);
+const dePath = locale === "de" ? path : altLocalePath("en", Astro.url.pathname);
+const enPath = locale === "en" ? path : altLocalePath("de", Astro.url.pathname);
 
 // Absolute URLs for canonical + social cards. new URL() returns an absolute
-// `image` (Sanity CDN) unchanged and resolves a site-relative one ("/og.png",
-// local covers) against Astro.site. /og.png is the site-wide fallback card.
+// `image` (Sanity CDN) unchanged and resolves a site-relative one (local covers)
+// against Astro.site. Fallback is the shipped favicon so shares never 404;
+// swap to a real 1200×630 /og.png once designed (see SEO-MANUAL-STEPS.md).
 const canonical = new URL(path, Astro.site);
-const shareImage = new URL(image ?? "/og.png", Astro.site);
+const shareImage = new URL(image ?? "/favicon.svg", Astro.site);
 ---
 
 <!doctype html>
@@ -104,8 +106,8 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
         <script type="application/ld+json" set:html={serializeJsonLd(node)} />
       ))
     }
-    <link rel="alternate" hreflang="de" href={new URL(dePath, Astro.site)} />
-    <link rel="alternate" hreflang="en" href={new URL(enPath, Astro.site)} />
+    <link rel="alternate" hreflang="de-DE" href={new URL(dePath, Astro.site)} />
+    <link rel="alternate" hreflang="en-GB" href={new URL(enPath, Astro.site)} />
     <link
       rel="alternate"
       hreflang="x-default"
@@ -284,16 +286,12 @@ const shareImage = new URL(image ?? "/og.png", Astro.site);
     <script is:inline src="/vendor/ScrollTrigger.min.js"></script>
     <script is:inline src="/vendor/lenis.min.js"></script>
 
-    <!-- autoplay looping media only when motion is allowed (WCAG 2.2.2).
-         Media.astro marks videos data-autoplay (not the native attribute) so
-         nothing plays on parse; under reduced-motion the poster frame stays. -->
-    <script is:inline>
-      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        document.querySelectorAll("video[data-autoplay]").forEach(function (v) {
-          v.play().catch(function () {});
-        });
-      }
-    </script>
+    <!-- autoplay looping media (WCAG 2.2.2): Media.astro marks videos
+         data-autoplay (not the native attribute) so nothing plays or streams on
+         parse; the poster frame (poster={src}) holds. home.js gates playback
+         behind an IntersectionObserver so a clip only streams once it scrolls
+         into view (the reel tiles are the only data-autoplay videos, all below
+         the fold). Under reduced-motion home.js leaves them paused. -->
 
     <!-- app (order matters) -->
     <script is:inline src="/scripts/webgl-bg.js"></script>

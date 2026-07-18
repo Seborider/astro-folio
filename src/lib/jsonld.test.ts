@@ -3,6 +3,9 @@ import {
   personSchema,
   webSiteSchema,
   creativeWorkSchema,
+  profilePageSchema,
+  collectionPageSchema,
+  breadcrumbSchema,
   serializeJsonLd,
 } from "./jsonld";
 
@@ -41,6 +44,107 @@ describe("personSchema", () => {
     expect(personSchema({ ...base, image: "https://x.test/p.png" }).image).toBe(
       "https://x.test/p.png",
     );
+  });
+
+  it("adds alternateName only when set", () => {
+    expect("alternateName" in personSchema(base)).toBe(false);
+    expect(
+      personSchema({ ...base, alternateName: "Sebastian Mayer-Murschall" })
+        .alternateName,
+    ).toBe("Sebastian Mayer-Murschall");
+  });
+
+  it("builds a PostalAddress node when address is given, else omits it", () => {
+    expect("address" in personSchema(base)).toBe(false);
+    const p = personSchema({
+      ...base,
+      address: { locality: "Tittmoning", region: "Bavaria", country: "DE" },
+    });
+    expect(p.address).toEqual({
+      "@type": "PostalAddress",
+      addressLocality: "Tittmoning",
+      addressRegion: "Bavaria",
+      addressCountry: "DE",
+    });
+  });
+
+  it("builds an EducationalOrganization for alumniOf only when set", () => {
+    expect("alumniOf" in personSchema(base)).toBe(false);
+    expect(personSchema({ ...base, alumniOf: "HTL Salzburg" }).alumniOf).toEqual({
+      "@type": "EducationalOrganization",
+      name: "HTL Salzburg",
+    });
+  });
+});
+
+describe("profilePageSchema", () => {
+  it("wraps a mainEntity with page metadata", () => {
+    const person = personSchema({
+      name: "Sebo Mayer",
+      url: "https://x.test/",
+      jobTitle: "Web & Mobile Developer",
+    });
+    const page = profilePageSchema({
+      url: "https://x.test/about/",
+      inLanguage: "de",
+      mainEntity: person,
+    });
+    expect(page["@type"]).toBe("ProfilePage");
+    expect(page.url).toBe("https://x.test/about/");
+    expect(page.inLanguage).toBe("de");
+    expect(page.mainEntity).toBe(person);
+  });
+});
+
+describe("collectionPageSchema", () => {
+  it("builds an ordered ItemList as mainEntity", () => {
+    const page = collectionPageSchema({
+      name: "Projects",
+      url: "https://x.test/work/",
+      inLanguage: "en",
+      items: [
+        { name: "Alpha", url: "https://x.test/work/alpha/" },
+        { name: "Beta", url: "https://x.test/work/beta/" },
+      ],
+    });
+    expect(page["@type"]).toBe("CollectionPage");
+    const list = page.mainEntity as {
+      "@type": string;
+      itemListElement: unknown[];
+    };
+    expect(list["@type"]).toBe("ItemList");
+    expect(list.itemListElement).toEqual([
+      {
+        "@type": "ListItem",
+        position: 1,
+        url: "https://x.test/work/alpha/",
+        name: "Alpha",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        url: "https://x.test/work/beta/",
+        name: "Beta",
+      },
+    ]);
+  });
+});
+
+describe("breadcrumbSchema", () => {
+  it("numbers crumbs from 1 with item URLs", () => {
+    const bc = breadcrumbSchema([
+      { name: "Sebo Mayer", url: "https://x.test/" },
+      { name: "Projects", url: "https://x.test/work/" },
+      { name: "Alpha", url: "https://x.test/work/alpha/" },
+    ]);
+    expect(bc["@type"]).toBe("BreadcrumbList");
+    expect(bc.itemListElement).toHaveLength(3);
+    expect(bc.itemListElement[2]).toEqual({
+      "@type": "ListItem",
+      position: 3,
+      name: "Alpha",
+      item: "https://x.test/work/alpha/",
+    });
   });
 });
 
@@ -90,6 +194,16 @@ describe("creativeWorkSchema", () => {
     expect(full.description).toBe("A fizzy thing");
     expect(full.image).toBe("https://cdn.test/c.png");
     expect(full.dateCreated).toBe("2024");
+  });
+
+  it("joins keywords when present, omits them when empty", () => {
+    expect("keywords" in creativeWorkSchema(base)).toBe(false);
+    expect("keywords" in creativeWorkSchema({ ...base, keywords: [] })).toBe(
+      false,
+    );
+    expect(
+      creativeWorkSchema({ ...base, keywords: ["Astro", "GSAP"] }).keywords,
+    ).toBe("Astro, GSAP");
   });
 });
 

@@ -50,6 +50,33 @@
     }
   }
 
+  /* ---------------- gated autoplay ----------------
+     The reel-tile clips are muted loops below the fold. Playing them all on
+     load (the old Base.astro loop) force-streamed every clip on a cold visit.
+     Gate each behind an IntersectionObserver: play only while it is in view,
+     pause when it leaves — keeps the autoplay feel, no cold-load streaming.
+     Reduced motion → never play (the poster frame stays). */
+  if (!reduce) {
+    const vids = document.querySelectorAll("video[data-autoplay]");
+    if (vids.length) {
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (en) {
+              if (en.isIntersecting) en.target.play().catch(function () {});
+              else en.target.pause();
+            });
+          },
+          { rootMargin: "200px 0px" }, // warm up just before it enters
+        );
+        vids.forEach(function (v) { io.observe(v); });
+      } else {
+        // No IO (old browser): fall back to the previous play-all behaviour.
+        vids.forEach(function (v) { v.play().catch(function () {}); });
+      }
+    }
+  }
+
   // The showreel overlay wiring now lives in core.js (shared with the project
   // detail page); it binds every element carrying data-video, including the
   // reel tiles below.

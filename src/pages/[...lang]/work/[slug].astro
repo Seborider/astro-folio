@@ -7,7 +7,7 @@ import PheroCanvas from "../../../components/PheroCanvas.astro";
 import { getProjects, neighbours } from "../../../lib/projects";
 import { altOf, BRAND, DEFAULT_LOCALE, LOCALES, localePath, otherLocale, pageTitle } from "../../../i18n";
 import { t } from "../../../i18n/ui";
-import { creativeWorkSchema } from "../../../lib/jsonld";
+import { breadcrumbSchema, creativeWorkSchema } from "../../../lib/jsonld";
 
 export async function getStaticPaths() {
   // Locale cross-product: each project page exists at /work/<slug> (de)
@@ -65,15 +65,25 @@ const metaRows: [string, string, string, string][] = [
     ? [[tr.metaTech, p.technologies.join(", "), trA.metaTech, pA.technologies.join(", ")] as [string, string, string, string]]
     : []),
 ];
-const jsonLd = creativeWorkSchema({
-  name: p.name,
-  url: new URL(localePath(locale, `/work/${p.id}`), Astro.site).href,
-  description: p.intro,
-  image: p.cover,
-  dateCreated: p.yr,
-  inLanguage: locale,
-  author: { name: BRAND, url: new URL(localePath(locale, "/"), Astro.site).href },
-});
+const homeHref = new URL(localePath(locale, "/"), Astro.site).href;
+const projectHref = new URL(localePath(locale, `/work/${p.id}`), Astro.site).href;
+const jsonLd = [
+  creativeWorkSchema({
+    name: p.name,
+    url: projectHref,
+    description: p.intro,
+    image: p.cover,
+    dateCreated: p.yr,
+    keywords: p.technologies,
+    inLanguage: locale,
+    author: { name: BRAND, url: homeHref },
+  }),
+  breadcrumbSchema([
+    { name: BRAND, url: homeHref },
+    { name: tr.workTitle, url: new URL(localePath(locale, "/work"), Astro.site).href },
+    { name: p.name, url: projectHref },
+  ]),
+];
 ---
 
 <Base
@@ -138,16 +148,16 @@ const jsonLd = creativeWorkSchema({
     data-screen-label={tr.sections.projectInfo}
     data-screen-label-alt={altOf(tr.sections.projectInfo, trA.sections.projectInfo)}
   >
-    <div class="pd-info__meta">
+    <dl class="pd-info__meta">
       {
         metaRows.map(([k, v, kA, vA]) => (
           <div class="pd-meta-row">
-            <span class="k" data-i18n-alt={altOf(k, kA)}>{k}</span>
-            <span class="v" data-i18n-alt={altOf(v, vA)}>{v}</span>
+            <dt class="k" data-i18n-alt={altOf(k, kA)}>{k}</dt>
+            <dd class="v" data-i18n-alt={altOf(v, vA)}>{v}</dd>
           </div>
         ))
       }
-    </div>
+    </dl>
     <div class="pd-info__body">
       {p.overview.map((para, i) => <p data-i18n-alt={altOf(para, pA.overview[i] ?? para)}>{para}</p>)}
     </div>

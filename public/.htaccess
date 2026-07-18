@@ -1,0 +1,43 @@
+# .htaccess — served from the site web root (Astro copies public/ into dist/).
+# Hostinger runs Apache and honours this file. Everything is wrapped in
+# <IfModule> so a host without a given module degrades to no-op instead of 500.
+# See SEO-MANUAL-STEPS.md for what each block replaces and how to verify it.
+
+# --- Custom error page (finding #1) --------------------------------------
+# Astro emits /404.html at the build root.
+ErrorDocument 404 /404.html
+
+# --- www -> apex 301 (finding #6) ----------------------------------------
+# Canonical host is the apex (astro.config.ts `site` = https://sebo.zone).
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} ^www\.sebo\.zone$ [NC]
+  RewriteRule ^ https://sebo.zone%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# --- Security headers -----------------------------------------------------
+<IfModule mod_headers.c>
+  # Force HTTPS for a year (browsers apply this only over HTTPS anyway).
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  # No MIME sniffing.
+  Header always set X-Content-Type-Options "nosniff"
+  # Clickjacking guard. Only frame-ancestors is set — a fuller CSP would have to
+  # allowlist the inline motion scripts + WebGL, so it is deliberately omitted.
+  Header always set Content-Security-Policy "frame-ancestors 'self'"
+  # Leak only the origin cross-site.
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  # Drop powerful features the site never uses (also opts out of FLoC).
+  Header always set Permissions-Policy "geolocation=(), camera=(), microphone=(), browsing-topics=()"
+</IfModule>
+
+# --- Cache headers --------------------------------------------------------
+# /_astro/* is content-hashed by the build → safe to cache forever, immutable.
+# /vendor/ and /scripts/ are NOT hashed (pinned by hand) → short, revalidated.
+<IfModule mod_setenvif.c>
+  SetEnvIf Request_URI "^/_astro/"          astro_hashed
+  SetEnvIf Request_URI "^/(vendor|scripts)/" static_pinned
+</IfModule>
+<IfModule mod_headers.c>
+  Header set Cache-Control "public, max-age=31536000, immutable" env=astro_hashed
+  Header set Cache-Control "public, max-age=86400, must-revalidate" env=static_pinned
+</IfModule>

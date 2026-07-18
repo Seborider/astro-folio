@@ -6,6 +6,7 @@ import PheroCanvas from "../../components/PheroCanvas.astro";
 import { getProjects, tagUnion } from "../../lib/projects";
 import { altOf, localePath, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
+import { collectionPageSchema } from "../../lib/jsonld";
 
 export function getStaticPaths() {
   return localeStaticPaths();
@@ -25,6 +26,16 @@ const tags = tagUnion(projects);
 const altTagLabels = new Map(
   tagUnion(projectsAlt).map((tag) => [tag.token, tag.label]),
 );
+// CollectionPage + ItemList — projects arrive already sorted by `order`.
+const jsonLd = collectionPageSchema({
+  name: tr.workTitle,
+  url: new URL(localePath(locale, "/work"), Astro.site).href,
+  inLanguage: locale,
+  items: projects.map((p) => ({
+    name: p.name,
+    url: new URL(localePath(locale, `/work/${p.id}`), Astro.site).href,
+  })),
+});
 ---
 
 <Base
@@ -32,6 +43,7 @@ const altTagLabels = new Map(
   description={tr.workDescription}
   titleAlt={trA.workMetaTitle}
   locale={locale}
+  jsonLd={jsonLd}
 >
   <!-- PAGE HERO -->
   <section

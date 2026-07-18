@@ -719,9 +719,10 @@ html.loader-seen .loader {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center; /* centre the bars in the enlarged hit box */
     gap: 6px;
-    width: 28px;
-    height: 28px;
+    width: 44px; /* ≥44×44 tap target (WCAG 2.5.8); bars stay 22×2 below */
+    height: 44px;
     padding: 0;
     background: none;
     border: 0;
@@ -786,12 +787,14 @@ html.loader-seen .loader {
     gap: 32px;
   }
   .nav-panel__controls .theme-toggle,
-  .nav-panel__controls .lang-switch {
+  .nav-panel__controls .lang-switch,
+  .nav-panel__controls .phero__reset {
     font-family: var(--mono);
     font-size: 13px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--ink);
+    padding: 15px 10px; /* ≥44px tap target in the drawer (WCAG 2.5.8) */
   }
   .nav-panel__controls .theme-toggle {
     font-size: 16px;
@@ -1025,6 +1028,12 @@ html.loader-seen .loader {
   flex: 1;
   height: 1px;
   background: var(--line);
+}
+/* "Ansatz" / "Stimmen" section labels are <h2> for document outline; strip the
+   UA heading styling so they read exactly like the meta <span> row they sit in. */
+.statement__index h2 {
+  margin: 0;
+  font: inherit;
 }
 .statement__quote {
   font-family: var(--serif);
@@ -2019,6 +2028,7 @@ details.idx-list[open]::details-content {
   grid-column: span 4;
   display: flex;
   flex-direction: column;
+  margin: 0; /* <dl> — drop the UA block margin */
 }
 .pd-meta-row {
   display: flex;
@@ -2040,6 +2050,7 @@ details.idx-list[open]::details-content {
   color: var(--ink-dim);
   text-align: right;
   max-width: 24ch;
+  margin: 0; /* <dd> — drop the UA inline-start indent */
 }
 .pd-info__body {
   grid-column: 6 / 12;

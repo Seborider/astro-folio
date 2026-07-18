@@ -1,0 +1,29 @@
+# Sebo Mayer — Web & Mobile Developer
+
+> Portfolio of Sebo Mayer (Sebastian Mayer-Murschall), a web & mobile developer
+> based in Tittmoning, Bavaria, Germany, building fast, animated interfaces.
+> The site is bilingual: German is the default at the root, English lives under
+> /en/.
+
+## Pages
+
+- [Home](https://sebo.zone/): hero, approach statement, selected-work reel, work list.
+- [Projects](https://sebo.zone/work/): project grid with a tag-driven filter.
+- [About](https://sebo.zone/about/): bio, capabilities, process, technologies.
+- [Archive](https://sebo.zone/archive/): full chronological index of projects.
+- [Legal notice / Impressum](https://sebo.zone/impressum/)
+- [Privacy / Datenschutz](https://sebo.zone/datenschutz/)
+
+English equivalents are served at the same paths under /en/ (e.g.
+https://sebo.zone/en/work/).
+
+## Stack
+
+Astro (static output), GSAP, Lenis, WebGL/Three.js. Fonts and JS libraries are
+self-hosted (no third-party CDNs) to respect German data-protection law (DSGVO).
+
+## Notes
+
+The project list, long-form bio, and contact details are still being finalized
+in the CMS; this file will be expanded with the real project entries and contact
+address once that content is published.

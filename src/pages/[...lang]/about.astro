@@ -4,8 +4,9 @@ import Footer from "../../components/Footer.astro";
 import Media from "../../components/Media.astro";
 import PheroCanvas from "../../components/PheroCanvas.astro";
 import { getAboutPage } from "../../lib/site";
-import { altOf, localeStaticPaths, otherLocale } from "../../i18n";
+import { altOf, BRAND, localePath, localeStaticPaths, otherLocale } from "../../i18n";
 import { t } from "../../i18n/ui";
+import { personSchema, profilePageSchema } from "../../lib/jsonld";
 
 export function getStaticPaths() {
   return localeStaticPaths();
@@ -19,6 +20,18 @@ const about = await getAboutPage(locale);
 const aboutAlt = await getAboutPage(alt);
 const capRange = `( 01 — ${String(about.capabilities.length).padStart(2, "0")} )`;
 const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
+const aboutUrl = new URL(localePath(locale, "/about"), Astro.site).href;
+const jsonLd = profilePageSchema({
+  url: aboutUrl,
+  inLanguage: locale,
+  mainEntity: personSchema({
+    name: BRAND,
+    alternateName: "Sebastian Mayer-Murschall",
+    url: new URL(localePath(locale, "/"), Astro.site).href,
+    jobTitle: tr.heroRole,
+    address: { locality: "Tittmoning", region: "Bavaria", country: "DE" },
+  }),
+});
 ---
 
 <Base
@@ -26,6 +39,7 @@ const procRange = `( 01 — ${String(about.process.length).padStart(2, "0")} )`;
   description={about.lede}
   titleAlt={aboutAlt.metaTitle}
   locale={locale}
+  jsonLd={jsonLd}
 >
   <!-- PAGE HERO -->
   <section

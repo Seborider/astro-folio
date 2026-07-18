@@ -34,8 +34,10 @@ const homeUrl = new URL(localePath(locale, "/"), Astro.site).href;
 const jsonLd = [
   personSchema({
     name: BRAND,
+    alternateName: "Sebastian Mayer-Murschall",
     url: homeUrl,
     jobTitle: tr.heroRole,
+    address: { locality: "Tittmoning", region: "Bavaria", country: "DE" },
     sameAs: settings.socials.map((s) => s.url),
   }),
   webSiteSchema({ name: BRAND, url: homeUrl, inLanguage: locale }),
@@ -111,9 +113,9 @@ const showPlayCta = Boolean(home.showreelVideo) || !hasTileVideo;
     data-screen-label-alt={altOf(tr.sections.statement, trA.sections.statement)}
   >
     <div class="statement__index meta">
-      <span>( 01 )</span><span class="rule"></span><span
+      <span>( 01 )</span><span class="rule"></span><h2
         data-i18n-alt={altOf(tr.statementLabel, trA.statementLabel)}
-        >{tr.statementLabel}</span
+        >{tr.statementLabel}</h2
       >
     </div>
     <blockquote class="statement__quote reveal-lines">
@@ -223,7 +225,7 @@ const showPlayCta = Boolean(home.showreelVideo) || !hasTileVideo;
         <div class="statement__index meta" style="margin-bottom:40px">
           <span>( 03 )</span>
           <span class="rule" />
-          <span data-i18n-alt={altOf(tr.sections.voices, trA.sections.voices)}>{tr.sections.voices}</span>
+          <h2 data-i18n-alt={altOf(tr.sections.voices, trA.sections.voices)}>{tr.sections.voices}</h2>
         </div>
         {home.testimonials.map((tm, i) => (
           <figure class="voices__item" data-reveal>

@@ -276,7 +276,7 @@ export const ui: Record<Locale, UIDict> = {
     heroMetaB: "DEVELOPMENT",
     heroMetaC: "PORTFOLIO",
     heroMetaYear: "( 2026 )",
-    heroCity: "( Copenhagen )",
+    heroCity: "( Germany )",
     scrollCue: "( Scroll )",
     heroResetLabel: "Reset letters",
     hintCut: "Cut the balloon letters loose!",
