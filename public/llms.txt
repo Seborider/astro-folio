@@ -22,8 +22,3 @@ https://sebo.zone/en/work/).
 Astro (static output), GSAP, Lenis, WebGL/Three.js. Fonts and JS libraries are
 self-hosted (no third-party CDNs) to respect German data-protection law (DSGVO).
 
-## Notes
-
-The project list, long-form bio, and contact details are still being finalized
-in the CMS; this file will be expanded with the real project entries and contact
-address once that content is published.
