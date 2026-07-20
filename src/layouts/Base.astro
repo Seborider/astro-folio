@@ -59,10 +59,9 @@ const enPath = locale === "en" ? path : altLocalePath("de", Astro.url.pathname);
 
 // Absolute URLs for canonical + social cards. new URL() returns an absolute
 // `image` (Sanity CDN) unchanged and resolves a site-relative one (local covers)
-// against Astro.site. Fallback is the shipped favicon so shares never 404;
-// swap to a real 1200×630 /og.png once designed (see SEO-MANUAL-STEPS.md).
+// against Astro.site. Fallback is the shipped 1200×630 /og.png share card.
 const canonical = new URL(path, Astro.site);
-const shareImage = new URL(image ?? "/favicon.svg", Astro.site);
+const shareImage = new URL(image ?? "/og.png", Astro.site);
 ---
 
 <!doctype html>
