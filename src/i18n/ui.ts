@@ -289,7 +289,7 @@ export const ui: Record<Locale, UIDict> = {
       "<em>people</em>.",
     ],
     statementAttr:
-      "A practice across brand, motion and editorial — built on slow looking, sharp typography, and the belief that restraint is its own kind of noise.",
+      "From interface to architecture, from web to mobile, my work is built on clean craft, continuous learning, and the belief that restraint is its own kind of noise.",
     reelHeading: "Selected motion",
     playReel: "Play showreel ",
     playVideo: "Play video ",
