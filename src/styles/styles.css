@@ -639,11 +639,48 @@ html.loader-seen .loader {
   color: var(--blend-ink);
   transition: opacity 0.4s var(--ease);
 }
+.header__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .header__mark {
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+.header__mail {
+  width: 13px;
+  height: 13px;
+  margin-right: 6px;
+  /* sit the icon on the text baseline (SVG box bottom drops below it) */
+  vertical-align: -0.3em;
+}
+/* Contact link reads as a nav link — shares the nav-link typography/underline. */
+.header__contact {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: 2px;
+}
+.header__contact::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s var(--ease);
+}
+.header__contact:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 .header__nav {
   display: flex;

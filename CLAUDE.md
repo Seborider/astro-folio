@@ -93,7 +93,10 @@ A doc edit isn't optional follow-up — it ships with the code.
   attribute) with `poster={src}`, so nothing streams on parse.
 - **i18n.** Header EN/DE switcher (immediate, same-page), localized chrome and
   content, `t(locale)` UI strings; `public/scripts/i18n.js` handles the
-  client-side switch wiring.
+  client-side switch wiring. The header's left cluster (`.header__left`) holds
+  the mark, a mail icon, and a localized "Kontakt"/"Contact" mailto link (reuses
+  `tr.sections.contact`, same email in both locales) — it stays on the left at
+  mobile widths and is NOT part of the burger nav.
 - **SEO.** Per-page `<title>`/meta + OG/Twitter tags, hreflang alternates,
   JSON-LD (`src/lib/jsonld.ts`: Person / WebSite / CreativeWork), `@astrojs/sitemap`
   (i18n-aware `sitemap-index.xml`), and a generated `robots.txt`.
